@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "allreal-21",
+    "production": "jurist-law"
+  }
+}

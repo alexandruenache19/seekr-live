@@ -1,200 +1,348 @@
-import Head from 'next/head'
-import Link from 'next/link'
-import { useEffect } from 'react'
-import { useUser } from '../context/userContext'
-import firebase from '../firebase/clientApp'
+import Head from "next/head";
+import { useEffect, useState } from "react";
+import {
+  Stack,
+  Flex,
+  Text,
+  Link,
+  Image,
+  useToast,
+  Input,
+  Button,
+  Spinner,
+  SimpleGrid
+} from "@chakra-ui/react";
+import {
+  FaEnvelope,
+  FaFacebookF,
+  FaInstagram,
+  FaTwitter,
+  FaLinkedin
+} from "react-icons/fa";
+import * as emailjs from "emailjs-com";
+import { isMobile } from "react-device-detect";
+import { motion, useAnimation } from "framer-motion";
 
-export default function Home() {
-  // Our custom hook to get context values
-  const { loadingUser, user } = useUser()
+const MotionButton = motion(Button);
 
-  const profile = { username: 'nextjs_user', message: 'Awesome!!' }
+const randomDuration = () => Math.random() * 0.07 + 0.23;
+
+const variants = {
+  start: {
+    rotate: [-1, 1.2, 0],
+    scale: [1, 1.4, 1],
+    transition: {
+      repeat: 3,
+      duration: randomDuration()
+    }
+  },
+  reset: {
+    rotate: 0
+  }
+};
+// Adauga dosarele la care lucrezi si noi ne
+// ocupam de restul.
+export default function Home({}) {
+  const [email, setEmail] = useState("");
+  const [isOnMobile, setMobile] = useState();
+  const [loading, setLoading] = useState(true);
+  const [complete, setComplete] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
-    if (!loadingUser) {
-      // You know that the user is loaded: either logged in or out!
-      console.log(user)
-    }
-    // You also have your firebase app initialized
-    console.log(firebase)
-  }, [loadingUser, user])
+    setMobile(isMobile);
+    setLoading(false);
+  }, [setMobile]);
+  const controls = useAnimation();
 
-  const createUser = async () => {
-    const db = firebase.firestore()
-    await db.collection('profile').doc(profile.username).set(profile)
-    alert('User created!!')
+  if (loading) {
+    return (
+      <Stack
+        w="100vw"
+        h="100vh"
+        justifyContent="center"
+        alignItems="center"
+        bg="#FFFEF3"
+      >
+        <Spinner color="red.500" size="xl" />
+      </Stack>
+    );
+  }
+
+  if (isOnMobile) {
+    return (
+      <Stack
+        w="100vw"
+        h="100vh"
+        p="2em"
+        bg="#FFFEF3"
+        justifyContent="space-between"
+      >
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text style={styles.mobileLogo}>jurist</Text>
+          <Button
+            onClick={() => {
+              controls.start("start");
+            }}
+            style={styles.button}
+          >
+            3 luni gratis!
+          </Button>
+        </Flex>
+
+        <Stack justifyContent="center" alignItems="center">
+          <Image
+            w="60%"
+            h="25%"
+            objectFit="cover"
+            position="absolute"
+            top="100"
+            src="/technology.png"
+          />
+          <Image
+            w="50%"
+            h="25%"
+            objectFit="cover"
+            position="absolute"
+            top="220"
+            left="2em"
+            src="/support.png"
+          />
+          <Image
+            w="50%"
+            h="25%"
+            objectFit="cover"
+            position="absolute"
+            top="220"
+            right="2em"
+            src="/data.png"
+          />
+        </Stack>
+
+        <Stack>
+          <Stack style={{ paddingBottom: 50 }}>
+            <Text style={styles.mobileLarge}>
+              Informaţiile de care ai nevoie in instanţa
+            </Text>
+            <Text style={styles.mobileNormal}>
+              Obtine access la informaţiile de care ai nevoie in instanţa in
+              doar cateva secunde. Înscrie-te pe lista de așteptare pentru a
+              descarca aplicatia și primești 3 luni gratis!
+            </Text>
+          </Stack>
+
+          <Link href="https://alexandruenache.typeform.com/to/DgSFPoWy">
+            <MotionButton
+              variants={variants}
+              animate={controls}
+              style={{ ...styles.button, width: "100%" }}
+            >
+              Înscrie-mă pe lista!
+            </MotionButton>
+          </Link>
+        </Stack>
+      </Stack>
+    );
   }
 
   return (
-    <div className="container">
-      <Head>
-        <title>Next.js w/ Firebase Client-Side</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <Stack
+      w="100vw"
+      minH="100vh"
+      h="100%"
+      bg="#FFFEF3"
+      pt="50px"
+      pb="100px"
+      pl="135px"
+      pr="135px"
+      style={{ backgroundSize: "cover", backgroundRepeat: "no-repeat" }}
+      bgImage="url('/bg2.png')"
+    >
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text
+          style={{
+            fontWeight: 700,
+            fontSize: 24,
+            lineHeight: "1.3em",
+            fontFamily: "Poppins"
+          }}
+        >
+          jurist.
+        </Text>
+        <Text
+          style={{
+            fontWeight: 400,
+            fontSize: 12,
+            lineHeight: "1.3em",
+            fontFamily: "Poppins"
+          }}
+        >
+          Înscrie-te pe lista de așteptare pentru a descarca aplicatia și
+          primești 3 luni gratis!
+        </Text>
+        <Button
+          onClick={() => {
+            controls.start("start");
+          }}
+          style={{
+            paddingLeft: 30,
+            paddingRight: 30,
+            backgroundColor: "#000",
+            color: "#FFF",
+            marginLeft: "5px"
+          }}
+        >
+          3 luni gratis!
+        </Button>
+      </Flex>
 
-      <main>
-        <h1 className="title">Next.js w/ Firebase Client-Side</h1>
-        <p className="description">Fill in your credentials to get started</p>
+      <Flex
+        flex="1"
+        justifyContent="space-between"
+        pt="50px"
+        alignItems="center"
+      >
+        <Stack w="70%" h="100%" justifyContent="space-between">
+          <Stack pt="4em">
+            <Text
+              style={{
+                width: "80%",
+                fontWeight: 600,
+                fontSize: 16,
+                lineHeight: "1.5em",
+                fontFamily: "Poppins"
+              }}
+            >
+              ━━━ Pentru avocaţi, juriști, judecatori
+            </Text>
+            <Text
+              style={{
+                width: "60%",
+                fontWeight: 800,
+                fontSize: 55,
+                lineHeight: "1.2em",
+                fontFamily: "Poppins",
+                paddingTop: 20
+              }}
+            >
+              Informaţiile de care ai nevoie in instanţa
+            </Text>
+            <Text
+              style={{
+                width: "60%",
+                fontWeight: 400,
+                fontSize: 16,
+                lineHeight: "1.5em",
+                fontFamily: "Poppins",
+                paddingTop: 20
+              }}
+            >
+              Gasește informaţiile de care ai nevoie in instanţa in doar cateva
+              secunde. Înscrie-te pe lista de așteptare pentru a descarca
+              aplicatia și primești 3 luni gratis!
+            </Text>
+          </Stack>
+          <Flex w="80%" pt={"4em"}>
+            <Link href="https://alexandruenache.typeform.com/to/DgSFPoWy">
+              <MotionButton
+                variants={variants}
+                animate={controls}
+                style={styles.button}
+              >
+                Înscrie-mă pe lista!
+              </MotionButton>
+            </Link>
+          </Flex>
+        </Stack>
+        <Image
+          w="25%"
+          h="40%"
+          objectFit="cover"
+          position="absolute"
+          bottom="350"
+          right="150"
+          zIndex="0"
+          src="/technology.png"
+          alt="logo"
+        />
 
-        <p className="description">
-          Cloud Firestore Security Rules write permissions are required for
-          adding users
-        </p>
-        <button onClick={createUser}>Create 'nextjs_user'</button>
-
-        <p className="description">
-          Please press the link below after adding the user
-        </p>
-        <Link href={`/profile/${profile.username}`} passHref>
-          <a>Go to SSR Page</a>
-        </Link>
-      </main>
-
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        button {
-          font-size: 1.5em;
-          margin: 1em 0;
-        }
-
-        a {
-          color: blue;
-          font-size: 1.5em;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </div>
-  )
+        <Image
+          w="25%"
+          h="50%"
+          objectFit="cover"
+          position="absolute"
+          bottom="100"
+          zIndex="1"
+          right="300"
+          src="/support.png"
+          alt="logo"
+        />
+        <Image
+          w="25%"
+          h="50%"
+          objectFit="cover"
+          position="absolute"
+          bottom="100"
+          right="100"
+          zIndex="1"
+          src="/data.png"
+          alt="logo"
+        />
+      </Flex>
+    </Stack>
+  );
 }
+
+const styles = {
+  bold: {
+    fontWeight: 800,
+    fontSize: 24,
+    color: "#081c15",
+    lineHeight: "1.3em",
+    fontFamily: "Poppins"
+  },
+  normal: {
+    fontSize: 16,
+    lineHeight: "1.5em"
+  },
+  mobileNormal: {
+    fontSize: 16,
+    lineHeight: "1.5em",
+    textAlign: "center",
+    paddingTop: 10
+  },
+  mobileLarge: {
+    fontWeight: 800,
+    fontSize: 30,
+    lineHeight: "1.2em",
+    textAlign: "center"
+  },
+  mobileLogo: {
+    fontWeight: 700,
+    fontSize: 18,
+    lineHeight: "1.3em"
+  },
+  semiBold: {
+    fontWeight: 600,
+    fontSize: 16,
+    lineHeight: "1.5em"
+  },
+  webContainer: {
+    flex: 1,
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  largeNormal: {
+    fontSize: 55,
+    lineHeight: "1.2em"
+  },
+  largeBold: {
+    fontWeight: 800,
+    fontSize: 55,
+    lineHeight: "1.2em"
+  },
+  button: {
+    backgroundColor: "#081c15",
+    color: "#FFF"
+  }
+};

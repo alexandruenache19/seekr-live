@@ -1,0 +1,32 @@
+a {
+	font-size: 1rem;
+	text-decoration: none;
+	background: linear-gradient(currentColor, currentColor) bottom / 0 .1em no-repeat;
+	transition: 1s background-size;
+  color: "#081c15";
+}
+
+a:hover {
+	background-size: 100% .1em;
+}
+
+/* Variations */
+a.left {
+	background-position: left bottom;
+}
+
+boldText {
+	font-weight: 800;
+	font-size: 24;
+	color: "#081c15";
+	line-height: "1.3em";
+	fontFamily: "Poppins";
+}
+
+.react-player video {
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: none;
+		object-fit: cover;
+}

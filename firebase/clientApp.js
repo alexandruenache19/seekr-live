@@ -6,14 +6,14 @@ import "firebase/analytics"; // If you need it
 import "firebase/performance"; // If you need it
 
 const clientCredentials = {
-  apiKey: "AIzaSyB7GQBB6eShF3FOUx1OpnCaMFYV4loQKW0",
-  authDomain: "jurist-law.firebaseapp.com",
-  databaseURL: "https://jurist-law-default-rtdb.firebaseio.com",
-  projectId: "jurist-law",
-  storageBucket: "jurist-law.appspot.com",
-  messagingSenderId: "746275699840",
-  appId: "1:746275699840:web:6946e5cdc34befae4cfa65",
-  measurementId: "G-EEFM6N6DB6"
+  apiKey: "AIzaSyAhpfn4y_u8T8MT9sVXfrZ_Hq3gP3s7AOg",
+  authDomain: "seekr-live.firebaseapp.com",
+  databaseURL: "https://seekr-live-default-rtdb.firebaseio.com",
+  projectId: "seekr-live",
+  storageBucket: "seekr-live.appspot.com",
+  messagingSenderId: "729457766335",
+  appId: "1:729457766335:web:06ca5153842eef5357fb0a",
+  measurementId: "G-6DPMN8B0MW"
 };
 
 if (!firebase.apps.length) {

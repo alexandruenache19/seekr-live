@@ -1,59 +1,29 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import {
-  Stack,
-  Flex,
-  Text,
-  Link,
-  Image,
-  useToast,
-  Input,
-  Button,
-  Spinner,
-  SimpleGrid
-} from "@chakra-ui/react";
-import {
-  FaEnvelope,
-  FaFacebookF,
-  FaInstagram,
-  FaTwitter,
-  FaLinkedin
-} from "react-icons/fa";
-import * as emailjs from "emailjs-com";
+import { Stack, Flex, Text, Image, Button, Spinner } from "@chakra-ui/react";
+
+import Link from "next/link";
 import { isMobile } from "react-device-detect";
-import { motion, useAnimation } from "framer-motion";
 
-const MotionButton = motion(Button);
+// {
+//   "hosting": {
+//     "public": "out",
+//     "ignore": [
+//       "firebase.json",
+//       "**/.*",
+//       "**/node_modules/**"
+//     ]
+//   }
+// }
 
-const randomDuration = () => Math.random() * 0.07 + 0.23;
-
-const variants = {
-  start: {
-    rotate: [-1, 1.2, 0],
-    scale: [1, 1.4, 1],
-    transition: {
-      repeat: 3,
-      duration: randomDuration()
-    }
-  },
-  reset: {
-    rotate: 0
-  }
-};
-// Adauga dosarele la care lucrezi si noi ne
-// ocupam de restul.
 export default function Home({}) {
-  const [email, setEmail] = useState("");
   const [isOnMobile, setMobile] = useState();
   const [loading, setLoading] = useState(true);
-  const [complete, setComplete] = useState(false);
-  const toast = useToast();
 
   useEffect(() => {
     setMobile(isMobile);
     setLoading(false);
   }, [setMobile]);
-  const controls = useAnimation();
 
   if (loading) {
     return (
@@ -75,72 +45,28 @@ export default function Home({}) {
         w="100vw"
         h="100vh"
         p="2em"
-        bg="#FFFEF3"
+        bg="#F0F0F0"
         justifyContent="space-between"
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <Text style={styles.mobileLogo}>jurist</Text>
-          <Button
-            onClick={() => {
-              controls.start("start");
-            }}
-            style={styles.button}
+          <Text style={styles.mobileLogo}>seekr.</Text>
+          <a
+            className="left"
+            target="_blank"
+            href="https://alexandruenache.typeform.com/to/XHmwEQ8j"
           >
-            3 luni gratis!
-          </Button>
+            Sign Up
+          </a>
         </Flex>
 
-        <Stack justifyContent="center" alignItems="center">
-          <Image
-            w="60%"
-            h="25%"
-            objectFit="cover"
-            position="absolute"
-            top="100"
-            src="/technology.png"
-          />
-          <Image
-            w="50%"
-            h="25%"
-            objectFit="cover"
-            position="absolute"
-            top="220"
-            left="2em"
-            src="/support.png"
-          />
-          <Image
-            w="50%"
-            h="25%"
-            objectFit="cover"
-            position="absolute"
-            top="220"
-            right="2em"
-            src="/data.png"
-          />
-        </Stack>
-
+        <Image src="./technology.png" alt="logo" />
         <Stack>
-          <Stack style={{ paddingBottom: 50 }}>
-            <Text style={styles.mobileLarge}>
-              Informaţiile de care ai nevoie in instanţa
-            </Text>
-            <Text style={styles.mobileNormal}>
-              Obtine access la informaţiile de care ai nevoie in instanţa in
-              doar cateva secunde. Înscrie-te pe lista de așteptare pentru a
-              descarca aplicatia și primești 3 luni gratis!
-            </Text>
-          </Stack>
-
-          <Link href="https://alexandruenache.typeform.com/to/DgSFPoWy">
-            <MotionButton
-              variants={variants}
-              animate={controls}
-              style={{ ...styles.button, width: "100%" }}
-            >
-              Înscrie-mă pe lista!
-            </MotionButton>
-          </Link>
+          <Text style={styles.mobileLarge}>Buy & Sell products live</Text>
+          <Text style={styles.mobileNormal}>Sell products live</Text>
         </Stack>
+        <Link href="https://alexandruenache.typeform.com/to/XHmwEQ8j">
+          <Button style={styles.button}>Join Waitlist!</Button>
+        </Link>
       </Stack>
     );
   }
@@ -150,144 +76,41 @@ export default function Home({}) {
       w="100vw"
       minH="100vh"
       h="100%"
-      bg="#FFFEF3"
+      bg="#F0F0F0"
       pt="50px"
-      pb="100px"
+      pb="50px"
       pl="135px"
       pr="135px"
-      style={{ backgroundSize: "cover", backgroundRepeat: "no-repeat" }}
-      bgImage="url('/bg2.png')"
+      justifyContent="space-between"
     >
       <Flex justifyContent="space-between" alignItems="center">
-        <Text
-          style={{
-            fontWeight: 700,
-            fontSize: 24,
-            lineHeight: "1.3em",
-            fontFamily: "Poppins"
-          }}
+        <Text style={styles.bold}>seekr.</Text>
+
+        <a
+          className="left"
+          target="_blank"
+          href="https://alexandruenache.typeform.com/to/XHmwEQ8j"
         >
-          jurist.
-        </Text>
-        <Text
-          style={{
-            fontWeight: 400,
-            fontSize: 12,
-            lineHeight: "1.3em",
-            fontFamily: "Poppins"
-          }}
-        >
-          Înscrie-te pe lista de așteptare pentru a descarca aplicatia și
-          primești 3 luni gratis!
-        </Text>
-        <Button
-          onClick={() => {
-            controls.start("start");
-          }}
-          style={{
-            paddingLeft: 30,
-            paddingRight: 30,
-            backgroundColor: "#000",
-            color: "#FFF",
-            marginLeft: "5px"
-          }}
-        >
-          3 luni gratis!
-        </Button>
+          Sign Up
+        </a>
       </Flex>
 
-      <Flex
-        flex="1"
-        justifyContent="space-between"
-        pt="50px"
-        alignItems="center"
-      >
-        <Stack w="70%" h="100%" justifyContent="space-between">
-          <Stack pt="4em">
-            <Text
-              style={{
-                width: "80%",
-                fontWeight: 600,
-                fontSize: 16,
-                lineHeight: "1.5em",
-                fontFamily: "Poppins"
-              }}
-            >
-              ━━━ Pentru avocaţi, juriști, judecatori
-            </Text>
-            <Text
-              style={{
-                width: "60%",
-                fontWeight: 800,
-                fontSize: 55,
-                lineHeight: "1.2em",
-                fontFamily: "Poppins",
-                paddingTop: 20
-              }}
-            >
-              Informaţiile de care ai nevoie in instanţa
-            </Text>
-            <Text
-              style={{
-                width: "60%",
-                fontWeight: 400,
-                fontSize: 16,
-                lineHeight: "1.5em",
-                fontFamily: "Poppins",
-                paddingTop: 20
-              }}
-            >
-              Gasește informaţiile de care ai nevoie in instanţa in doar cateva
-              secunde. Înscrie-te pe lista de așteptare pentru a descarca
-              aplicatia și primești 3 luni gratis!
-            </Text>
-          </Stack>
-          <Flex w="80%" pt={"4em"}>
-            <Link href="https://alexandruenache.typeform.com/to/DgSFPoWy">
-              <MotionButton
-                variants={variants}
-                animate={controls}
-                style={styles.button}
-              >
-                Înscrie-mă pe lista!
-              </MotionButton>
-            </Link>
-          </Flex>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Stack width="50%">
+          <Text style={styles.semiBold}>━━━ Cosmetics, clothes and more </Text>
+          <Text>
+            <Text style={styles.largeBold}>Buy & Sell products live</Text>
+          </Text>
+          <Text style={styles.normal}>Sell products live</Text>
         </Stack>
-        <Image
-          w="25%"
-          h="40%"
-          objectFit="cover"
-          position="absolute"
-          bottom="350"
-          right="150"
-          zIndex="0"
-          src="/technology.png"
-          alt="logo"
-        />
 
-        <Image
-          w="25%"
-          h="50%"
-          objectFit="cover"
-          position="absolute"
-          bottom="100"
-          zIndex="1"
-          right="300"
-          src="/support.png"
-          alt="logo"
-        />
-        <Image
-          w="25%"
-          h="50%"
-          objectFit="cover"
-          position="absolute"
-          bottom="100"
-          right="100"
-          zIndex="1"
-          src="/data.png"
-          alt="logo"
-        />
+        <Image w="50%" h="100%" src="/technology.png" alt="logo" />
+      </Flex>
+
+      <Flex alignItems="center">
+        <Link href="https://alexandruenache.typeform.com/to/XHmwEQ8j">
+          <Button style={styles.button}>Join Waitlist!</Button>
+        </Link>
       </Flex>
     </Stack>
   );
@@ -303,7 +126,8 @@ const styles = {
   },
   normal: {
     fontSize: 16,
-    lineHeight: "1.5em"
+    lineHeight: "1.5em",
+    width: "70%"
   },
   mobileNormal: {
     fontSize: 16,

@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "allreal-21",
-    "production": "jurist-law"
+    "default": "seekr-live",
+    "production": "seekr-live",
+    "seekr-prod": "seekr-live"
   }
 }

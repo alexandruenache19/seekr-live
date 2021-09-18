@@ -1,10 +1,42 @@
 {
-  "hosting": {
-    "public": "out",
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "ui": {
+      "enabled": true
+    }
+  },
+  "functions": {
+    "source": ".",
+    "runtime": "nodejs14",
     "ignore": [
       "firebase.json",
+      "firebase-debug.log",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "components/**",
+      "helpers/**",
+      "pages/**",
+      "public/**",
+      "firestore.rules",
+      "readme.md"
     ]
-  }
+  },
+  "hosting": [
+    {
+      "site": "seekr-live",
+      "public": "public/",
+      "cleanUrls": true,
+      "rewrites": [
+        {
+          "source": "**",
+          "function": "nextjs-server"
+        }
+      ]
+    }
+  ]
 }

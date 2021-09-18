@@ -1,25 +1,42 @@
 {
   "private": true,
   "scripts": {
+    "clean": "rimraf nextjs/",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "export": "next export"
+    "predeploy": "npm run clean && next build",
+    "deploy": "firebase deploy"
   },
+  "main": "server.js",
   "dependencies": {
-    "@chakra-ui/react": "^1.6.5",
+    "@chakra-ui/react": "^1.6.7",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "emailjs-com": "^3.2.0",
     "firebase": "7.17.0",
-    "firebase-admin": "9.0.0",
-    "framer-motion": "^4.1.17",
+    "firebase-admin": "^9.11.1",
+    "firebase-functions": "^3.15.6",
+    "framer-motion": "^4",
     "next": "latest",
+    "next-images": "^1.8.1",
     "react": "^17.0.2",
+    "react-copy-to-clipboard": "^5.0.4",
     "react-device-detect": "^1.17.0",
     "react-dom": "^17.0.2",
-    "react-icons": "^4.2.0"
+    "react-hls-player": "^3.0.7",
+    "react-icons": "^4.2.0",
+    "react-lottie": "^1.2.3",
+    "react-player": "^2.9.0",
+    "react-share": "^4.4.0"
   },
   "license": "MIT",
-  "proxy": "http://localhost:5000"
+  "proxy": "http://localhost:5000",
+  "devDependencies": {
+    "@babel/cli": "^7.15.4",
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.6",
+    "cross-env": "^7.0.3",
+    "rimraf": "^3.0.2"
+  }
 }

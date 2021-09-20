@@ -75,11 +75,34 @@ class EventScreen extends PureComponent {
     };
 
     const MobileButton = args => (
-      <Text fontSize={10} fontWeight="normal" onClick={args.onClick}>
-        {args.children}
-      </Text>
+      <Button
+        flexDirection="column"
+        h="3em"
+        shadow="md"
+        borderRadius="1em"
+        onClick={args.onClick}
+        bg="#FFF"
+      >
+        <BiCalendarPlus size={26} />
+        <Text fontSize={10} fontWeight="normal">
+          {args.children}
+        </Text>
+      </Button>
     );
-    const WebButton = args => <a onClick={args.onClick}>{args.children}</a>;
+    const WebButton = args => (
+      <Button
+        onClick={args.onClick}
+        h="3em"
+        shadow="md"
+        borderRadius="1.5em"
+        bg="#FFF"
+      >
+        <a>{args.children}</a>
+        <Center pl="5px">
+          <BiCalendarPlus size={26} />
+        </Center>
+      </Button>
+    );
 
     const AddToCalendarComp = AddToCalendarHOC(
       isOnMobile ? MobileButton : WebButton,
@@ -215,17 +238,7 @@ class EventScreen extends PureComponent {
               Choose your reminder
             </Text>
             <Center>
-              <Button
-                flexDirection="column"
-                h="3em"
-                shadow="md"
-                borderRadius="1em"
-                bg="#FFF"
-              >
-                <BiCalendarPlus size={26} />
-                <AddToCalendarComp event={event} />
-              </Button>
-
+              <AddToCalendarComp event={event} />
               <Button
                 h="3em"
                 ml="10px"
@@ -383,12 +396,7 @@ class EventScreen extends PureComponent {
                 alignItems: "center"
               }}
             >
-              <Button h="3em" shadow="md" borderRadius="1.5em" bg="#FFF">
-                <AddToCalendarComp event={event} />
-                <Center pl="5px">
-                  <BiCalendarPlus size={26} />
-                </Center>
-              </Button>
+              <AddToCalendarComp event={event} />
 
               <Button
                 h="3em"

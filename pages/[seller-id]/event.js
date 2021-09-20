@@ -214,7 +214,7 @@ class EventScreen extends PureComponent {
             <Text fontWeight="bold" fontSize={20} textAlign="center">
               Choose your reminder
             </Text>
-            <Flex>
+            <Center>
               <Button
                 flexDirection="column"
                 h="3em"
@@ -255,7 +255,7 @@ class EventScreen extends PureComponent {
                   Text me
                 </Text>
               </Button>
-            </Flex>
+            </Center>
           </Stack>
         </Stack>
       );

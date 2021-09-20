@@ -12,7 +12,7 @@ class Document extends NextDocument {
       <Html>
         <Head>
           <meta content="width=device-width, initial-scale=1" />
-          <meta title="Polymore" />
+          <meta title="Seekr" />
           <link rel="icon" sizes="96x96" href="/favicon.ico" />
           <meta name="theme-color" content="#319795" />
           <link
@@ -26,7 +26,7 @@ class Document extends NextDocument {
         </Head>
 
         <body
-          style={{ overscrollBehavior: "none", backgroundColor: "#FFFEF3" }}
+          style={{ overscrollBehavior: "none", backgroundColor: "#FFFFFF" }}
         >
           <Main />
           <NextScript />

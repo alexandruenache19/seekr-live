@@ -65,7 +65,6 @@ class EventScreen extends PureComponent {
       description: "Cosmetics sale on Seekr",
       duration: duration,
       endDatetime: endDatetime.format("YYYYMMDDTHHmmssZ"),
-      // location: "NYC",
       startDatetime: startDatetime.format("YYYYMMDDTHHmmssZ"),
       title: "Summer Sale by @maria"
     };
@@ -127,9 +126,7 @@ class EventScreen extends PureComponent {
                 <Button
                   bg="#FFF"
                   borderRadius="1em"
-                  onClick={() => {
-                    this.downloadModal.openModal();
-                  }}
+                  onClick={this.handleReminder}
                 >
                   <FaPlus size={20} />
                 </Button>
@@ -137,24 +134,26 @@ class EventScreen extends PureComponent {
                   ml="0.2em"
                   borderRadius="1em"
                   bg="#FFF"
-                  onClick={() => {
-                    this.shareModal.openModal();
-                  }}
+                  onClick={this.handleShare}
                 >
                   <FaShareSquare size={20} />
                 </Button>
               </Center>
             </Flex>
           </Flex>
-          <Stack h="50vh" bg="#EEF2F8" borderRadius="xl" overflow="hidden">
+          <Stack
+            h="50vh"
+            bg="rgba(0,0,0,0.9)"
+            borderRadius="xl"
+            overflow="hidden"
+          >
             <ReactPlayer
-              className="react-player"
-              url={
-                "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-              }
+              // className="react-player"
+              url={"https://event-preview.s3.amazonaws.com/file.name"}
               width="100%"
               height="100%"
               playing
+              loop
             />
           </Stack>
           <Stack
@@ -328,18 +327,17 @@ class EventScreen extends PureComponent {
             <Stack
               h="100%"
               w="100%"
-              bg="#F2F4F9"
+              bg="rgba(0,0,0,0.9)"
               borderRadius="xl"
               overflow="hidden"
             >
               <ReactPlayer
-                className="react-player"
-                url={
-                  "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-                }
+                // className="react-player"
+                url={"https://event-preview.s3.amazonaws.com/file.name"}
                 width="100%"
                 height="100%"
                 playing
+                loop
               />
 
               <Center position="absolute" top="130" left="30">

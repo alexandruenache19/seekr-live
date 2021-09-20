@@ -89,15 +89,19 @@ class LiveScreen extends PureComponent {
               </Center>
             </Flex>
           </Flex>
-          <Stack h="50vh" bg="#EEF2F8" borderRadius="xl" overflow="hidden">
+          <Stack
+            h="50vh"
+            bg="rgba(0,0,0,0.9)"
+            borderRadius="xl"
+            overflow="hidden"
+          >
             <ReactPlayer
-              className="react-player"
-              url={
-                "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-              }
+              // className="react-player"
+              url={"https://event-preview.s3.amazonaws.com/file.name"}
               width="100%"
               height="100%"
               playing
+              loop
             />
 
             <Center
@@ -291,18 +295,17 @@ class LiveScreen extends PureComponent {
             <Stack
               h="100%"
               w="100%"
-              bg="#F2F4F9"
+              bg="rgba(0,0,0,0.9)"
               borderRadius="xl"
               overflow="hidden"
             >
               <ReactPlayer
-                className="react-player"
-                url={
-                  "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-                }
+                // className="react-player"
+                url={"https://event-preview.s3.amazonaws.com/file.name"}
                 width="100%"
                 height="100%"
                 playing
+                loop
               />
               <Flex
                 position="absolute"

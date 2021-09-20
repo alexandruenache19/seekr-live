@@ -63,33 +63,13 @@ const CustomModal = ({ openAuthModal, isOnMobile }, ref) => {
   }));
 
   return (
-    <Modal
-      enableBodyScroll={false}
-      disableBodyScroll={false}
-      isCentered
-      isOpen={isOpen}
-      onClose={onClose}
-      size={"2xl"}
-    >
+    <Modal motionPreset="scale" isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent
-        p={8}
-        borderRadius={30}
-        justify="center"
-        align="center"
-        {...styles}
-      >
-        <ModalHeader
-          fontSize={22}
-          fontWeight="bold"
-          color="#000"
-          d="flex"
-          justifyContent="center"
-        >
-          {title[type]}
-        </ModalHeader>
+      <ModalContent borderRadius={30} {...styles}>
+        <ModalHeader>{title[type]}</ModalHeader>
+        <ModalCloseButton />
         <ModalBody>
-          <Center>{renderContent(type, props)}</Center>
+          <Center>{renderContent(type, { ...props, isOnMobile })}</Center>
         </ModalBody>
       </ModalContent>
     </Modal>

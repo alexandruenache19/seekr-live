@@ -2,10 +2,8 @@ import React, { PureComponent } from "react";
 import { withRouter } from "next/router";
 import { Center, Spinner } from "@chakra-ui/react";
 
-import { Modal } from "../../../components";
+import { Modal, LiveScreen, EventScreen } from "../../../components";
 
-import LiveScreen from "./live";
-import EventScreen from "./event";
 import { getSeller, getEvent } from "../../../fetchData/getData";
 import firebase from "../../../firebase/clientApp";
 

@@ -50,7 +50,7 @@ class SellerProfile extends PureComponent {
           comments: comments,
           loading: false,
           isOnMobile: window.innerWidth <= 780,
-          isLive: true
+          isLive: false
         });
       });
   }
@@ -112,7 +112,7 @@ export const getServerSideProps = async context => {
   const { id } = context.params;
   const seller = await getSeller(id);
   const eventId = seller.events ? seller.events.current : null;
-  let eventInfo = null;
+  let eventInfo;
 
   if (eventId) {
     eventInfo = await getEvent(eventId);

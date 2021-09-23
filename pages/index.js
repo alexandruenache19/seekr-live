@@ -55,14 +55,14 @@ export default function Home({}) {
             target="_blank"
             href="https://alexandruenache.typeform.com/to/XHmwEQ8j"
           >
-            Sign Up
+            Join Waitlist
           </a>
         </Flex>
 
         <Image src="./technology.png" alt="logo" />
         <Stack>
           <Text style={styles.mobileLarge}>Buy & Sell products live</Text>
-          <Text style={styles.mobileNormal}>Sell products live</Text>
+          {/*  <Text style={styles.mobileNormal}>Sell products live</Text>*/}
         </Stack>
         <Link href="https://alexandruenache.typeform.com/to/XHmwEQ8j">
           <Button style={styles.button}>Join Waitlist!</Button>
@@ -91,7 +91,7 @@ export default function Home({}) {
           target="_blank"
           href="https://alexandruenache.typeform.com/to/XHmwEQ8j"
         >
-          Sign Up
+          Join Waitlist
         </a>
       </Flex>
 
@@ -101,7 +101,7 @@ export default function Home({}) {
           <Text>
             <Text style={styles.largeBold}>Buy & Sell products live</Text>
           </Text>
-          <Text style={styles.normal}>Sell products live</Text>
+          {/*    <Text style={styles.normal}>Sell products live</Text>*/}
         </Stack>
 
         <Image w="50%" h="100%" src="/technology.png" alt="logo" />

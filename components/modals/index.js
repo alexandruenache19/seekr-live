@@ -1,4 +1,4 @@
-import { useState, forwardRef, useImperativeHandle } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import {
   Modal,
   ModalBody,
@@ -7,6 +7,7 @@ import {
   ModalOverlay,
   ModalHeader,
   Center,
+  Text,
   useDisclosure
 } from "@chakra-ui/react";
 
@@ -15,19 +16,34 @@ import {
   CalendarModalContent,
   ShareModalContent,
   FollowModalContent,
-  NotifyModelContent,
+  CommentModelContent,
   TextModalContent,
   EmailModalContent
 } from "./content";
 
-const title = {
-  share: "Share this event",
-  calendar: "Add Event to Your Calendar",
-  notify: "Reminder",
-  text: "Get a text 5 min before",
-  email: "Get an email 5 min before",
-  order: "Complete order",
-  follow: "Follow"
+const info = {
+  share: {
+    title: "Share Event",
+    subtitle: "Share this event with your friends."
+  },
+  calendar: {
+    title: "Add To Calendar",
+    subtitle: "Where do you want to save the event?"
+  },
+  comment: {
+    title: "What is you name?",
+    subtitle: "Add your name to comment."
+  },
+  text: {
+    title: "Text me",
+    subtitle: "Get a text 5 minutes before the event starts."
+  },
+  email: {
+    title: "Email me",
+    subtitle: "Get an email 5 minutes before the event starts."
+  },
+  order: { title: "Complete Your Order", subtitle: "" },
+  follow: { title: "Download the app to follow", subtitle: "Down" }
 };
 
 const renderContent = (type, props) => {
@@ -36,8 +52,8 @@ const renderContent = (type, props) => {
       return <ShareModalContent {...props} />;
     case "calendar":
       return <CalendarModalContent {...props} />;
-    case "notify":
-      return <NotifyModelContent {...props} />;
+    case "comment":
+      return <CommentModelContent {...props} />;
     case "text":
       return <TextModalContent {...props} />;
     case "email":
@@ -50,10 +66,13 @@ const renderContent = (type, props) => {
   }
 };
 
-const CustomModal = ({ openAuthModal, isOnMobile }, ref) => {
+const CustomModal = ({ isOnMobile, callback }, ref) => {
   const { onClose, onOpen, isOpen } = useDisclosure();
-  const [type, setType] = useState("");
+  const [type, setType] = useState("share");
   const [props, setProps] = useState({});
+  const initialRef = React.useRef();
+  const finalRef = React.useRef();
+
   useImperativeHandle(ref, () => ({
     openModal(type, props) {
       setType(type);
@@ -63,13 +82,36 @@ const CustomModal = ({ openAuthModal, isOnMobile }, ref) => {
   }));
 
   return (
-    <Modal motionPreset="scale" isCentered isOpen={isOpen} onClose={onClose}>
+    <Modal
+      initialFocusRef={initialRef}
+      finalFocusRef={finalRef}
+      motionPreset="scale"
+      isCentered
+      isOpen={isOpen}
+      onClose={onClose}
+      size={"2xl"}
+    >
       <ModalOverlay />
-      <ModalContent borderRadius={30} {...styles}>
-        <ModalHeader>{title[type]}</ModalHeader>
+      <ModalContent
+        p={isOnMobile ? 5 : 10}
+        ref={initialRef}
+        borderRadius={isOnMobile ? 10 : 30}
+        {...styles}
+      >
+        <ModalHeader>
+          <Text>{info[type].title}</Text>
+          <Text fontSize={14} fontWeight="normal">
+            {info[type].subtitle}
+          </Text>
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Center>{renderContent(type, { ...props, isOnMobile })}</Center>
+          {renderContent(type, {
+            ...props,
+            isOnMobile,
+            onClose,
+            callback
+          })}
         </ModalBody>
       </ModalContent>
     </Modal>

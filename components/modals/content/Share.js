@@ -2,16 +2,12 @@ import { useState } from "react";
 import {
   Flex,
   Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  ModalHeader,
   Button,
   Stack,
   Text,
   Link,
   Box,
+  Center,
   useDisclosure,
   useToast
 } from "@chakra-ui/react";
@@ -37,7 +33,7 @@ import {
   FiYoutube
 } from "react-icons/fi";
 
-const ShareButton = ({ child, text, isOnMobile, item, ...rest }) => (
+const ShareButton = ({ child, text, isOnMobile, ...rest }) => (
   <Stack
     m={2}
     w={isOnMobile ? "20%" : "6em"}
@@ -69,20 +65,43 @@ const ShareButton = ({ child, text, isOnMobile, item, ...rest }) => (
   </Stack>
 );
 
-const ShareModalContent = ({
-  auth,
-  item,
-  openAuthModal,
-  isOnMobile,
-  ...rest
-}) => {
+const ShareModalContent = ({ isOnMobile, username, onClose, ...rest }) => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const iconSize = isOnMobile ? "2em" : "3em";
-  const url = `https://joinSnippet.com/`;
+  const url = `https://joinSeekr.com/u/${username}`;
 
   return (
     <Stack {...rest}>
+      <Flex justify="Center" align="center">
+        <CopyToClipboard
+          text={url}
+          onCopy={() => {
+            toast({
+              title: "Copied!",
+              status: "success",
+              duration: 2000,
+              isClosable: false
+            });
+            onClose();
+          }}
+        >
+          <Center cursor="pointer">
+            <Text
+              style={{
+                fontSize: 18,
+                backgroundColor: "#999",
+                padding: 10,
+                borderRadius: 10,
+                marginRight: 10
+              }}
+            >
+              {url}
+            </Text>
+            <FiLink size={26} />
+          </Center>
+        </CopyToClipboard>
+      </Flex>
       <Flex justify="space-between" align="center">
         <ShareButton
           child={
@@ -90,51 +109,26 @@ const ShareModalContent = ({
               <FiTwitter size={iconSize} />
             </TwitterShareButton>
           }
-          item={item}
           text="Twitter"
           isOnMobile={isOnMobile}
         />
-        <ShareButton
-          child={<FiInstagram size={iconSize} />}
-          text="Instagram"
-          isOnMobile={isOnMobile}
-        />
+        {/*  <ShareButton
+            child={<FiInstagram size={iconSize} />}
+            text="Instagram"
+            isOnMobile={isOnMobile}
+          />*/}
+
         <ShareButton
           child={
             <FacebookShareButton url={url}>
               <FiFacebook size={iconSize} />
             </FacebookShareButton>
           }
-          item={item}
           text="Facebook"
           isOnMobile={isOnMobile}
         />
         <ShareButton
-          child={
-            <LinkedinShareButton url={url}>
-              <FiLinkedin size={iconSize} />
-            </LinkedinShareButton>
-          }
-          item={item}
-          text="LinkedIn"
           isOnMobile={isOnMobile}
-        />
-      </Flex>
-      <Flex justify="space-between" align="center">
-        <ShareButton
-          isOnMobile={isOnMobile}
-          item={item}
-          child={
-            <RedditShareButton url={url}>
-              <AiOutlineReddit size={iconSize} />
-            </RedditShareButton>
-          }
-          text="Reddit"
-        />
-
-        <ShareButton
-          isOnMobile={isOnMobile}
-          item={item}
           child={
             <TelegramShareButton url={url}>
               <FaTelegramPlane size={iconSize} />
@@ -142,31 +136,17 @@ const ShareModalContent = ({
           }
           text="Telegram"
         />
-
+        {/*  <ShareButton
+            child={
+              <LinkedinShareButton url={url}>
+                <FiLinkedin size={iconSize} />
+              </LinkedinShareButton>
+            }
+            text="LinkedIn"
+            isOnMobile={isOnMobile}
+          />*/}
         <ShareButton
           isOnMobile={isOnMobile}
-          item={item}
-          child={
-            <CopyToClipboard
-              text={url}
-              onCopy={() =>
-                toast({
-                  title: "Copied!",
-                  status: "success",
-                  duration: 1000,
-                  isClosable: false
-                })
-              }
-            >
-              <FiLink size={iconSize} />
-            </CopyToClipboard>
-          }
-          text="Copy Link"
-        />
-
-        <ShareButton
-          isOnMobile={isOnMobile}
-          item={item}
           child={
             <FacebookMessengerShareButton appId={1190712697719040} url={url}>
               <FaFacebookMessenger size={iconSize} />

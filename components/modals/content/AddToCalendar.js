@@ -8,19 +8,31 @@ import {
   useToast
 } from "@chakra-ui/react";
 
-const CalendarModalContent = props => {
-  //props = {data: array of  options }
+const CalendarModalContent = ({ data, onClose, callback }) => {
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
+  function handleSubmit() {
+    toast({
+      title: "Done",
+      description: "You will get an email 5 minutes before the event starts",
+      status: "success",
+      duration: 19000,
+      isClosable: true
+    });
+
+    onClose();
+    callback();
+  }
 
   return (
-    <List>
-      {props.data.map((link, i) => (
-        <ListItem key={i} p="10px">
-          <Text>{link}</Text>
-        </ListItem>
-      ))}
-    </List>
+    <Center>
+      <List>
+        {data.map((link, i) => (
+          <ListItem key={i} p="10px">
+            <Text onClick={handleSubmit}>{link}</Text>
+          </ListItem>
+        ))}
+      </List>
+    </Center>
   );
 };
 

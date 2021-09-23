@@ -23,10 +23,25 @@ boldText {
 	fontFamily: "Poppins";
 }
 
+.bg-player video {
+	position: absolute;
+	transform: none;
+	object-fit: cover;
+	margin-top: 0;
+  top: 0;
+  left: 0;
+	z-index: 0;
+  filter: blur(20px);
+}
+
+.react-player {
+		margin-top: 0;
+}
+
 .react-player video {
     position: relative;
     left: 0;
     top: 0;
-    transform: none;
-		object-fit: cover;
+		z-index: 1;
+		margin-top: 0;
 }

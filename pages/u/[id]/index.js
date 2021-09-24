@@ -48,7 +48,7 @@ class SellerProfile extends PureComponent {
           comments: comments,
           loading: false,
           isOnMobile: window.innerWidth <= 780,
-          isLive: false
+          isLive: true
         });
       });
   }

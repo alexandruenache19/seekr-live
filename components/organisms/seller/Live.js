@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import { withRouter } from 'next/router'
 import { Flex, Stack, Text, Avatar, Center, Button } from '@chakra-ui/react'
 import ReactPlayer from 'react-player'
@@ -17,11 +17,10 @@ import { MessageInput, CommentsList } from '../../../components'
 import { getProductInfo } from '../../../fetchData/getData'
 import firebase from '../../../firebase/clientApp'
 
-class LiveScreen extends PureComponent {
-  constructor (props) {
+class LiveScreen extends Component {
+  constructor(props) {
     super(props)
     this.state = {
-      currentProductId: null,
       productInfo: null,
       orderQuantity: 1
     }
@@ -30,30 +29,27 @@ class LiveScreen extends PureComponent {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  async componentDidMount () {
-    const { eventInfo } = this.props
-    const currentProductId = eventInfo.currentProductId
+  async componentDidMount() {
+    const { eventInfo, currentProductId } = this.props
     // const productInfo = await getProductInfo(eventInfo.id, currentProductId)
     this.productInfoListener = firebase
       .database()
       .ref(`events/${eventInfo.id}/products/${currentProductId}`)
       .on('value', (snapshot) => {
         this.setState({
-          productInfo: snapshot.val(),
-          currentProductId: currentProductId
+          productInfo: snapshot.val()
         })
       })
   }
 
-  componentWillUnmount () {
-    const { eventInfo } = this.props
-    const { currentProductId } = this.state
+  componentWillUnmount() {
+    const { eventInfo, currentProductId } = this.props
     this.productInfoListener && firebase.database()
       .ref(`events/${eventInfo.id}/products/${currentProductId}`)
       .off('value', this.productInfoListener)
   }
 
-  handleOrder () {
+  handleOrder() {
     const { eventInfo } = this.props
     const { productInfo, orderQuantity } = this.state
     this.props.onOpenModal('order', {
@@ -64,24 +60,25 @@ class LiveScreen extends PureComponent {
     })
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', { username: sellerInfo.username })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
       eventInfo,
       comments,
-      username
+      username,
+      currentProductId
     } = this.props
-    const { productInfo, currentProductId, orderQuantity } = this.state
+    const { productInfo, orderQuantity } = this.state
 
     if (isOnMobile) {
       return (
@@ -463,7 +460,33 @@ class LiveScreen extends PureComponent {
                 </Center>
               </Flex>
             </Center>
-          ) : null}
+          ) : (
+            <Center p='20px' h='15vh' w='100%' style={{ marginTop: 0 }}>
+              <Flex
+                h='100%'
+                w='100%'
+                p='10px'
+                bg='#F2F4F9'
+                borderRadius='xl'
+                overflow='hidden'
+                style={{ justifyContent: 'space-between', marginTop: 0 }}
+              >
+                <Center w='100%'>
+                  <Stack
+                    borderRadius='xl'
+                    p='10px'
+                    bg='#FFF'
+                    w='100%'
+                    align='center'
+                  >
+                    <Text pl='6px' color='#000' fontWeight='bold' fontSize='xl'>
+                      {`Waiting for ${sellerInfo.username} to add a product...`}
+                    </Text>
+                  </Stack>
+                </Center>
+              </Flex>
+            </Center>
+          )}
         </Stack>
 
         <Center p='20px' pl='0px' h='100vh' w='30vw'>

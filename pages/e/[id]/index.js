@@ -15,17 +15,51 @@ class EventPage extends PureComponent {
             isOnMobile: false,
             isLive: true,
             comments: [],
-            username: ''
+            username: '',
+            evetInfo: null,
+            sellerInfo: null,
+            currentProductId: null
         };
         this.handleOpenModal = this.handleOpenModal.bind(this);
         this.handelCallback = this.handelCallback.bind(this);
     }
 
     componentDidMount() {
-        const { eventInfo } = this.props;
+        const { eventId } = this.props;
+
+        this.eventInfoListener = firebase
+            .database()
+            .ref(`/events/${eventId}/info`)
+            .on("value", async snapshot => {
+
+                const eventInfo = snapshot.val()
+
+                if (eventInfo.sellerId && !this.state.sellerInfo) {
+                    const sellerInfo = await getSellerInfo(eventInfo.sellerId)
+                    this.setState({ sellerInfo })
+                }
+
+                console.log('eventInfo', eventInfo)
+
+                this.setState({
+                    eventInfo: eventInfo,
+                    currentProductId: eventInfo.currentProductId
+                })
+            })
+
+
+        this.sellerInfoListener = firebase
+            .database()
+            .ref(`/events/${eventId}/info`)
+            .on("value", snapshot => {
+                this.setState({
+                    eventInfo: snapshot.val()
+                });
+            })
+
         this.commentsListener = firebase
             .database()
-            .ref(`/events/${eventInfo.id}/comments`)
+            .ref(`/events/${eventId}/comments`)
             .orderByChild('timestamp')
             .limitToLast(20)
             .on("value", snapshot => {
@@ -54,10 +88,12 @@ class EventPage extends PureComponent {
     }
 
     render() {
-        const { isOnMobile, sellerInfo, eventInfo } = this.props;
-        const { loading, isLive, comments, username } = this.state;
+        const { isOnMobile } = this.props;
+        const { loading, isLive, comments, username, eventInfo, sellerInfo, currentProductId } = this.state;
 
-        if (loading) {
+        console.log('prod', currentProductId)
+
+        if (loading || !eventInfo || !sellerInfo) {
             return (
                 <Center bg="#FFF" w="100vw" h="100vh">
                     <Spinner size="xl" thickness="3px" />
@@ -81,6 +117,7 @@ class EventPage extends PureComponent {
                         eventInfo={eventInfo}
                         comments={comments}
                         username={username}
+                        currentProductId={currentProductId}
                     />
                 ) : (
                     <EventScreen
@@ -99,8 +136,6 @@ class EventPage extends PureComponent {
 
 export const getServerSideProps = async context => {
     const { id } = context.params;
-    const eventInfo = await getEventInfo(id);
-    const sellerInfo = await getSellerInfo(eventInfo.sellerId)
 
     let userAgent;
     if (context.req) {
@@ -116,7 +151,7 @@ export const getServerSideProps = async context => {
         )
     );
 
-    return { props: { eventInfo, id, sellerInfo: sellerInfo, isOnMobile } };
+    return { props: { eventId: id, isOnMobile } };
 };
 
 const styles = {};

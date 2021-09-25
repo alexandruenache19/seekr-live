@@ -1,27 +1,27 @@
-import UserProvider from "../context/userContext";
-import { ChakraProvider } from "@chakra-ui/react";
-import "./styles.css";
-import { extendTheme } from "@chakra-ui/react";
-import { mode } from "@chakra-ui/theme-tools";
+import UserProvider from '../context/userContext'
+import { ChakraProvider, extendTheme } from '@chakra-ui/react'
+import './styles.css'
+
+import { mode } from '@chakra-ui/theme-tools'
 const theme = extendTheme({
   styles: {
     global: props => ({
       body: {
-        fontFamily: "Poppins",
-        color: "#081c15",
-        lineHeight: "base"
+        fontFamily: 'Poppins',
+        color: '#081c15',
+        lineHeight: 'base'
       }
     })
   }
-});
+})
 
 // Custom App to wrap it with context provider
-export default function App({ Component, pageProps }) {
+export default function App ({ Component, pageProps }) {
   return (
     <ChakraProvider theme={theme}>
       <UserProvider>
         <Component {...pageProps} />
       </UserProvider>
     </ChakraProvider>
-  );
+  )
 }

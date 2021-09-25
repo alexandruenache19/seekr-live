@@ -18,6 +18,7 @@
     "firebase-admin": "^9.11.1",
     "firebase-functions": "^3.15.6",
     "framer-motion": "^4",
+    "fs": "^0.0.1-security",
     "moment": "^2.29.1",
     "next": "latest",
     "next-images": "^1.8.1",
@@ -29,6 +30,7 @@
     "react-hls-player": "^3.0.7",
     "react-icons": "^4.2.0",
     "react-lottie": "^1.2.3",
+    "react-places-autocomplete": "^7.3.0",
     "react-player": "^2.9.0",
     "react-share": "^4.4.0"
   },

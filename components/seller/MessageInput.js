@@ -1,50 +1,50 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
-import { Flex, Input, Button, useDisclosure } from "@chakra-ui/react";
-import { FaRegPaperPlane } from "react-icons/fa";
-import { EventActions } from "../../actions";
-const { addComment } = EventActions;
+import React, { useState, forwardRef, useImperativeHandle } from 'react'
+import { Flex, Input, Button, useDisclosure } from '@chakra-ui/react'
+import { FaRegPaperPlane } from 'react-icons/fa'
+import { EventActions } from '../../actions'
+const { addComment } = EventActions
 
 const MessageInput = ({ eventId, onOpenModal, username }) => {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('')
 
-  function handleChange(event) {
-    setMessage(event.target.value);
+  function handleChange (event) {
+    setMessage(event.target.value)
   }
 
-  function handleSendMessage() {
-    if (message !== "" && username !== "") {
+  function handleSendMessage () {
+    if (message !== '' && username !== '') {
       addComment(
         {
           text: message,
           username: username
         },
         eventId
-      );
-      setMessage("");
+      )
+      setMessage('')
     } else {
-      onOpenModal("comment", {});
+      onOpenModal('comment', {})
     }
   }
 
   return (
     <Flex
-      borderRadius="xl"
-      p="10px"
-      bg="#FFF"
-      style={{ justifyContent: "space-between", marginTop: 0 }}
+      borderRadius='xl'
+      p='10px'
+      bg='#FFF'
+      style={{ justifyContent: 'space-between', marginTop: 0 }}
     >
       <Input
         value={message}
         onChange={handleChange}
-        placeholder="write your message..."
+        placeholder='write your message...'
       />
       <Button onClick={handleSendMessage} style={{ marginLeft: 10 }}>
         <FaRegPaperPlane size={22} />
       </Button>
     </Flex>
-  );
-};
+  )
+}
 
-const styles = {};
+const styles = {}
 
-export default MessageInput;
+export default MessageInput

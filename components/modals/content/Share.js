@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 import {
   Flex,
   Modal,
@@ -10,9 +10,9 @@ import {
   Center,
   useDisclosure,
   useToast
-} from "@chakra-ui/react";
+} from '@chakra-ui/react'
 
-import { CopyToClipboard } from "react-copy-to-clipboard";
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 import {
   FacebookShareButton,
   LinkedinShareButton,
@@ -20,9 +20,9 @@ import {
   TwitterShareButton,
   TelegramShareButton,
   FacebookMessengerShareButton
-} from "react-share";
-import { AiOutlineReddit } from "react-icons/ai";
-import { FaTelegramPlane, FaFacebookMessenger } from "react-icons/fa";
+} from 'react-share'
+import { AiOutlineReddit } from 'react-icons/ai'
+import { FaTelegramPlane, FaFacebookMessenger } from 'react-icons/fa'
 import {
   FiInstagram,
   FiTwitter,
@@ -31,66 +31,71 @@ import {
   FiLinkedin,
   FiDownload,
   FiYoutube
-} from "react-icons/fi";
+} from 'react-icons/fi'
 
 const ShareButton = ({ child, text, isOnMobile, ...rest }) => (
   <Stack
     m={2}
-    w={isOnMobile ? "20%" : "6em"}
-    position="relative"
-    justify="center"
-    align="center"
+    w={isOnMobile ? '20%' : '6em'}
+    position='relative'
+    justify='center'
+    align='center'
     // onClick={() =>
     //
     // }
     {...rest}
   >
     <Box
-      d="flex"
-      w="100%"
-      flexDir="column"
-      h={!isOnMobile && "6em"}
-      shadow={!isOnMobile && "md"}
-      borderRadius="3em"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
-      bg="#FFF"
-      color="#000"
-      cursor="pointer"
+      d='flex'
+      w='100%'
+      flexDir='column'
+      h={!isOnMobile && '6em'}
+      shadow={!isOnMobile && 'md'}
+      borderRadius='3em'
+      justifyContent='center'
+      alignItems='center'
+      textAlign='center'
+      bg='#FFF'
+      color='#000'
+      cursor='pointer'
     >
       {child}
     </Box>
-    {!isOnMobile && <Text fontSize="sm">{text}</Text>}
+    {!isOnMobile && <Text fontSize='sm'>{text}</Text>}
   </Stack>
-);
+)
 
-const ShareModalContent = ({ isOnMobile, username, onClose, ...rest }) => {
-  const toast = useToast();
-  const [loading, setLoading] = useState(false);
-  const iconSize = isOnMobile ? "2em" : "3em";
-  const url = `https://joinSeekr.com/u/${username}`;
+const ShareModalContent = ({ isOnMobile, username, shareUrl, onClose, ...rest }) => {
+  const toast = useToast()
+  const [loading, setLoading] = useState(false)
+  const iconSize = isOnMobile ? '2em' : '3em'
+
+  let url = `https://joinSeekr.com/u/${username}`
+
+  if (shareUrl) {
+    url = shareUrl
+  }
 
   return (
     <Stack {...rest}>
-      <Flex justify="Center" align="center">
+      <Flex justify='Center' align='center'>
         <CopyToClipboard
           text={url}
           onCopy={() => {
             toast({
-              title: "Copied!",
-              status: "success",
+              title: 'Copied!',
+              status: 'success',
               duration: 2000,
               isClosable: false
-            });
-            onClose();
+            })
+            onClose()
           }}
         >
-          <Center cursor="pointer">
+          <Center cursor='pointer'>
             <Text
               style={{
                 fontSize: 18,
-                backgroundColor: "#999",
+                backgroundColor: '#999',
                 padding: 10,
                 borderRadius: 10,
                 marginRight: 10
@@ -102,21 +107,21 @@ const ShareModalContent = ({ isOnMobile, username, onClose, ...rest }) => {
           </Center>
         </CopyToClipboard>
       </Flex>
-      <Flex justify="space-between" align="center">
+      <Flex justify='space-between' align='center'>
         <ShareButton
           child={
-            <TwitterShareButton title="A snippet via @snippet_club" url={url}>
+            <TwitterShareButton title='A snippet via @snippet_club' url={url}>
               <FiTwitter size={iconSize} />
             </TwitterShareButton>
           }
-          text="Twitter"
+          text='Twitter'
           isOnMobile={isOnMobile}
         />
         {/*  <ShareButton
             child={<FiInstagram size={iconSize} />}
             text="Instagram"
             isOnMobile={isOnMobile}
-          />*/}
+          /> */}
 
         <ShareButton
           child={
@@ -124,7 +129,7 @@ const ShareModalContent = ({ isOnMobile, username, onClose, ...rest }) => {
               <FiFacebook size={iconSize} />
             </FacebookShareButton>
           }
-          text="Facebook"
+          text='Facebook'
           isOnMobile={isOnMobile}
         />
         <ShareButton
@@ -134,7 +139,7 @@ const ShareModalContent = ({ isOnMobile, username, onClose, ...rest }) => {
               <FaTelegramPlane size={iconSize} />
             </TelegramShareButton>
           }
-          text="Telegram"
+          text='Telegram'
         />
         {/*  <ShareButton
             child={
@@ -144,7 +149,7 @@ const ShareModalContent = ({ isOnMobile, username, onClose, ...rest }) => {
             }
             text="LinkedIn"
             isOnMobile={isOnMobile}
-          />*/}
+          /> */}
         <ShareButton
           isOnMobile={isOnMobile}
           child={
@@ -152,11 +157,11 @@ const ShareModalContent = ({ isOnMobile, username, onClose, ...rest }) => {
               <FaFacebookMessenger size={iconSize} />
             </FacebookMessengerShareButton>
           }
-          text="Messenger"
+          text='Messenger'
         />
       </Flex>
     </Stack>
-  );
-};
+  )
+}
 
-export default ShareModalContent;
+export default ShareModalContent

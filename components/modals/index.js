@@ -74,7 +74,7 @@ const CustomModal = ({ isOnMobile, callback }, ref) => {
   const finalRef = React.useRef()
 
   useImperativeHandle(ref, () => ({
-    openModal(type, props) {
+    openModal (type, props) {
       setType(type)
       setProps({ ...props, onCloseModal: onClose })
       onOpen()
@@ -93,7 +93,8 @@ const CustomModal = ({ isOnMobile, callback }, ref) => {
     >
       <ModalOverlay />
       <ModalContent
-        p={isOnMobile ? 5 : 10}
+        p={isOnMobile ? 0 : 10}
+        py={isOnMobile ? 5 : 10}
         ref={initialRef}
         borderRadius={isOnMobile ? 10 : 30}
         {...styles}

@@ -42,6 +42,27 @@ class LiveScreen extends Component {
       })
   }
 
+  async componentDidUpdate(prevProps, prevState) {
+    const { eventInfo, currentProductId } = this.props
+    if ((
+      prevProps.currentProductId &&
+      this.props.currentProductId &&
+      prevProps.currentProductId !== this.props.currentProductId
+    ) || (
+        !prevProps.currentProductId &&
+        this.props.currentProductId
+      )) {
+      this.productInfoListener = firebase
+        .database()
+        .ref(`events/${eventInfo.id}/products/${currentProductId}`)
+        .on('value', (snapshot) => {
+          this.setState({
+            productInfo: snapshot.val()
+          })
+        })
+    }
+  }
+
   componentWillUnmount() {
     const { eventInfo, currentProductId } = this.props
     this.productInfoListener && firebase.database()
@@ -62,7 +83,7 @@ class LiveScreen extends Component {
 
   handleShare() {
     const { sellerInfo } = this.props
-    this.props.onOpenModal('share', { username: sellerInfo.username })
+    this.props.onOpenModal('share', { username: sellerInfo.username, shareUrl: window.location.href })
   }
 
   handleFollow() {
@@ -83,7 +104,7 @@ class LiveScreen extends Component {
     if (isOnMobile) {
       return (
         <Stack h='100vh' w='100vw' p='10px' bg='#FFF'>
-          <Flex h='10vh' justify='space-between' alignItems='center'>
+          {/* <Flex h='10vh' justify='space-between' alignItems='center'>
             <Text p='10px' fontWeight='bold' fontSize='sm'>
               seekr.
             </Text>
@@ -101,16 +122,6 @@ class LiveScreen extends Component {
 
               <Center>
                 <Button
-                  bg='#FFF'
-                  borderRadius='1em'
-                  onClick={this.handleFollow}
-                >
-                  <Text fontSize={10} pr='5px'>
-                    Follow
-                  </Text>
-                  <FaPlus size={20} />
-                </Button>
-                <Button
                   ml='0.2em'
                   borderRadius='1em'
                   bg='#FFF'
@@ -121,9 +132,10 @@ class LiveScreen extends Component {
                 </Button>
               </Center>
             </Flex>
-          </Flex>
+          </Flex> */}
           <Stack
-            h='50vh'
+            // h='50vh'
+            h='100%'
             bg='rgba(0,0,0,0.9)'
             borderRadius='xl'
             overflow='hidden'
@@ -146,6 +158,40 @@ class LiveScreen extends Component {
               playing
               loop
             />
+            <Button
+              position='absolute'
+              top='10px'
+              right='10px'
+              style={{ marginTop: 0 }}
+              h='40px'
+              w='40px'
+              p='0px'
+              borderRadius='xl'
+              bg='#FFF'
+              onClick={this.handleShare}
+              zIndex={10}
+            >
+              <FaShareSquare size={20} />
+            </Button>
+            {productInfo ? (
+              <Stack
+                position='absolute'
+                left='10px'
+                bottom='10px'
+                borderRadius='xl'
+                p='5px'
+                px='9px'
+                bg='#FFF'
+                zIndex={10}
+                justifyContent='space-between'
+              >
+                <Text color='#000' fontWeight='bold' fontSize='14'>
+                  {`${productInfo.currentStock} in stock`}
+                </Text>
+              </Stack>
+            ) : (
+              null
+            )}
             <Stack
               position='absolute'
               left='10px'
@@ -215,37 +261,69 @@ class LiveScreen extends Component {
             overflow='hidden'
             style={{ justifyContent: 'space-between' }}
           >
-            <Center
-              w='100%'
-              p='10px'
-              bg='#FFF'
-              style={{ justifyContent: 'space-between' }}
-            >
-              <Flex w='100px' justify='space-between'>
-                <Button size='sm'>
-                  <FaMinus size={14} />
-                </Button>
-                <Text fontSize='xl'>1</Text>
-                <Button size='sm'>
-                  <FaPlus size={14} />
-                </Button>
-              </Flex>
+            {currentProductId && productInfo ? (
+              <Center
+                w='100%'
+                p='10px'
+                bg='#FFF'
+                style={{ justifyContent: 'space-between' }}
+              >
 
-              <Center>
-                <Text fontSize={22}>50</Text>
-                <Text fontWeight='light' fontSize={8}>
-                  $
+                <Flex justify='space-between'>
+                  <Button
+                    size='sm'
+                    onClick={() => {
+                      if (orderQuantity > 1) {
+                        this.setState({ orderQuantity: orderQuantity - 1 })
+                      }
+                    }}
+                  >
+                    <FaMinus size={14} />
+                  </Button>
+                  <Text fontSize='xl'>{orderQuantity}</Text>
+                  <Button
+                    size='sm'
+                    onClick={() => {
+                      if (orderQuantity < productInfo.currentStock - 1) {
+                        this.setState({ orderQuantity: orderQuantity + 1 })
+                      } else {
+                        alert('Sold out')
+                      }
+                    }}
+                  >
+                    <FaPlus size={14} />
+                  </Button>
+                </Flex>
+
+                <Center>
+                  <Text fontWeight='light' fontSize={9}>
+                    {productInfo.currency}
+                  </Text>
+                  <Text fontSize={22}>
+                    {productInfo.price * orderQuantity}
+                  </Text>
+                </Center>
+
+                <Button
+                  style={{ marginLeft: 10, justifyContent: 'space-between' }}
+                  onClick={this.handleOrder}
+                >
+                  <Text pr='10px'>Place Order</Text>
+                  <FaArrowRight size={14} />
+                </Button>
+              </Center>
+            ) : (
+              <Center
+                w='100%'
+                p='10px'
+                bg='#FFF'
+                style={{ justifyContent: 'center' }}
+              >
+                <Text color='#000' fontWeight='bold' textAlign='center' fontSize='md'>
+                  {`Waiting for ${sellerInfo.username} to add a product...`}
                 </Text>
               </Center>
-
-              <Button
-                style={{ marginLeft: 10, justifyContent: 'space-between' }}
-                onClick={this.handleOrder}
-              >
-                <Text pr='10px'>Buy</Text>
-                <FaArrowRight size={14} />
-              </Button>
-            </Center>
+            )}
           </Flex>
         </Stack>
       )
@@ -283,16 +361,6 @@ class LiveScreen extends Component {
               </Stack>
 
               <Center>
-                <Button
-                  h='3em'
-                  shadow='md'
-                  borderRadius='1.5em'
-                  bg='#FFF'
-                  onClick={this.handleFollow}
-                >
-                  <Text pr='5px'>Follow</Text>
-                  <FaPlus size={26} />
-                </Button>
                 <Button
                   h='3em'
                   shadow='md'
@@ -378,7 +446,7 @@ class LiveScreen extends Component {
           </Center>
 
           {currentProductId && productInfo ? (
-            <Center p='20px' h='15vh' w='100%' style={{ marginTop: 0 }}>
+            <Center p='20px' px='0' h='15vh' w='100%' style={{ marginTop: 0 }}>
               <Flex
                 h='100%'
                 w='100%'
@@ -478,8 +546,9 @@ class LiveScreen extends Component {
                     bg='#FFF'
                     w='100%'
                     align='center'
+                    justify='center'
                   >
-                    <Text pl='6px' color='#000' fontWeight='bold' fontSize='xl'>
+                    <Text color='#000' fontWeight='bold' fontSize='xl'>
                       {`Waiting for ${sellerInfo.username} to add a product...`}
                     </Text>
                   </Stack>

@@ -91,8 +91,6 @@ class EventPage extends PureComponent {
         const { isOnMobile } = this.props;
         const { loading, isLive, comments, username, eventInfo, sellerInfo, currentProductId } = this.state;
 
-        console.log('prod', currentProductId)
-
         if (loading || !eventInfo || !sellerInfo) {
             return (
                 <Center bg="#FFF" w="100vw" h="100vh">

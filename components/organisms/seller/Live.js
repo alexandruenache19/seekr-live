@@ -18,7 +18,7 @@ import { getProductInfo } from '../../../fetchData/getData'
 import firebase from '../../../firebase/clientApp'
 
 class LiveScreen extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -29,7 +29,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  async componentDidMount() {
+  async componentDidMount () {
     const { eventInfo, currentProductId } = this.props
     // const productInfo = await getProductInfo(eventInfo.id, currentProductId)
     this.productInfoListener = firebase
@@ -42,16 +42,16 @@ class LiveScreen extends Component {
       })
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate (prevProps, prevState) {
     const { eventInfo, currentProductId } = this.props
     if ((
       prevProps.currentProductId &&
       this.props.currentProductId &&
       prevProps.currentProductId !== this.props.currentProductId
     ) || (
-        !prevProps.currentProductId &&
+      !prevProps.currentProductId &&
         this.props.currentProductId
-      )) {
+    )) {
       this.productInfoListener = firebase
         .database()
         .ref(`events/${eventInfo.id}/products/${currentProductId}`)
@@ -63,14 +63,14 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { eventInfo, currentProductId } = this.props
     this.productInfoListener && firebase.database()
       .ref(`events/${eventInfo.id}/products/${currentProductId}`)
       .off('value', this.productInfoListener)
   }
 
-  handleOrder() {
+  handleOrder () {
     const { eventInfo } = this.props
     const { productInfo, orderQuantity } = this.state
     this.props.onOpenModal('order', {
@@ -81,16 +81,16 @@ class LiveScreen extends Component {
     })
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', { username: sellerInfo.username, shareUrl: window.location.href })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  render() {
+  render () {
     const {
       isOnMobile,
       sellerInfo,
@@ -174,21 +174,37 @@ class LiveScreen extends Component {
               <FaShareSquare size={20} />
             </Button>
             {productInfo ? (
-              <Stack
+              <Flex
                 position='absolute'
                 left='10px'
                 bottom='10px'
-                borderRadius='xl'
-                p='5px'
-                px='9px'
-                bg='#FFF'
-                zIndex={10}
-                justifyContent='space-between'
               >
-                <Text color='#000' fontWeight='bold' fontSize='14'>
-                  {`${productInfo.currentStock} in stock`}
-                </Text>
-              </Stack>
+                <Stack
+                  borderRadius='xl'
+                  p='5px'
+                  px='9px'
+                  bg='#FFF'
+                  zIndex={10}
+                  justifyContent='center'
+                >
+                  <Text color='#000' fontWeight='bold' fontSize='14'>
+                    {`${productInfo.currentStock} in stock`}
+                  </Text>
+                </Stack>
+                <Stack
+                  borderRadius='xl'
+                  p='5px'
+                  px='9px'
+                  bg='#FFF'
+                  ml='10px'
+                  zIndex={10}
+                  justifyContent='center'
+                >
+                  <Text color='#000' fontWeight='bold' fontSize='14'>
+                    {`${productInfo.currency} ${productInfo.price}`}
+                  </Text>
+                </Stack>
+              </Flex>
             ) : (
               null
             )}

@@ -49,7 +49,7 @@ export const Banner = ({ isOnMobile, auth, openAuthModal }) => {
       }}
       >
         {/* {'Organize your brain dump'} */}
-        {'Seekr is a marketplace that allows any shop with a social media audience to better engage with customers and sell their products faster, through live streams'}
+        {'Seekr is a marketplace that allows any shop with a social media audience to engage with customers easier and sell their products faster, through live streams'}
       </Text>
 
       <Pressable

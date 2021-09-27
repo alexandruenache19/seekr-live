@@ -1,3 +1,15 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Poppins' !important;
+}
+
+h1, h2, h3, h4, h5, h6, span, div, p {
+    font-family: 'Poppins' !important;
+    letter-spacing: 0.1px;
+}
+
 a {
 	font-size: 1rem;
 	text-decoration: none;
@@ -48,4 +60,16 @@ a.left {
 
 .suggestion-item, .suggestion-item--active {
 	padding: 8px 10px
+}
+
+.header-wrap {
+    transition: all 0.2s ease-in;
+}
+
+.header-wrap.with-light-bg {
+    /* background-color: #F8F8F8; */
+	background-color: rgba(255,255,255,0.65);
+	/* filter: blur(5px); */
+	backdrop-filter: blur(5px) ;
+
 }

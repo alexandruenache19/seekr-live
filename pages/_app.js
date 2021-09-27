@@ -1,6 +1,6 @@
 import UserProvider from '../context/userContext'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
-import './styles.css'
+import '../styles/styles.css'
 
 import { mode } from '@chakra-ui/theme-tools'
 const theme = extendTheme({

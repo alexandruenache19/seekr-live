@@ -13,6 +13,7 @@
     "@chakra-ui/react": "^1.6.7",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "babel-preset-react-native": "^4.0.1",
     "emailjs-com": "^3.2.0",
     "firebase": "7.17.0",
     "firebase-admin": "^9.11.1",
@@ -22,6 +23,7 @@
     "moment": "^2.29.1",
     "next": "latest",
     "next-images": "^1.8.1",
+    "next-seo": "^4.28.1",
     "react": "^17.0.2",
     "react-add-to-calendar-hoc": "^1.0.10",
     "react-copy-to-clipboard": "^5.0.4",
@@ -30,6 +32,7 @@
     "react-hls-player": "^3.0.7",
     "react-icons": "^4.2.0",
     "react-lottie": "^1.2.3",
+    "react-native-web": "^0.17.1",
     "react-places-autocomplete": "^7.3.0",
     "react-player": "^2.9.0",
     "react-share": "^4.4.0"
@@ -40,6 +43,7 @@
     "@babel/cli": "^7.15.4",
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.15.6",
+    "babel-plugin-react-native-web": "^0.17.1",
     "cross-env": "^7.0.3",
     "rimraf": "^3.0.2"
   }

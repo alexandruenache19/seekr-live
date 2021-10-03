@@ -4,7 +4,7 @@ import React, {
   useEffect,
   forwardRef,
   useImperativeHandle
-} from 'react'
+} from "react";
 import {
   List,
   ListItem,
@@ -13,49 +13,50 @@ import {
   Stack,
   Text,
   useDisclosure
-} from '@chakra-ui/react'
+} from "@chakra-ui/react";
 
 const CommentsList = ({ comments }) => {
-  const divRef = useRef()
+  const divRef = useRef();
 
   useEffect(() => {
     if (divRef.current) {
-      console.log('hre')
       divRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-        inline: 'nearest'
-      })
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest"
+      });
     }
-  })
+  });
 
   return (
-    <List style={{ overflowY: 'auto' }} spacing={3} pb='10px'>
+    <List style={{ overflowY: "auto" }} spacing={3} pb="10px">
       {comments.map((comment, i) => (
         <ListItem key={i}>
-          <Flex justify='flex-start'>
-            <Avatar size='sm' name={comment.username} />
+          <Flex justify="flex-start">
+            <Avatar size="sm" name={comment.username} />
 
             <Stack
-              p='6px'
-              justify='center'
-              ml='5px'
-              bg='#FFF'
-              borderRadius='xl'
+              p="6px"
+              justify="center"
+              ml="5px"
+              bg="#FFF"
+              borderRadius="xl"
             >
-              <Text fontWeight='bold' fontSize={12}>
+              <Text fontWeight="bold" fontSize={12}>
                 @{comment.username}
               </Text>
-              <Text style={{ marginTop: 0 }} fontSize={12}>{comment.text}</Text>
+              <Text style={{ marginTop: 0 }} fontSize={12}>
+                {comment.text}
+              </Text>
             </Stack>
           </Flex>
         </ListItem>
       ))}
       <div ref={divRef} />
     </List>
-  )
-}
+  );
+};
 
-const styles = {}
+const styles = {};
 
-export default CommentsList
+export default CommentsList;

@@ -20,5 +20,5 @@ export default {
     border: '1px solid rgba(255,255,255,0.3)',
     cursor: 'pointer'
   },
-  SIGN_UP_FORM_SHOPS: 'https://alexandruenache.typeform.com/to/XHmwEQ8j'
+  SIGN_UP_FORM_SHOPS: 'https://forms.gle/Kf2Gb4hueWTWf1hs5'
 }

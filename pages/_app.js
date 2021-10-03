@@ -2,6 +2,8 @@ import UserProvider from '../context/userContext'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import '../styles/styles.css'
 
+import 'react-modal-video/css/modal-video.css'
+
 import { mode } from '@chakra-ui/theme-tools'
 const theme = extendTheme({
   styles: {
@@ -16,7 +18,7 @@ const theme = extendTheme({
 })
 
 // Custom App to wrap it with context provider
-export default function App ({ Component, pageProps }) {
+export default function App({ Component, pageProps }) {
   return (
     <ChakraProvider theme={theme}>
       <UserProvider>

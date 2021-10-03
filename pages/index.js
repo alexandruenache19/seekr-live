@@ -4,6 +4,7 @@ import { View, ScrollView } from 'react-native'
 import { useEffect, useState } from 'react'
 import { Stack, Flex, Text, Image, Button, Spinner } from '@chakra-ui/react'
 import NextImage from 'next/image'
+import ModalVideo from 'react-modal-video'
 
 import Link from 'next/link'
 import { isMobile } from 'react-device-detect'
@@ -67,10 +68,11 @@ const renderSEOTags = () => {
   )
 }
 
-export default function Home ({ ...props }) {
+export default function Home({ ...props }) {
   const [isOnMobile, setMobile] = useState()
   const [loading, setLoading] = useState(true)
   const [scrolled, setScrolled] = useState(false)
+  const [isVideoModalOpen, setVideoModalOpen] = useState(false)
 
   const handleScroll = () => {
     if (window && window.pageYOffset > 0) {
@@ -116,7 +118,7 @@ export default function Home ({ ...props }) {
         <NextImage
           layout='fill'
           objectFit='cover'
-          src='https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2812&q=80'
+          src='/main-bg.jpg'
         />
       </View>
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 10 }} className={scrolled ? 'header-wrap with-light-bg' : 'header-wrap'}>
@@ -124,6 +126,13 @@ export default function Home ({ ...props }) {
           isOnMobile={isOnMobile}
         />
       </div>
+      <ModalVideo
+        channel='youtube'
+        autoplay
+        isOpen={isVideoModalOpen}
+        videoId='T1VQv4KivVs'
+        onClose={() => setVideoModalOpen(false)}
+      />
       <ScrollView
         style={{ width: '100%', flex: 1, zIndex: 4 }}
       >
@@ -148,7 +157,7 @@ export default function Home ({ ...props }) {
             }}
           />
           <MeetOdin isOnMobile={isOnMobile} />
-          <Demo isOnMobile={isOnMobile} />
+          <Demo isOnMobile={isOnMobile} setVideoModalOpen={() => setVideoModalOpen(true)} />
           <CollaborateSection isOnMobile={isOnMobile} auth={null} />
 
           {/* <img
@@ -163,82 +172,6 @@ export default function Home ({ ...props }) {
         <Footer isOnMobile={isOnMobile} />
       </ScrollView>
     </>
-  )
-
-  if (isOnMobile) {
-    return (
-      <Stack
-        w='100vw'
-        h='100vh'
-        p='2em'
-        bg='#F0F0F0'
-        justifyContent='space-between'
-      >
-        <Flex justifyContent='space-between' alignItems='center'>
-          <Text style={styles.mobileLogo}>seekr.</Text>
-          <a
-            className='left'
-            target='_blank'
-            href='https://alexandruenache.typeform.com/to/XHmwEQ8j'
-          >
-            Join Waitlist
-          </a>
-        </Flex>
-
-        <Image src='./technology.png' alt='logo' />
-        <Stack>
-          <Text style={styles.mobileLarge}>Buy & Sell products live</Text>
-          {/*  <Text style={styles.mobileNormal}>Sell products live</Text> */}
-        </Stack>
-        <Link href='https://alexandruenache.typeform.com/to/XHmwEQ8j'>
-          <Button style={styles.button}>Join Waitlist!</Button>
-        </Link>
-      </Stack>
-    )
-  }
-
-  return (
-    <Stack
-      w='100vw'
-      minH='100vh'
-      h='100%'
-      bg='#F0F0F0'
-      pt='50px'
-      pb='50px'
-      pl='135px'
-      pr='135px'
-      justifyContent='space-between'
-    >
-      <Flex justifyContent='space-between' alignItems='center'>
-        <Text style={styles.bold}>seekr.</Text>
-
-        <a
-          className='left'
-          target='_blank'
-          href='https://alexandruenache.typeform.com/to/XHmwEQ8j'
-        >
-          Join Waitlist
-        </a>
-      </Flex>
-
-      <Flex justifyContent='space-between' alignItems='center'>
-        <Stack width='50%'>
-          <Text style={styles.semiBold}>━━━ Cosmetics, clothes and more </Text>
-          <Text>
-            <Text style={styles.largeBold}>Buy & Sell products live</Text>
-          </Text>
-          {/*    <Text style={styles.normal}>Sell products live</Text> */}
-        </Stack>
-
-        <Image w='50%' h='100%' src='/technology.png' alt='logo' />
-      </Flex>
-
-      <Flex alignItems='center'>
-        <Link href='https://alexandruenache.typeform.com/to/XHmwEQ8j'>
-          <Button style={styles.button}>Join Waitlist!</Button>
-        </Link>
-      </Flex>
-    </Stack>
   )
 }
 

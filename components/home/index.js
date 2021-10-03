@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
-// import { Fade } from 'react-slideshow-image'
 import { FaPlay } from 'react-icons/fa'
-// import ItemModalWithAuth from '../Card/item-modal'
 import Colors from '../../styles/colors'
 import Constants from '../../styles/constants'
 
@@ -142,9 +140,8 @@ export const MeetOdin = ({ isOnMobile, auth }) => {
   )
 }
 
-export const Demo = ({ isOnMobile }) => {
-  const [showItemModal, setShowItemModal] = useState(false)
-  const [itemToShow, setItemToShow] = useState({})
+export const Demo = ({ isOnMobile, setVideoModalOpen }) => {
+  // const [isVideoModalOpen, setVideoModalOpen] = useState(false)
   return (
     <View style={{
       display: 'flex',
@@ -157,19 +154,17 @@ export const Demo = ({ isOnMobile }) => {
     >
       <View style={{ marginRight: isOnMobile ? 0 : '4rem', flex: isOnMobile ? 1 : 1 / 2, marginBottom: isOnMobile ? '2rem' : 0 }}>
         <Pressable
-          onPress={async () => {
-            // const itemToShow = await getItemData('nuf7q9sB062')
-            // setItemToShow(itemToShow)
-            // setShowItemModal(true)
-          }}
-          style={{ minHeight: 400, height: '100%', borderRadius: 20, backgroundColor: Colors.LIGHT_BG_COLOR }}
+          onPress={setVideoModalOpen}
+          style={{ maxHeight: 500, flex: 1, borderRadius: 20, backgroundColor: Colors.LIGHT_BG_COLOR }}
         >
           <img
-            src='/odin-demo.png'
+            src='/demo-2.png'
             style={{
               borderRadius: 20,
-              filter: 'blur(2px)',
+              filter: 'blur(3px)',
+              maxHeight: 500,
               objectFit: 'cover',
+              // objectPosition: 'top',
               width: '100%',
               height: '100%',
               flex: 1
@@ -281,15 +276,23 @@ export const CollaborateSection = ({ isOnMobile, auth, openAuthModal }) => {
           </Pressable>
         )} */}
       </View>
-      <View style={{ marginLeft: isOnMobile ? 0 : '4rem', flex: isOnMobile ? 1 : 1 / 2, marginBottom: isOnMobile ? '1rem' : 0, marginTop: isOnMobile ? '3rem' : 0 }}>
+      <View style={{
+        marginLeft: isOnMobile ? 0 : '4rem',
+        flex: isOnMobile ? 1 : 1 / 2,
+        marginBottom: isOnMobile ? '1rem' : 0,
+        marginTop: isOnMobile ? '3rem' : 0,
+        backgroundColor: '#000',
+        borderRadius: 20
+      }}
+      >
         <img
-          src='/demo-2.png'
+          src='/demo-3.png'
           style={{
             boxShadow: Constants.DEFAULT_SHADOW,
             maxHeight: 450,
             height: '100%',
             borderRadius: 20,
-            objectFit: 'cover',
+            objectFit: 'contain',
             objectPosition: 'top'
           }}
         />

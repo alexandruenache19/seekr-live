@@ -163,17 +163,18 @@ class LiveScreen extends Component {
             overflow="hidden"
             position="relative"
           >
-            <ReactPlayer
+            {/*  <ReactPlayer
               className="bg-player"
               url={eventInfo.videoURL}
               width="100%"
               height="100%"
               playing
               loop
-            />
+            />*/}
+
             <ReactPlayer
               className="react-player"
-              url={eventInfo.videoURL}
+              url={eventInfo.liveURL}
               width="100%"
               height="100%"
               style={{ marginTop: 0 }}
@@ -440,8 +441,7 @@ class LiveScreen extends Component {
 
               <ReactPlayer
                 className="react-player"
-                // url={eventInfo.liveURL || eventInfo.videoURL}
-                url="https://a6a7debc4d73.us-east-1.playback.live-video.net/api/video/v1/us-east-1.655514092918.channel.QRSYRWg4Uk8K.m3u8"
+                url={eventInfo.liveURL}
                 width="100%"
                 height="100%"
                 style={{ marginTop: 0 }}

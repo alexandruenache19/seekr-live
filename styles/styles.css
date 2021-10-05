@@ -36,48 +36,8 @@ a.left {
 	line-height: "1.3em";
 	font-family: "Poppins";
 }
-
-.bg-player video {
-	position: absolute;
-	transform: none;
-	object-fit: cover;
-	margin-top: 0;
-  top: 0;
-  left: 0;
-	z-index: 0;
-  filter: blur(20px);
+#video-player {
+  max-width: inherit;
+  max-height: inherit;
+  height: inherit;
 }
-
-.react-player {
-		margin-top: 0;
-}
-
-.react-player video {
-    position: relative;
-    left: 0;
-    top: 0;
-		z-index: 1;
-		margin-top: 0;
-}
-
-.suggestion-item, .suggestion-item--active {
-	padding: 8px 10px
-}
-
-.header-wrap {
-    transition: all 0.2s ease-in;
-}
-
-.header-wrap.with-light-bg {
-    /* background-color: #F8F8F8; */
-	background-color: rgba(255,255,255,0.65);
-	/* filter: blur(5px); */
-	backdrop-filter: blur(5px) ;
-
-}
-
-
-  #video-player {
-        min-width: 100%;
-        max-width: 100%;
-    }

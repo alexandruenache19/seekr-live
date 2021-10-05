@@ -169,6 +169,8 @@ class LiveScreen extends Component {
             borderRadius="xl"
             overflow="hidden"
             position="relative"
+            justifyContent="center"
+            alignItems="center"
           >
             {/*  <ReactPlayer
               className="bg-player"
@@ -438,6 +440,7 @@ class LiveScreen extends Component {
               position="relative"
             >
               <AmazonIVS url={eventInfo.liveURL} />
+
               {/*<ReactPlayer
                 className="bg-player"
                 // url={eventInfo.liveURL || eventInfo.videoURL}

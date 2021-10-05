@@ -1,29 +1,48 @@
 module.exports = {
   images: {
-    domains: [
-      'images.unsplash.com'
-    ]
+    domains: ["images.unsplash.com"]
   },
-  distDir: 'nextjs',
+  distDir: "nextjs",
   env: {
-    FIREBASE_PROJECT_ID: 'seekr-live'
+    FIREBASE_PROJECT_ID: "seekr-live"
   },
   experimental: {
     sprFlushToDisk: false
   },
   webpack5: true,
-  webpack: (config) => {
+  webpack: config => {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       // Transform all direct `react-native` imports to `react-native-web`
-      'react-native$': 'react-native-web'
-    }
+      "react-native$": "react-native-web"
+    };
     config.resolve.extensions = [
-      '.web.js',
-      '.web.ts',
-      '.web.tsx',
+      ".web.js",
+      ".web.ts",
+      ".web.tsx",
       ...config.resolve.extensions
-    ]
-    return config
+    ];
+    config.module.rules.push({
+      /**
+       * Developers packaging the IVS player into an app are required to resolve and import the following assets via URL:
+       *
+       * 'amazon-ivs-player/dist/assets/amazon-ivs-wasmworker.min.wasm'
+       * 'amazon-ivs-player/dist/assets/amazon-ivs-wasmworker.min.js';
+       * 'amazon-ivs-player/dist/assets/amazon-ivs-worker.min.js';
+       *
+       * These assets must not be re-compiled during packaging.
+       * The webpack file-loader (https://webpack.js.org/loaders/file-loader/) accomplishes this.
+       * Rollup's plugin-url (https://github.com/rollup/plugins/tree/master/packages/url) also seems to do this, but has not been tested.
+       */
+      test: /[\/\\]amazon-ivs-player[\/\\].*dist[\/\\]assets[\/\\]/,
+      loader: "file-loader",
+      type: "javascript/auto",
+      options: {
+        name: "[name].[ext]",
+        outputPath: "static/ivs-player",
+        publicPath: "/_next/static/ivs-player"
+      }
+    });
+    return config;
   }
-}
+};

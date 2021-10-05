@@ -75,3 +75,9 @@ a.left {
 	backdrop-filter: blur(5px) ;
 
 }
+
+
+  #video-player {
+        min-width: 100%;
+        max-width: 100%;
+    }

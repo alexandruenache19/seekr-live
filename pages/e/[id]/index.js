@@ -40,7 +40,7 @@ class EventPage extends PureComponent {
 
         if (eventInfo.sellerId && !this.state.sellerInfo) {
           const sellerInfo = await getSellerInfo(eventInfo.sellerId);
-          this.setState({ sellerInfo });
+          this.setState({ sellerInfo: sellerInfo });
         }
 
         this.setState({

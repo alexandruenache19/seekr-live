@@ -11,10 +11,14 @@ import * as animationData from "./live.json";
 import { MessageInput, CommentsList } from "../../../components";
 import { getProductInfo } from "../../../fetchData/getData";
 import firebase from "../../../firebase/clientApp";
-
+import AmazonIVS from "./AmazonIVS";
 class LiveScreen extends Component {
   constructor(props) {
     super(props);
+
+    // this.player = new MediaPlayer();
+    // this.videoElement = document.querySelector("#video-player");
+
     this.state = {
       productInfo: null,
       orderQuantity: 1,
@@ -23,6 +27,10 @@ class LiveScreen extends Component {
     this.handleOrder = this.handleOrder.bind(this);
     this.handleShare = this.handleShare.bind(this);
     this.handleFollow = this.handleFollow.bind(this);
+
+    // this.player.load(
+    //   "https://a6a7debc4d73.us-east-1.playback.live-video.net/api/video/v1/us-east-1.655514092918.channel.IBqDDsJKrvYj.m3u8"
+    // );
   }
 
   componentDidMount() {
@@ -78,7 +86,6 @@ class LiveScreen extends Component {
         });
     }
   }
-  // Setup the `beforeunload` event listener
 
   componentWillUnmount() {
     const { eventInfo, currentProductId } = this.props;
@@ -170,7 +177,7 @@ class LiveScreen extends Component {
               height="100%"
               playing
               loop
-            />*/}
+            />
 
             <ReactPlayer
               className="react-player"
@@ -181,6 +188,10 @@ class LiveScreen extends Component {
               playing
               loop
             />
+
+            */}
+            <AmazonIVS url={eventInfo.liveURL} />
+
             <Button
               position="absolute"
               top="10px"
@@ -426,6 +437,7 @@ class LiveScreen extends Component {
               overflow="hidden"
               position="relative"
             >
+              <AmazonIVS url={eventInfo.liveURL} />
               {/*<ReactPlayer
                 className="bg-player"
                 // url={eventInfo.liveURL || eventInfo.videoURL}
@@ -438,15 +450,14 @@ class LiveScreen extends Component {
                 loop
                 mute
               />*/}
-
-              <ReactPlayer
+              {/*<ReactPlayer
                 className="react-player"
                 url={eventInfo.liveURL}
                 width="100%"
                 height="100%"
                 style={{ marginTop: 0 }}
                 playing
-              />
+              />*/}
               <Center
                 position="absolute"
                 top="15px"

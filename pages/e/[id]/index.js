@@ -2,7 +2,12 @@ import React, { PureComponent } from "react";
 import { withRouter } from "next/router";
 import { Center, Spinner } from "@chakra-ui/react";
 
-import { Modal, LiveScreen, EventScreen } from "../../../components";
+import {
+  Modal,
+  LiveScreen,
+  EventScreen,
+  EndedScreen
+} from "../../../components";
 
 import {
   getSeller,
@@ -18,15 +23,15 @@ class EventPage extends PureComponent {
     this.state = {
       loading: true,
       isOnMobile: false,
-      isLive: true,
+      status: "scheduled",
       comments: [],
       username: "",
       evetInfo: null,
-      sellerInfo: null,
-      currentProductId: null
+      sellerInfo: null
     };
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.handelCallback = this.handelCallback.bind(this);
+    this.renderScreen = this.renderScreen.bind(this);
   }
 
   componentDidMount() {
@@ -37,24 +42,14 @@ class EventPage extends PureComponent {
       .ref(`/events/${eventId}/info`)
       .on("value", async snapshot => {
         const eventInfo = snapshot.val();
-
+        const liveStatus = false;
         if (eventInfo.sellerId && !this.state.sellerInfo) {
           const sellerInfo = await getSellerInfo(eventInfo.sellerId);
           this.setState({ sellerInfo: sellerInfo });
         }
 
         this.setState({
-          eventInfo: eventInfo,
-          currentProductId: eventInfo.currentProductId
-        });
-      });
-
-    this.sellerInfoListener = firebase
-      .database()
-      .ref(`/events/${eventId}/info`)
-      .on("value", snapshot => {
-        this.setState({
-          eventInfo: snapshot.val()
+          eventInfo: eventInfo
         });
       });
 
@@ -72,8 +67,7 @@ class EventPage extends PureComponent {
         this.setState({
           comments: comments,
           loading: false,
-          isOnMobile: window.innerWidth <= 780,
-          isLive: true
+          isOnMobile: window.innerWidth <= 780
         });
       });
   }
@@ -85,6 +79,57 @@ class EventPage extends PureComponent {
   handelCallback(data) {
     if (data.type === "comment") {
       this.setState({ username: data.text });
+    }
+  }
+
+  renderScreen() {
+    const { isOnMobile } = this.props;
+    const {
+      loading,
+      isLive,
+      comments,
+      username,
+      eventInfo,
+      sellerInfo,
+      currentProductId
+    } = this.state;
+
+    switch (eventInfo.status) {
+      case "scheduled":
+        return (
+          <EventScreen
+            isOnMobile={isOnMobile}
+            onOpenModal={this.handleOpenModal}
+            sellerInfo={sellerInfo}
+            eventInfo={eventInfo}
+            comments={comments}
+            username={username}
+          />
+        );
+      case "live":
+        return (
+          <LiveScreen
+            isOnMobile={isOnMobile}
+            onOpenModal={this.handleOpenModal}
+            sellerInfo={sellerInfo}
+            eventInfo={eventInfo}
+            comments={comments}
+            username={username}
+          />
+        );
+      case "ended":
+        return (
+          <EndedScreen
+            isOnMobile={isOnMobile}
+            onOpenModal={this.handleOpenModal}
+            sellerInfo={sellerInfo}
+            eventInfo={eventInfo}
+            comments={comments}
+            username={username}
+          />
+        );
+
+      default:
     }
   }
 
@@ -115,27 +160,7 @@ class EventPage extends PureComponent {
           ref={ref => (this.modal = ref)}
           isOnMobile={isOnMobile}
         />
-
-        {isLive ? (
-          <LiveScreen
-            isOnMobile={isOnMobile}
-            onOpenModal={this.handleOpenModal}
-            sellerInfo={sellerInfo}
-            eventInfo={eventInfo}
-            comments={comments}
-            username={username}
-            currentProductId={currentProductId}
-          />
-        ) : (
-          <EventScreen
-            isOnMobile={isOnMobile}
-            onOpenModal={this.handleOpenModal}
-            sellerInfo={sellerInfo}
-            eventInfo={eventInfo}
-            comments={comments}
-            username={username}
-          />
-        )}
+        {this.renderScreen()}
       </Center>
     );
   }

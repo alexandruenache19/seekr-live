@@ -34,7 +34,7 @@ class LiveScreen extends Component {
   }
 
   componentDidMount() {
-    const { eventInfo, currentProductId } = this.props;
+    const { eventInfo } = this.props;
     firebase
       .database()
       .ref(`events/${eventInfo.id}/info/viewers`)
@@ -42,14 +42,14 @@ class LiveScreen extends Component {
 
     this.productInfoListener = firebase
       .database()
-      .ref(`events/${eventInfo.id}/products/${currentProductId}`)
+      .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
       .on("value", snapshot => {
         this.setState({
           productInfo: snapshot.val()
         });
       });
 
-    this.productInfoListener = firebase
+    this.viewsInfoListener = firebase
       .database()
       .ref(`events/${eventInfo.id}/info/viewers`)
       .on("value", snapshot => {
@@ -69,16 +69,18 @@ class LiveScreen extends Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    const { eventInfo, currentProductId } = this.props;
+    const { eventInfo } = this.props;
     if (
-      (prevProps.currentProductId &&
-        this.props.currentProductId &&
-        prevProps.currentProductId !== this.props.currentProductId) ||
-      (!prevProps.currentProductId && this.props.currentProductId)
+      (prevProps.eventInfo.currentProductId &&
+        this.props.eventInfo.currentProductId &&
+        prevProps.eventInfo.currentProductId !==
+          this.props.eventInfo.currentProductId) ||
+      (!prevProps.eventInfo.currentProductId &&
+        this.props.eventInfo.currentProductId)
     ) {
       this.productInfoListener = firebase
         .database()
-        .ref(`events/${eventInfo.id}/products/${currentProductId}`)
+        .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
         .on("value", snapshot => {
           this.setState({
             productInfo: snapshot.val()
@@ -88,11 +90,11 @@ class LiveScreen extends Component {
   }
 
   componentWillUnmount() {
-    const { eventInfo, currentProductId } = this.props;
+    const { eventInfo } = this.props;
     this.productInfoListener &&
       firebase
         .database()
-        .ref(`events/${eventInfo.id}/products/${currentProductId}`)
+        .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
         .off("value", this.productInfoListener);
   }
 
@@ -125,8 +127,7 @@ class LiveScreen extends Component {
       sellerInfo,
       eventInfo,
       comments,
-      username,
-      currentProductId
+      username
     } = this.props;
     const { productInfo, orderQuantity, viewers } = this.state;
 
@@ -163,7 +164,6 @@ class LiveScreen extends Component {
             </Flex>
           </Flex> */}
           <Stack
-            // h='50vh'
             h="100%"
             bg="rgba(0,0,0,0.9)"
             borderRadius="xl"
@@ -172,26 +172,6 @@ class LiveScreen extends Component {
             justifyContent="center"
             alignItems="center"
           >
-            {/*  <ReactPlayer
-              className="bg-player"
-              url={eventInfo.videoURL}
-              width="100%"
-              height="100%"
-              playing
-              loop
-            />
-
-            <ReactPlayer
-              className="react-player"
-              url={eventInfo.liveURL}
-              width="100%"
-              height="100%"
-              style={{ marginTop: 0 }}
-              playing
-              loop
-            />
-
-            */}
             <AmazonIVS url={eventInfo.liveURL} />
 
             <Button
@@ -307,7 +287,7 @@ class LiveScreen extends Component {
             overflow="hidden"
             style={{ justifyContent: "space-between" }}
           >
-            {currentProductId && productInfo ? (
+            {eventInfo.currentProductId && productInfo ? (
               <Center
                 w="100%"
                 p="10px"
@@ -441,26 +421,6 @@ class LiveScreen extends Component {
             >
               <AmazonIVS url={eventInfo.liveURL} />
 
-              {/*<ReactPlayer
-                className="bg-player"
-                // url={eventInfo.liveURL || eventInfo.videoURL}
-                url={
-                  "https://a6a7debc4d73.us-east-1.playback.live-video.net/api/video/v1/us-east-1.655514092918.channel.QRSYRWg4Uk8K.m3u8"
-                }
-                width="100%"
-                height="100%"
-                playing
-                loop
-                mute
-              />*/}
-              {/*<ReactPlayer
-                className="react-player"
-                url={eventInfo.liveURL}
-                width="100%"
-                height="100%"
-                style={{ marginTop: 0 }}
-                playing
-              />*/}
               <Center
                 position="absolute"
                 top="15px"
@@ -499,7 +459,7 @@ class LiveScreen extends Component {
             </Stack>
           </Center>
 
-          {currentProductId && productInfo ? (
+          {eventInfo.currentProductId && productInfo ? (
             <Center p="20px" px="0" h="15vh" w="100%" style={{ marginTop: 0 }}>
               <Flex
                 h="100%"

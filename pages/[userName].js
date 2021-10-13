@@ -43,8 +43,6 @@ export const getServerSideProps = async context => {
   const uid = await getUserId(userName)
   const userProfile = await getUser(uid)
 
-  console.log('userprofile', userName, uid, userProfile)
-
   let userAgent;
   if (context.req) {
     // if you are on the server and you get a 'req' property from your context

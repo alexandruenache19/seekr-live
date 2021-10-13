@@ -73,22 +73,29 @@ export const addOrder = async (eventId, orderData) => {
     .ref(`events/${eventId}/orders/${orderData.phoneNumber}`)
     .update({
       info: {
+        id: orderData.phoneNumber,
         address: orderData.address,
         addressDetails: orderData.addressDetails,
         name: orderData.name,
-        phoneNumber: orderData.phoneNumber
+        phoneNumber: orderData.phoneNumber,
+        status: 'pending'
       }
     })
 
-  await firebase
+  const ref = await firebase
     .database()
     .ref(`events/${eventId}/orders/${orderData.phoneNumber}/products`)
-    .push({
-      priceToPay: orderData.priceToPay,
-      productId: orderData.productId,
-      quantity: orderData.quantity,
-      currency: orderData.currency
-    })
+    .push()
+
+  ref.set({
+    id: ref.key,
+    priceToPay: orderData.priceToPay,
+    productId: orderData.productId,
+    quantity: orderData.quantity,
+    currency: orderData.currency,
+    imageURL: orderData.imageURL || null,
+    isPacked: false
+  })
   // .update({
   //   [orderData.phoneNumber]: orderData
   // })

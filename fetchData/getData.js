@@ -67,10 +67,31 @@ export const addOrder = async (eventId, orderData) => {
      * add order in events/eventId/orders/orderId
      * decrease stock in events/eventId/products/productId
      */
+
   await firebase
     .database()
-    .ref(`events/${eventId}/orders`)
-    .push(orderData)
+    .ref(`events/${eventId}/orders/${orderData.phoneNumber}`)
+    .update({
+      info: {
+        address: orderData.address,
+        addressDetails: orderData.addressDetails,
+        name: orderData.name,
+        phoneNumber: orderData.phoneNumber
+      }
+    })
+
+  await firebase
+    .database()
+    .ref(`events/${eventId}/orders/${orderData.phoneNumber}/products`)
+    .push({
+      priceToPay: orderData.priceToPay,
+      productId: orderData.productId,
+      quantity: orderData.quantity,
+      currency: orderData.currency
+    })
+  // .update({
+  //   [orderData.phoneNumber]: orderData
+  // })
 
   const currentStockRef = await firebase
     .database()

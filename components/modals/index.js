@@ -74,7 +74,7 @@ const CustomModal = ({ isOnMobile, callback }, ref) => {
   const finalRef = React.useRef()
 
   useImperativeHandle(ref, () => ({
-    openModal (type, props) {
+    openModal(type, props) {
       setType(type)
       setProps({ ...props, onCloseModal: onClose })
       onOpen()

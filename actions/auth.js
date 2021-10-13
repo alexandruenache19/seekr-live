@@ -6,7 +6,13 @@ export const getUser = async (uid) => {
   if (snapshot.exists()) {
     return snapshot.val()
   }
+
   return null
+}
+
+export const getUserId = async (username) => {
+  const snapshot = await firebase.database().ref(`usernames/${username}`).once('value')
+  return snapshot.val()
 }
 
 export const updateFirebaseUser = async (user) => {

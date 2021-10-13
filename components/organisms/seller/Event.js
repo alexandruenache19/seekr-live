@@ -5,13 +5,8 @@ import ReactPlayer from 'react-player'
 import AddToCalendarHOC from 'react-add-to-calendar-hoc'
 import {
   FaShareSquare,
-  FaRegPaperPlane,
-  FaPlus,
-  FaMinus,
-  FaArrowRight,
-  FaHeart
+  FaPlus
 } from 'react-icons/fa'
-import { FiShare, FiEye } from 'react-icons/fi'
 import {
   BiCalendarHeart,
   BiTimeFive,
@@ -21,7 +16,6 @@ import {
 } from 'react-icons/bi'
 import moment from 'moment'
 
-import { MessageInput, CommentsList } from '../../../components'
 class EventScreen extends PureComponent {
   constructor (props) {
     super(props)
@@ -42,7 +36,8 @@ class EventScreen extends PureComponent {
   }
 
   handleReminderText () {
-    this.props.onOpenModal('text', {})
+    const { eventInfo } = this.props
+    this.props.onOpenModal('text', { eventId: eventInfo.id })
   }
 
   handleReminderEmail () {
@@ -100,179 +95,53 @@ class EventScreen extends PureComponent {
         borderRadius='1.5em'
         bg='#FFF'
       >
-        <a>{args.children}</a>
+
+        <BiTimeFive size={30} />
+        <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>
+          {`${date} at ${time}`}
+        </Text>
+        {/* <a>{args.children}</a>
         <Center pl='5px'>
           <BiCalendarPlus size={26} />
-        </Center>
+        </Center> */}
       </Button>
     )
 
     const AddToCalendarComp = AddToCalendarHOC(
-      isOnMobile ? MobileButton : WebButton,
+      isOnMobile ? WebButton : WebButton,
       Modal
     )
 
-    if (isOnMobile) {
-      return (
-        <Stack h='100vh' w='100vw' p='10px' bg='#FFF'>
-          <Flex h='10vh' justify='space-between' alignItems='center'>
-            <Text p='10px' fontWeight='bold' fontSize='sm'>
-              seekr.
-            </Text>
-            <Flex
-              flex={1}
-              bg='#F2F4F9'
-              p='10px'
-              borderRadius='xl'
-              overflow='hidden'
-              justify='space-between'
-            >
-              <Stack justify='space-between'>
-                <Flex>
-                  <Avatar
-                    size='xs'
-                    name={sellerInfo.name}
-                    src={sellerInfo.imageURL}
-                  />
-                  <Text
-                    ml='0.2em'
-                    noOfLines={1}
-                    fontSize={10}
-                    fontWeight='bold'
-                  >
-                    @{sellerInfo.username}
-                  </Text>
-                </Flex>
-                <Text style={{ marginTop: 0 }} noOfLines={1} fontSize='sm'>
-                  {eventInfo.title}
-                </Text>
-              </Stack>
-
-              <Center>
-                <Button
-                  bg='#FFF'
-                  borderRadius='1em'
-                  onClick={this.handleFollow}
-                >
-                  <FaPlus size={20} />
-                </Button>
-                <Button
-                  ml='0.2em'
-                  borderRadius='1em'
-                  bg='#FFF'
-                  onClick={this.handleShare}
-                >
-                  <FaShareSquare size={20} />
-                </Button>
-              </Center>
-            </Flex>
-          </Flex>
-          <Stack
-            h='50vh'
-            bg='rgba(0,0,0,0.9)'
-            borderRadius='xl'
-            overflow='hidden'
-            position='relative'
-          >
-            <ReactPlayer
-              className='bg-player'
-              url={eventInfo.videoURL}
-              width='100%'
-              height='100%'
-              playing
-              loop
-            />
-            <ReactPlayer
-              className='react-player'
-              url={eventInfo.videoURL}
-              width='100%'
-              height='100%'
-              style={{ marginTop: 0 }}
-              playing
-              loop
-            />
-          </Stack>
-          <Stack
-            p='10px'
-            h='20vh'
-            bg='#EEF2F8'
-            borderRadius='xl'
-            style={{ justifyContent: 'space-between' }}
-          >
-            <CommentsList comments={comments} />
-            <MessageInput
-              onOpenModal={this.props.onOpenModal}
-              username={username}
-              eventId={eventInfo.id}
-            />
-          </Stack>
-
-          <Stack
-            p='10px'
-            h='15vh'
-            w='100%'
-            bg='#EEF2F8'
-            borderRadius='xl'
-            overflow='hidden'
-            style={{ justifyContent: 'space-between' }}
-          >
-            <Text fontWeight='bold' fontSize={20} textAlign='center'>
-              Choose your reminder
-            </Text>
-            <Center>
-              <AddToCalendarComp event={event} />
-              <Button
-                h='3em'
-                ml='10px'
-                flexDirection='column'
-                shadow='md'
-                borderRadius='1em'
-                bg='#FFF'
-                onClick={this.handleReminderEmail}
-              >
-                <BiMailSend size={26} />
-                <Text fontSize={10} fontWeight='normal'>
-                  Email me
-                </Text>
-              </Button>
-
-              <Button
-                h='3em'
-                ml='10px'
-                flexDirection='column'
-                shadow='md'
-                borderRadius='1em'
-                bg='#FFF'
-                onClick={this.handleReminderText}
-              >
-                <BiMessageSquareDots size={26} />
-                <Text fontSize={10} fontWeight='normal'>
-                  Text me
-                </Text>
-              </Button>
-            </Center>
-          </Stack>
-        </Stack>
-      )
-    }
-
     return (
-      <Flex bg='#FFF' h='100vh' w='100vw' justify='space-between'>
-        <Stack w='70vw'>
+      <Flex
+        bgColor='#FFF'
+        h='100vh'
+        w='100vw'
+        justify='center'
+        alignItems='center'
+        bg='url("https://images.unsplash.com/photo-1564951434112-64d74cc2a2d7?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=774&q=80")'
+      >
+        <Stack
+          w={isOnMobile ? '100%' : '70vw'}
+          h={isOnMobile ? '100vh' : '94vh'}
+          bg='rgba(255,255,255,0.4)'
+          borderRadius={isOnMobile ? 0 : '20px'}
+          boxShadow='0px 0px 41px 6px rgba(0,0,0,0.45)'
+          p='1.4rem'
+        >
           <Flex
             justify='space-between'
             alignItems='center'
-            p='20px'
-            h='15vh'
+            h='auto'
             w='100%'
           >
-            <Text fontWeight='bold' fontSize='2xl'>
+            {/* <Text fontWeight='bold' fontSize='2xl'>
               seekr.
-            </Text>
+            </Text> */}
             <Flex
               h='100%'
               p='10px'
-              w='85%'
+              w='100%'
               bg='#F2F4F9'
               borderRadius='xl'
               overflow='hidden'
@@ -280,19 +149,18 @@ class EventScreen extends PureComponent {
             >
               <Center>
                 <Avatar name={sellerInfo.name} src={sellerInfo.imageURL} />
-
                 <Stack ml='10px'>
                   <Text fontWeight='bold' fontSize='lg'>
                     {eventInfo.title} by @{sellerInfo.username}
                   </Text>
-                  <Text color='#718096' fontSize='sm'>
+                  {/* <Text color='#718096' fontSize='sm'>
                     {sellerInfo.category}
-                  </Text>
+                  </Text> */}
                 </Stack>
               </Center>
 
               <Center>
-                <Button
+                {/* <Button
                   h='3em'
                   shadow='md'
                   borderRadius='1.5em'
@@ -301,7 +169,7 @@ class EventScreen extends PureComponent {
                 >
                   <a style={{ paddingRight: '5px' }}>Follow</a>
                   <FaPlus size={26} />
-                </Button>
+                </Button> */}
                 <Button
                   h='3em'
                   shadow='md'
@@ -310,18 +178,15 @@ class EventScreen extends PureComponent {
                   bg='#FFF'
                   onClick={this.handleShare}
                 >
-                  <a style={{ paddingRight: '5px' }}>Share</a>
-                  <FaShareSquare size={30} />
+                  <Text fontWeight='bold' fontSize='md' marginRight='0.5rem'>Share</Text>
+                  <FaShareSquare size={20} />
                 </Button>
               </Center>
             </Flex>
           </Flex>
           <Center
-            style={{ marginTop: 0 }}
-            p='20px'
-            pt='0px'
-            pb='0px'
-            h='70vh'
+            style={{ marginTop: '1rem' }}
+            h='100%'
             w='100%'
           >
             <Stack
@@ -351,36 +216,40 @@ class EventScreen extends PureComponent {
                 loop
               />
 
-              <Center position='absolute' top='5px' left='5px' zIndex={10}>
-                <Center
-                  ml='10px'
-                  borderRadius='xl'
-                  p='10px'
+              <Center
+                position='absolute'
+                top='5px'
+                width={isOnMobile ? '100%' : 'auto'}
+                left={isOnMobile ? 'auto' : '10px'}
+                zIndex={10}
+              >
+                <AddToCalendarComp event={event} />
+              </Center>
+
+              <Center
+                position='absolute'
+                top={isOnMobile ? 'auto' : '5px'}
+                right={isOnMobile ? 'auto' : '10px'}
+                left={isOnMobile ? '0px' : 'auto'}
+                zIndex={10}
+                width={isOnMobile ? '100%' : 'auto'}
+                bottom={isOnMobile ? '10px' : 'auto'}
+              >
+                <Button
+                  h='3em'
+                  shadow='md'
+                  borderRadius='1.5em'
                   bg='#FFF'
-                  justifyContent='space-between'
+                  onClick={this.handleReminderText}
                 >
-                  <BiCalendarHeart size={30} />
-                  <Text pl='6px' color='#000' fontWeight='bold' fontSize='xl'>
-                    {date}
-                  </Text>
-                </Center>
-                <Center
-                  ml='10px'
-                  borderRadius='xl'
-                  p='10px'
-                  bg='#FFF'
-                  justifyContent='space-between'
-                >
-                  <BiTimeFive size={30} />
-                  <Text pl='6px' color='#000' fontWeight='bold' fontSize='xl'>
-                    {time}
-                  </Text>
-                </Center>
+                  <BiMessageSquareDots size={26} />
+                  <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Text me 5 min before</Text>
+                </Button>
               </Center>
             </Stack>
           </Center>
 
-          <Center p='20px' h='15vh' w='100%'>
+          {/* <Center p='20px' h='15vh' w='100%'>
             <Flex
               h='100%'
               w='100%'
@@ -394,8 +263,6 @@ class EventScreen extends PureComponent {
                 alignItems: 'center'
               }}
             >
-              <AddToCalendarComp event={event} />
-
               <Button
                 h='3em'
                 ml='10px'
@@ -424,9 +291,9 @@ class EventScreen extends PureComponent {
                 </Center>
               </Button>
             </Flex>
-          </Center>
+          </Center> */}
         </Stack>
-        <Center p='20px' pl='0px' h='100vh' w='30vw'>
+        {/* <Center p='20px' pl='0px' h='100vh' w='30vw'>
           <Stack
             h='100%'
             p='20px'
@@ -445,7 +312,7 @@ class EventScreen extends PureComponent {
               eventId={eventInfo.id}
             />
           </Stack>
-        </Center>
+        </Center> */}
       </Flex>
     )
   }

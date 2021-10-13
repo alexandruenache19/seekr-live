@@ -77,7 +77,7 @@ class EventPage extends PureComponent {
   }
 
   handelCallback(data) {
-    if (data.type === "comment") {
+    if (data.type && data.type === "comment") {
       this.setState({ username: data.text });
     }
   }

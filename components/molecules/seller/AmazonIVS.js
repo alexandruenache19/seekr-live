@@ -1,14 +1,14 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Pressable, View } from 'react-native'
 import {
   Center
 } from '@chakra-ui/react'
 import { FaVolumeMute } from 'react-icons/fa'
 
-function AmazonIVSWorkaround ({ url }) {
+function AmazonIVSWorkaround({ url }) {
   const videoEl = useRef(null)
-
-  let player = null
+  const [player, setPlayer] = useState(null)
+  const [muted, setMuted] = useState(true)
 
   useEffect(() => {
     const script = document.createElement('script')
@@ -22,10 +22,13 @@ function AmazonIVSWorkaround ({ url }) {
       // eslint-disable-next-line no-undef
       if (IVSPlayer.isPlayerSupported) {
         // eslint-disable-next-line no-undef
-        player = IVSPlayer.create()
+        const player = IVSPlayer.create()
         player.attachHTMLVideoElement(document.getElementById('video-player'))
         player.load(url)
         player.play()
+        player.setMuted(true)
+
+        setPlayer(player)
       }
     }
 
@@ -35,10 +38,13 @@ function AmazonIVSWorkaround ({ url }) {
   }, [])
 
   return (
-    <View style={{ height: '100%', flex: 1 }}>
-      {player && player.isMuted() ? (
+    <View style={{ width: '100%' }}>
+      {player ? (
         <Pressable
-          onPress={() => player && player.setMuted(true)}
+          onPress={() => {
+            player && player.setMuted(!muted)
+            setMuted(!muted)
+          }}
           style={{
             position: 'absolute',
             top: 0,
@@ -50,20 +56,20 @@ function AmazonIVSWorkaround ({ url }) {
             backgroundColor: 'rgba(0,0,0,0.3)'
           }}
         >
-          <Center style={{
-            width: '100%',
-            height: '100%',
-            flex: 1
-          }}
-          >
-            <Center style={{ backgroundColor: '#000', width: 60, height: 60, borderRadius: 30 }}>
-              <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
+          {muted ? (
+            <Center style={{
+              width: '100%',
+              height: '100%',
+              flex: 1
+            }}
+            >
+              <Center style={{ backgroundColor: '#000', width: 60, height: 60, borderRadius: 30 }}>
+                <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
+              </Center>
             </Center>
-          </Center>
+          ) : null}
         </Pressable>
-      ) : (
-        null
-      )}
+      ) : null}
       <video id='video-player' ref={videoEl} autoplay />
     </View>
   )

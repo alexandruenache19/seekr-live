@@ -12,7 +12,7 @@ import firebase from '../../../firebase/clientApp'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
 
 class LiveScreen extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -28,8 +28,14 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { eventInfo } = this.props
+
+    // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    const vh = window.innerHeight * 0.01
+    // Then we set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty('--vh', `${vh}px`)
+
     firebase
       .database()
       .ref(`events/${eventInfo.id}/info/viewers`)
@@ -63,7 +69,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate (prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -84,7 +90,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -93,7 +99,7 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder () {
+  handleOrder() {
     const { eventInfo } = this.props
     const {
       productInfo,
@@ -123,7 +129,7 @@ class LiveScreen extends Component {
     })
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -131,11 +137,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -147,7 +153,7 @@ class LiveScreen extends Component {
 
     if (isOnMobile) {
       return (
-        <Stack h='100vh' w='100vw' p='10px' bg='#FFF'>
+        <Stack w='100vw' bg='#FFF' p='10px' className='perfect-height-wrapper'>
           {/* <Flex h='10vh' justify='space-between' alignItems='center'>
             <Text p='10px' fontWeight='bold' fontSize='sm'>
               seekr.
@@ -186,7 +192,10 @@ class LiveScreen extends Component {
             justifyContent='center'
             alignItems='center'
           >
-            <AmazonIVS url={eventInfo.liveURL} />
+            <AmazonIVS
+              isOnMobile={isOnMobile}
+              url={eventInfo.liveURL}
+            />
 
             <Button
               position='absolute'
@@ -244,43 +253,44 @@ class LiveScreen extends Component {
             >
               <Flex justify='flex-start' alignItems='center'>
                 <Avatar
-                  size='xs'
+                  size='sm'
                   name={sellerInfo.username}
                   src={sellerInfo.imageURL}
                 />
-                <Text
-                  noOfLines={1}
-                  textOverflow='ellipsis'
-                  maxW='100px'
-                  fontWeight='bold'
-                  fontSize={12}
-                  ml='5px'
-                >
-                  @{sellerInfo.username + 'dasdasdkklldkmlkmda'}
-                </Text>
+                <Stack style={{ marginTop: 0, marginLeft: 5, alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+                  <Text
+                    noOfLines={1}
+                    textOverflow='ellipsis'
+                    maxW='100px'
+                    fontWeight='bold'
+                    fontSize={12}
+                  >
+                    @{sellerInfo.username + 'dasdasdkklldkmlkmda'}
+                  </Text>
+                  <Center style={{ marginTop: 0, justifyContent: 'flex-start' }}>
+                    <Center style={{ marginLeft: -3 }}>
+                      <Lottie
+                        options={{
+                          loop: true,
+                          autoplay: true,
+                          animationData: animationData
+                        }}
+                        height={20}
+                        width={20}
+                      />
+                      <Text pl='2px' fontSize={10}>
+                        Live
+                      </Text>
+                    </Center>
+                    <Center ml='5px' textAlign='center'>
+                      <FiEye size={14} />
+                      <Text fontSize={10} textAlign='center' pl='2px'>
+                        {viewers}
+                      </Text>
+                    </Center>
+                  </Center>
+                </Stack>
               </Flex>
-              <Center style={{ marginTop: 4, justifyContent: 'flex-start' }}>
-                <Center>
-                  <Lottie
-                    options={{
-                      loop: true,
-                      autoplay: true,
-                      animationData: animationData
-                    }}
-                    height={20}
-                    width={20}
-                  />
-                  <Text pl='2px' fontSize={10}>
-                    Live
-                  </Text>
-                </Center>
-                <Center ml='5px' textAlign='center'>
-                  <FiEye size={14} />
-                  <Text fontSize={10} textAlign='center' pl='2px'>
-                    {viewers}
-                  </Text>
-                </Center>
-              </Center>
             </Stack>
           </Stack>
 
@@ -311,12 +321,12 @@ class LiveScreen extends Component {
             {eventInfo.currentProductId && productInfo ? (
               <Center
                 w='100%'
-                py='10px'
+                // p='10px'
                 bg='#FFF'
                 style={{ justifyContent: 'space-between' }}
               >
                 {productInfo.currentStock > 1 ? (
-                  <Flex justify='flex-start' alignItems='center' marginRight='15px'>
+                  <Flex justify='flex-start' alignItems='center' marginRight='25px'>
                     <Button
                       size='xs'
                       marginRight='6px'
@@ -353,12 +363,23 @@ class LiveScreen extends Component {
                   </Flex>
                 ) : (null)}
 
-                <Button
-                  style={{ marginLeft: 10, justifyContent: 'center', flex: 1, backgroundColor: '#28A445' }}
-                  onClick={this.handleOrder}
-                >
-                  <Text pr='10px' color='#FFFFFF'>Place Order</Text>
-                </Button>
+                {productInfo.currentStock > 0 ? (
+                  <Button
+                    borderRadius='xl'
+                    style={{ justifyContent: 'center', flex: 1, backgroundColor: '#28A445' }}
+                    onClick={this.handleOrder}
+                  >
+                    <Text pr='10px' color='#FFFFFF'>Place Order</Text>
+                  </Button>
+                ) : (
+                  <Button
+                    borderRadius='xl'
+                    onClick={() => null}
+                    style={{ justifyContent: 'center', flex: 1, backgroundColor: '#999' }}
+                  >
+                    <Text pr='10px' color='#FFFFFF'>Waiting for the next item</Text>
+                  </Button>
+                )}
               </Center>
             ) : (
               <Center
@@ -563,9 +584,23 @@ class LiveScreen extends Component {
                       {productInfo.price * orderQuantity}
                     </Text>
                   </Center>
-                  <Button onClick={this.handleOrder} style={{ backgroundColor: '#28A445' }}>
-                    <Text pr='10px' color='#FFF'>Place Order</Text>
-                  </Button>
+                  {productInfo.currentStock > 0 ? (
+                    <Button
+                      borderRadius='xl'
+                      style={{ justifyContent: 'center', flex: 1, backgroundColor: '#28A445' }}
+                      onClick={this.handleOrder}
+                    >
+                      <Text pr='10px' color='#FFFFFF'>Place Order</Text>
+                    </Button>
+                  ) : (
+                    <Button
+                      borderRadius='xl'
+                      onClick={() => null}
+                      style={{ justifyContent: 'center', flex: 1, backgroundColor: '#999' }}
+                    >
+                      <Text pr='10px' color='#FFFFFF'>Waiting for the next item</Text>
+                    </Button>
+                  )}
                 </Center>
               </Flex>
             </Center>

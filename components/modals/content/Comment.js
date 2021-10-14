@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 import {
   Center,
   Input,
@@ -8,28 +8,29 @@ import {
   Button,
   useDisclosure,
   useToast
-} from "@chakra-ui/react";
-import { FiMail } from "react-icons/fi";
+} from '@chakra-ui/react'
+import { FiMail } from 'react-icons/fi'
 
-const EmailModalContent = ({ onClose, callback }) => {
-  const toast = useToast();
-  const [username, setUsername] = useState("");
+const CommentModelContent = ({ onClose, callback, onSendMessage }) => {
+  const toast = useToast()
+  const [username, setUsername] = useState('')
 
   function handleChange(event) {
-    setUsername(event.target.value);
+    setUsername(event.target.value)
   }
 
   function handleSubmit() {
     toast({
-      title: "Great",
-      description: "You can comment now",
-      status: "success",
-      duration: 19000,
+      title: 'Great',
+      description: 'You can comment now',
+      status: 'success',
+      duration: 2000,
       isClosable: true
-    });
+    })
 
-    onClose();
-    callback({ type: "comment", text: username });
+    onClose()
+    callback({ type: 'comment', text: username })
+    onSendMessage(username)
   }
 
   return (
@@ -37,13 +38,13 @@ const EmailModalContent = ({ onClose, callback }) => {
       <Input
         value={username}
         onChange={handleChange}
-        placeholder="type here..."
+        placeholder='type here...'
       />
-      <Button onClick={handleSubmit} ml="10px" variant="outline">
+      <Button onClick={handleSubmit} ml='10px' variant='outline'>
         Done
       </Button>
     </Center>
-  );
-};
+  )
+}
 
-export default EmailModalContent;
+export default CommentModelContent

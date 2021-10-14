@@ -1,31 +1,34 @@
-import React, { Component } from 'react';
-import { withRouter } from 'next/router';
-import { Flex, Stack, Text, Avatar, Center, Button } from '@chakra-ui/react';
-import ReactPlayer from 'react-player';
-import Lottie from 'react-lottie';
-import { FaShareSquare, FaPlus, FaMinus, FaArrowRight } from 'react-icons/fa';
-import { FiEye } from 'react-icons/fi';
-import { AiFillTags } from 'react-icons/ai';
+import React, { Component } from 'react'
+import { withRouter } from 'next/router'
+import { Flex, Stack, Text, Avatar, Center, Button } from '@chakra-ui/react'
+import Lottie from 'react-lottie'
+import { FaShareSquare, FaPlus, FaMinus } from 'react-icons/fa'
+import { FiEye } from 'react-icons/fi'
+import { AiFillTags } from 'react-icons/ai'
 
-import * as animationData from './live.json';
-import { MessageInput, CommentsList } from '../../../components';
-import { getProductInfo } from '../../../fetchData/getData';
-import firebase from '../../../firebase/clientApp';
-import AmazonIVS from '../../molecules/seller/AmazonIVS';
+import * as animationData from './live.json'
+import { MessageInput, CommentsList } from '../../../components'
+import firebase from '../../../firebase/clientApp'
+import AmazonIVS from '../../molecules/seller/AmazonIVS'
+
 class LiveScreen extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       productInfo: null,
       orderQuantity: 1,
-      viewers: 0
+      viewers: 0,
+      address: null,
+      addressDetails: null,
+      name: null,
+      phoneNumber: null
     }
     this.handleOrder = this.handleOrder.bind(this)
     this.handleShare = this.handleShare.bind(this)
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { eventInfo } = this.props
     firebase
       .database()
@@ -57,10 +60,10 @@ class LiveScreen extends Component {
         .database()
         .ref(`events/${eventInfo.id}/info/viewers`)
         .set(firebase.database.ServerValue.increment(-1))
-    };
+    }
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate (prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -81,7 +84,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -90,18 +93,37 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder() {
+  handleOrder () {
     const { eventInfo } = this.props
-    const { productInfo, orderQuantity } = this.state
+    const {
+      productInfo,
+      orderQuantity,
+      address,
+      addressDetails,
+      name,
+      phoneNumber
+    } = this.state
     this.props.onOpenModal('order', {
       productInfo: productInfo,
       eventInfo: eventInfo,
       orderQuantity: orderQuantity,
-      totalPrice: productInfo.price * orderQuantity
+      totalPrice: productInfo.price * orderQuantity,
+      address: address,
+      addressDetails: addressDetails,
+      name: name,
+      phoneNumber: phoneNumber,
+      setDetailsInHomeState: (details) => {
+        this.setState({
+          address: details.address,
+          addressDetails: details.addressDetails,
+          name: details.name,
+          phoneNumber: details.phoneNumber
+        })
+      }
     })
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -109,11 +131,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  render() {
+  render () {
     const {
       isOnMobile,
       sellerInfo,
@@ -220,17 +242,24 @@ class LiveScreen extends Component {
               zIndex={10}
               style={{ marginTop: 0, justifyContent: 'flex-start' }}
             >
-              <Flex justify='space-between'>
+              <Flex justify='flex-start' alignItems='center'>
                 <Avatar
                   size='xs'
                   name={sellerInfo.username}
                   src={sellerInfo.imageURL}
                 />
-                <Text fontWeight='bold' fontSize={10} pl='4px'>
-                  @{sellerInfo.username}
+                <Text
+                  noOfLines={1}
+                  textOverflow='ellipsis'
+                  maxW='100px'
+                  fontWeight='bold'
+                  fontSize={12}
+                  ml='5px'
+                >
+                  @{sellerInfo.username + 'dasdasdkklldkmlkmda'}
                 </Text>
               </Flex>
-              <Center style={{ marginTop: 0, justifyContent: 'flex-start' }}>
+              <Center style={{ marginTop: 4, justifyContent: 'flex-start' }}>
                 <Center>
                   <Lottie
                     options={{
@@ -271,7 +300,7 @@ class LiveScreen extends Component {
           </Stack>
 
           <Flex
-            p='10px'
+            // p='10px'
             h='10vh'
             w='100%'
             bg='#EEF2F8'
@@ -282,49 +311,53 @@ class LiveScreen extends Component {
             {eventInfo.currentProductId && productInfo ? (
               <Center
                 w='100%'
-                p='10px'
+                py='10px'
                 bg='#FFF'
                 style={{ justifyContent: 'space-between' }}
               >
-                <Flex justify='space-between'>
-                  <Button
-                    size='sm'
-                    onClick={() => {
-                      if (orderQuantity > 1) {
-                        this.setState({ orderQuantity: orderQuantity - 1 })
-                      }
-                    }}
-                  >
-                    <FaMinus size={14} />
-                  </Button>
-                  <Text fontSize='xl'>{orderQuantity}</Text>
-                  <Button
-                    size='sm'
-                    onClick={() => {
-                      if (orderQuantity < productInfo.currentStock - 1) {
-                        this.setState({ orderQuantity: orderQuantity + 1 })
-                      } else {
-                        alert('Sold out')
-                      }
-                    }}
-                  >
-                    <FaPlus size={14} />
-                  </Button>
-                </Flex>
-
-                <Center>
-                  <Text fontWeight='light' fontSize={9}>
-                    {productInfo.currency}
-                  </Text>
-                  <Text fontSize={22}>{productInfo.price * orderQuantity}</Text>
-                </Center>
+                {productInfo.currentStock > 1 ? (
+                  <Flex justify='flex-start' alignItems='center' marginRight='15px'>
+                    <Button
+                      size='xs'
+                      marginRight='6px'
+                      bg='transparent'
+                      onClick={() => {
+                        if (orderQuantity > 1) {
+                          this.setState({ orderQuantity: orderQuantity - 1 })
+                        }
+                      }}
+                    >
+                      <FaMinus size={14} />
+                    </Button>
+                    <Text fontSize='xl'>{orderQuantity}</Text>
+                    <Button
+                      size='xs'
+                      marginLeft='6px'
+                      bg='transparent'
+                      onClick={() => {
+                        if (orderQuantity <= productInfo.currentStock - 1) {
+                          this.setState({ orderQuantity: orderQuantity + 1 })
+                        } else {
+                          alert('Not enough stock')
+                        }
+                      }}
+                    >
+                      <FaPlus size={14} />
+                    </Button>
+                    <Center marginLeft='10px'>
+                      <Text fontWeight='light' fontSize={9}>
+                        {productInfo.currency}
+                      </Text>
+                      <Text fontSize={22}>{productInfo.price * orderQuantity}</Text>
+                    </Center>
+                  </Flex>
+                ) : (null)}
 
                 <Button
-                  style={{ marginLeft: 10, justifyContent: 'space-between' }}
+                  style={{ marginLeft: 10, justifyContent: 'center', flex: 1, backgroundColor: '#28A445' }}
                   onClick={this.handleOrder}
                 >
-                  <Text pr='10px'>Place Order</Text>
-                  <FaArrowRight size={14} />
+                  <Text pr='10px' color='#FFFFFF'>Place Order</Text>
                 </Button>
               </Center>
             ) : (
@@ -512,10 +545,10 @@ class LiveScreen extends Component {
                     <Button
                       size='sm'
                       onClick={() => {
-                        if (orderQuantity < productInfo.currentStock - 1) {
+                        if (orderQuantity <= productInfo.currentStock - 1) {
                           this.setState({ orderQuantity: orderQuantity + 1 })
                         } else {
-                          alert('Sold out')
+                          alert('Not enough stock')
                         }
                       }}
                     >
@@ -530,8 +563,8 @@ class LiveScreen extends Component {
                       {productInfo.price * orderQuantity}
                     </Text>
                   </Center>
-                  <Button onClick={this.handleOrder}>
-                    <Text pr='10px'>Place Order</Text>
+                  <Button onClick={this.handleOrder} style={{ backgroundColor: '#28A445' }}>
+                    <Text pr='10px' color='#FFF'>Place Order</Text>
                   </Button>
                 </Center>
               </Flex>

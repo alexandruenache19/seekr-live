@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react'
-import { Flex, Input, Button, useDisclosure } from '@chakra-ui/react'
+import { Flex, Input, Button, InputGroup, InputRightElement, useDisclosure } from '@chakra-ui/react'
 import { FaRegPaperPlane } from 'react-icons/fa'
 import { EventActions } from '../../../actions'
 const { addComment } = EventActions
@@ -7,11 +7,11 @@ const { addComment } = EventActions
 const MessageInput = ({ eventId, onOpenModal, username }) => {
   const [message, setMessage] = useState('')
 
-  function handleChange (event) {
+  function handleChange(event) {
     setMessage(event.target.value)
   }
 
-  function handleSendMessage () {
+  function handleSendMessage() {
     if (message !== '' && username !== '') {
       addComment(
         {
@@ -38,21 +38,33 @@ const MessageInput = ({ eventId, onOpenModal, username }) => {
     }
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    handleSendMessage()
+  }
+
   return (
     <Flex
-      borderRadius='xl'
-      p='10px'
+      borderRadius='20px'
+      // p='10px'
       bg='#FFF'
       style={{ justifyContent: 'space-between', marginTop: 0 }}
     >
-      <Input
-        value={message}
-        onChange={handleChange}
-        placeholder='Ask a question...'
-      />
-      <Button onClick={handleSendMessage} style={{ marginLeft: 10 }}>
-        <FaRegPaperPlane size={22} />
-      </Button>
+      <InputGroup as='form' style={{ borderRadius: 20 }}>
+        <Input
+          value={message}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+          style={{ borderRadius: 20 }}
+          placeholder='Ask a question...'
+        />
+        <InputRightElement children={(
+          <Button type='submit' onClick={handleSubmit} style={{ padding: 0, borderRadius: 20 }}>
+            <FaRegPaperPlane style={{ fontSize: 16 }} />
+          </Button>
+        )}
+        />
+      </InputGroup>
     </Flex>
   )
 }

@@ -3,7 +3,7 @@ import { withRouter } from 'next/router'
 import { Flex, Stack, Text, Avatar, Center, Button } from '@chakra-ui/react'
 import Lottie from 'react-lottie'
 import { FaShareSquare, FaPlus, FaMinus } from 'react-icons/fa'
-import { FiEye } from 'react-icons/fi'
+import { FiEye, FiShare } from 'react-icons/fi'
 import { AiFillTags } from 'react-icons/ai'
 
 import * as animationData from './live.json'
@@ -199,6 +199,23 @@ class LiveScreen extends Component {
 
             <Button
               position='absolute'
+              top='8px'
+              right='12px'
+              h='2em'
+              w='2em'
+              minW='0'
+              p='5px'
+              borderRadius='50%'
+              align='center'
+              justify='center'
+              bg='#FFF'
+              onClick={this.handleShare}
+            >
+              <FiShare style={{ fontSize: 18 }} />
+            </Button>
+
+            {/* <Button
+              position='absolute'
               top='10px'
               right='10px'
               style={{ marginTop: 0 }}
@@ -211,9 +228,9 @@ class LiveScreen extends Component {
               zIndex={10}
             >
               <FaShareSquare size={20} />
-            </Button>
+            </Button> */}
             {productInfo ? (
-              <Flex position='absolute' left='10px' bottom='10px'>
+              <Flex position='absolute' left='0px' bottom='10px' px='10px' width='100%' align='center'>
                 <Stack
                   borderRadius='xl'
                   p='5px'
@@ -222,9 +239,14 @@ class LiveScreen extends Component {
                   zIndex={10}
                   justifyContent='center'
                 >
-                  <Text color='#000' fontWeight='bold' fontSize='14'>
-                    {`${productInfo.currentStock} in stock`}
-                  </Text>
+                  <Flex alignItems='center'>
+                    <Text color='#000' fontSize='14' fontWeight='bold'>
+                      {`${productInfo.currentStock} `}
+                    </Text>
+                    <Text color='#000' fontWeight='normal' fontSize='14' style={{ marginLeft: 5 }}>
+                      {'in stock'}
+                    </Text>
+                  </Flex>
                 </Stack>
                 <Stack
                   borderRadius='xl'
@@ -301,7 +323,9 @@ class LiveScreen extends Component {
             borderRadius='xl'
             style={{ justifyContent: 'space-between' }}
           >
-            <CommentsList comments={comments} />
+            <Center style={{ flex: 1, marginBottom: 5, overflow: 'scroll', alignItems: 'flex-start' }}>
+              <CommentsList comments={comments} />
+            </Center>
             <MessageInput
               onOpenModal={this.props.onOpenModal}
               username={username}
@@ -406,7 +430,7 @@ class LiveScreen extends Component {
     return (
       <Flex bg='#FFF' h='100vh' w='100vw' justify='space-between'>
         <Stack w='70vw'>
-          <Flex
+          {/* <Flex
             justify='space-between'
             alignItems='center'
             p='20px'
@@ -450,24 +474,24 @@ class LiveScreen extends Component {
                 </Button>
               </Center>
             </Flex>
-          </Flex>
+          </Flex> */}
           <Center
             p='20px'
-            pt='0px'
-            pb='0px'
-            h='70vh'
+            pb={0}
+            h='85vh'
             w='100%'
-            style={{ marginTop: 0 }}
           >
             <Stack
               h='100%'
               w='100%'
               bg='rgba(0,0,0,0.9)'
-              borderRadius='xl'
+              borderRadius='20px'
               overflow='hidden'
               position='relative'
             >
-              <AmazonIVS url={eventInfo.liveURL} />
+              <Flex h='100%' flex={1} style={{ boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)' }}>
+                <AmazonIVS url={eventInfo.liveURL} />
+              </Flex>
 
               <Center
                 position='absolute'
@@ -504,104 +528,140 @@ class LiveScreen extends Component {
                   </Flex>
                 </Stack>
               </Center>
+
+              {productInfo ? (
+                <Flex position='absolute' left='0px' bottom='15px' px='15px' width='100%' justify='space-between' align='center'>
+                  <Flex>
+                    <Stack
+                      borderRadius='xl'
+                      p='5px'
+                      px='10px'
+                      bg='#FFF'
+                      zIndex={10}
+                      justifyContent='center'
+                      style={{ marginRight: '10px' }}
+                    >
+                      <Flex alignItems='center'>
+                        <Text color='#000' fontSize='17' fontWeight='bold'>
+                          {`${productInfo.currentStock} `}
+                        </Text>
+                        <Text color='#000' fontWeight='normal' fontSize='17' style={{ marginLeft: 5 }}>
+                          {'in stock'}
+                        </Text>
+                      </Flex>
+                    </Stack>
+                    <Stack
+                      borderRadius='xl'
+                      p='5px'
+                      px='10px'
+                      bg='#FFF'
+                      zIndex={10}
+                      justifyContent='center'
+                    >
+                      <Flex alignItems='center'>
+                        <Text color='#000' fontSize='17' fontWeight='bold'>
+                          {`${productInfo.currency}`}
+                        </Text>
+                        <Text color='#000' fontWeight='normal' fontSize='17' style={{ marginLeft: 5 }}>
+                          {`${productInfo.price}`}
+                        </Text>
+                      </Flex>
+                    </Stack>
+                  </Flex>
+                  <Button
+                    h='2em'
+                    w='2em'
+                    minW='0'
+                    p='5px'
+                    borderRadius='50%'
+                    align='center'
+                    justify='center'
+                    bg='#FFF'
+                    onClick={this.handleShare}
+                  >
+                    <FiShare style={{ fontSize: 18 }} />
+                  </Button>
+                </Flex>
+              ) : null}
             </Stack>
           </Center>
 
           {eventInfo.currentProductId && productInfo ? (
-            <Center p='20px' px='0' h='15vh' w='100%' style={{ marginTop: 0 }}>
+            <Center px='20px' h='15vh' w='100%' style={{ marginTop: 0 }}>
               <Flex
                 h='100%'
                 w='100%'
-                p='10px'
-                bg='#F2F4F9'
+                bg='#FFFFFF'
                 borderRadius='xl'
                 overflow='hidden'
+                align='center'
                 style={{ justifyContent: 'space-between', marginTop: 0 }}
               >
-                <Center>
-                  <Stack
-                    borderRadius='xl'
-                    p='10px'
-                    bg='#FFF'
-                    justifyContent='space-between'
+                <Flex justify='space-between' align='center'>
+                  <Button
+                    size='sm'
+                    bg='transparent'
+                    onClick={() => {
+                      if (orderQuantity > 1) {
+                        this.setState({ orderQuantity: orderQuantity - 1 })
+                      }
+                    }}
                   >
-                    <Text pl='6px' color='#000' fontWeight='bold' fontSize='xl'>
-                      {`${productInfo.currentStock} in stock`}
-                    </Text>
-                  </Stack>
-                  <Center
-                    ml='10px'
-                    borderRadius='xl'
-                    p='10px'
-                    bg='#FFF'
-                    justifyContent='space-between'
+                    <FaMinus size={14} />
+                  </Button>
+                  <Text px='10px' fontSize='xl'>
+                    {orderQuantity}
+                  </Text>
+                  <Button
+                    size='sm'
+                    bg='transparent'
+                    onClick={() => {
+                      if (orderQuantity <= productInfo.currentStock - 1) {
+                        this.setState({ orderQuantity: orderQuantity + 1 })
+                      } else {
+                        alert('Not enough stock')
+                      }
+                    }}
                   >
-                    <AiFillTags size={30} />
-                    <Text pl='6px' color='#000' fontWeight='bold' fontSize='xl'>
-                      {`${productInfo.currency} ${productInfo.price}`}
-                    </Text>
-                  </Center>
-                </Center>
-                <Center
+                    <FaPlus size={14} />
+                  </Button>
+                </Flex>
+                <Flex align='flex-end' marginLeft='20px'>
+                  <Text fontSize={23} lineHeight='22px'>
+                    {productInfo.price * orderQuantity}
+                  </Text>
+                  <Text fontWeight='light' fontSize={19} lineHeight='19px'>
+                    {productInfo.currency}
+                  </Text>
+                </Flex>
+                {productInfo.currentStock > 0 ? (
+                  <Button
+                    size='lg'
+                    borderRadius='30px'
+                    style={{ justifyContent: 'center', flex: 1, backgroundColor: '#28A445', marginLeft: 30 }}
+                    onClick={this.handleOrder}
+                  >
+                    <Text pr='10px' color='#FFFFFF'>Place Order</Text>
+                  </Button>
+                ) : (
+                  <Button
+                    size='lg'
+                    borderRadius='xl'
+                    onClick={() => null}
+                    style={{ justifyContent: 'center', flex: 1, backgroundColor: '#999', marginLeft: 30 }}
+                  >
+                    <Text pr='10px' color='#FFFFFF'>Waiting for the next item</Text>
+                  </Button>
+                )}
+                {/* <Center
                   w='40vw'
                   borderRadius='xl'
                   p='10px'
                   bg='#FFF'
                   justifyContent='space-between'
                 >
-                  <Flex justify='space-between'>
-                    <Button
-                      size='sm'
-                      onClick={() => {
-                        if (orderQuantity > 1) {
-                          this.setState({ orderQuantity: orderQuantity - 1 })
-                        }
-                      }}
-                    >
-                      <FaMinus size={14} />
-                    </Button>
-                    <Text px='10px' fontSize='xl'>
-                      {orderQuantity}
-                    </Text>
-                    <Button
-                      size='sm'
-                      onClick={() => {
-                        if (orderQuantity <= productInfo.currentStock - 1) {
-                          this.setState({ orderQuantity: orderQuantity + 1 })
-                        } else {
-                          alert('Not enough stock')
-                        }
-                      }}
-                    >
-                      <FaPlus size={14} />
-                    </Button>
-                  </Flex>
-                  <Center>
-                    <Text fontWeight='light' fontSize={9}>
-                      {productInfo.currency}
-                    </Text>
-                    <Text fontSize={22}>
-                      {productInfo.price * orderQuantity}
-                    </Text>
-                  </Center>
-                  {productInfo.currentStock > 0 ? (
-                    <Button
-                      borderRadius='xl'
-                      style={{ justifyContent: 'center', flex: 1, backgroundColor: '#28A445' }}
-                      onClick={this.handleOrder}
-                    >
-                      <Text pr='10px' color='#FFFFFF'>Place Order</Text>
-                    </Button>
-                  ) : (
-                    <Button
-                      borderRadius='xl'
-                      onClick={() => null}
-                      style={{ justifyContent: 'center', flex: 1, backgroundColor: '#999' }}
-                    >
-                      <Text pr='10px' color='#FFFFFF'>Waiting for the next item</Text>
-                    </Button>
-                  )}
-                </Center>
+
+                </Center> */}
               </Flex>
             </Center>
           ) : (
@@ -634,20 +694,24 @@ class LiveScreen extends Component {
           )}
         </Stack>
 
-        <Center p='20px' pl='0px' h='100vh' w='30vw'>
+        <Center p='20px' pl='10px' h='100vh' w='30vw'>
           <Stack
             h='100%'
             p='20px'
             w='100%'
-            bg='#EEF2F8'
-            borderRadius='xl'
+            bg='#FFFFFF'
+            borderRadius='25px'
+            boxShadow='0px 0px 36px 2px rgba(0,0,0,0.12);'
             style={{ justifyContent: 'space-between' }}
           >
             <Text color='#000' fontWeight='bold'>
               Chat with {sellerInfo.username}
             </Text>
 
-            <CommentsList comments={comments} />
+            <Center style={{ flex: 1, marginBottom: 10, marginTop: 10, overflow: 'scroll', alignItems: 'flex-start' }}>
+              <CommentsList comments={comments} />
+            </Center>
+
             <MessageInput
               onOpenModal={this.props.onOpenModal}
               username={username}

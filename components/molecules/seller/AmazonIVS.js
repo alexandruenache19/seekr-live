@@ -38,7 +38,7 @@ function AmazonIVSWorkaround({ url }) {
   }, [])
 
   return (
-    <View style={{ width: '100%' }}>
+    <View style={{ width: '100%', height: '100%' }}>
       {player ? (
         <Pressable
           onPress={() => {
@@ -70,7 +70,7 @@ function AmazonIVSWorkaround({ url }) {
           ) : null}
         </Pressable>
       ) : null}
-      <video id='video-player' ref={videoEl} autoplay />
+      <video id='video-player' style={{ height: '127%', marginTop: '-10vh' }} ref={videoEl} autoplay />
     </View>
   )
 }

@@ -53,7 +53,8 @@ function AmazonIVSWorkaround({ url }) {
             height: '100%',
             flex: 1,
             zIndex: 4,
-            backgroundColor: 'rgba(0,0,0,0.3)'
+            borderRadius: 20,
+            backgroundColor: muted ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0)'
           }}
         >
           {muted ? (
@@ -70,7 +71,7 @@ function AmazonIVSWorkaround({ url }) {
           ) : null}
         </Pressable>
       ) : null}
-      <video id='video-player' style={{ height: '127%', marginTop: '-10vh' }} ref={videoEl} autoplay />
+      <video id='video-player' style={{ height: '127%', marginTop: '-10vh' }} ref={videoEl} autoplay playsInline />
     </View>
   )
 }

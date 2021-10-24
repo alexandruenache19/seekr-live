@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react'
 import { FaVolumeMute } from 'react-icons/fa'
 
-function AmazonIVSWorkaround({ url }) {
+function AmazonIVSWorkaround ({ url }) {
   const videoEl = useRef(null)
   const [player, setPlayer] = useState(null)
   const [muted, setMuted] = useState(true)
@@ -64,7 +64,7 @@ function AmazonIVSWorkaround({ url }) {
               flex: 1
             }}
             >
-              <Center style={{ backgroundColor: '#000', width: 60, height: 60, borderRadius: 30 }}>
+              <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
                 <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
               </Center>
             </Center>

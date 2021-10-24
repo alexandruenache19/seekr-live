@@ -6,6 +6,7 @@ import AddToCalendarHOC from 'react-add-to-calendar-hoc'
 import {
   FaShareSquare,
   FaPlus
+  , FaVolumeMute
 } from 'react-icons/fa'
 import {
   BiCalendarHeart,
@@ -14,11 +15,16 @@ import {
   BiCalendarPlus,
   BiMessageSquareDots
 } from 'react-icons/bi'
+
 import moment from 'moment'
 
 class EventScreen extends PureComponent {
   constructor(props) {
     super(props)
+
+    this.state = {
+      muted: true
+    }
 
     this.handleFollow = this.handleFollow.bind(this)
     this.handleReminderText = this.handleReminderText.bind(this)
@@ -45,6 +51,7 @@ class EventScreen extends PureComponent {
   }
 
   render() {
+    const { muted } = this.state
     const {
       isOnMobile,
       sellerInfo,
@@ -120,6 +127,9 @@ class EventScreen extends PureComponent {
         justify='center'
         alignItems='center'
         bg='url("https://images.unsplash.com/photo-1564951434112-64d74cc2a2d7?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=774&q=80")'
+        backgroundSize='cover'
+        backgroundPosition='center'
+        className='perfect-height-wrapper'
       >
         <Stack
           w={isOnMobile ? '100%' : '70vw'}
@@ -132,15 +142,15 @@ class EventScreen extends PureComponent {
           <Flex
             justify='space-between'
             alignItems='center'
-            h='12vh'
+            h='10vh'
             w='100%'
           >
             <Flex
               h='100%'
-              p='10px'
+              py='10px'
               w='100%'
-              bg='#F2F4F9'
-              borderRadius='xl'
+              // bg='#F2F4F9'
+              borderRadius='15px'
               overflow='hidden'
               justify='space-between'
             >
@@ -190,7 +200,7 @@ class EventScreen extends PureComponent {
               h='100%'
               w='100%'
               bg='rgba(0,0,0,0.9)'
-              borderRadius='xl'
+              borderRadius='15px'
               overflow='hidden'
               position='relative'
             >
@@ -209,9 +219,32 @@ class EventScreen extends PureComponent {
                 width='100%'
                 height='120%'
                 playing
+                muted={muted}
+                playsinline
                 style={{ marginTop: -20 }}
                 loop
               />
+
+              {muted ? (
+                <Center
+                  onClick={() => this.setState({ muted: false })}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    position: 'absolute',
+                    zIndex: 3,
+                    top: 0,
+                    left: 0,
+                    marginTop: 0,
+                    cursor: 'pointer',
+                    backgroundColor: 'rgba(0,0,0,0.3)'
+                  }}
+                >
+                  <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
+                    <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
+                  </Center>
+                </Center>
+              ) : null}
 
               <Center
                 position='absolute'

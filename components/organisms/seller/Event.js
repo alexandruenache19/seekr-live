@@ -5,9 +5,10 @@ import ReactPlayer from 'react-player'
 import AddToCalendarHOC from 'react-add-to-calendar-hoc'
 import {
   FaShareSquare,
-  FaPlus
-  , FaVolumeMute
+  FaPlus,
+  FaVolumeMute
 } from 'react-icons/fa'
+import { FiShare } from 'react-icons/fi'
 import {
   BiCalendarHeart,
   BiTimeFive,
@@ -59,7 +60,7 @@ class EventScreen extends PureComponent {
       comments,
       username
     } = this.props
-    const date = moment(eventInfo.timestamp).format('dddd, DD MMM')
+    const date = moment(eventInfo.timestamp).format('DD MMM')
     const time = moment(eventInfo.timestamp).format('HH:mm')
 
     const startDatetime = moment(eventInfo.timestamp)
@@ -105,7 +106,7 @@ class EventScreen extends PureComponent {
 
         <BiTimeFive size={30} />
         <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>
-          {`${date} at ${time}`}
+          {`${time} - ${date}`}
         </Text>
         {/* <a>{args.children}</a>
         <Center pl='5px'>
@@ -154,17 +155,17 @@ class EventScreen extends PureComponent {
               overflow='hidden'
               justify='space-between'
             >
-              <Center>
+              <Flex>
                 <Avatar name={sellerInfo.name} src={sellerInfo.imageURL} />
                 <Stack ml='10px'>
-                  <Text fontWeight='bold' fontSize='lg'>
-                    {eventInfo.title} by @{sellerInfo.username}
+                  <Text fontWeight='bold' fontSize='md'>
+                    {eventInfo.title}
                   </Text>
-                  {/* <Text color='#718096' fontSize='sm'>
-                    {sellerInfo.category}
-                  </Text> */}
+                  <Text style={{ marginTop: -3 }}>
+                    @{sellerInfo.username}
+                  </Text>
                 </Stack>
-              </Center>
+              </Flex>
 
               <Center>
                 {/* <Button
@@ -185,8 +186,7 @@ class EventScreen extends PureComponent {
                   bg='#FFF'
                   onClick={this.handleShare}
                 >
-                  <Text fontWeight='bold' fontSize='md' marginRight='0.5rem'>Share</Text>
-                  <FaShareSquare size={20} />
+                  <FiShare size={20} />
                 </Button>
               </Center>
             </Flex>
@@ -248,7 +248,7 @@ class EventScreen extends PureComponent {
 
               <Center
                 position='absolute'
-                top='5px'
+                bottom='5px'
                 width={isOnMobile ? '100%' : 'auto'}
                 left={isOnMobile ? 'auto' : '10px'}
                 zIndex={10}
@@ -258,12 +258,12 @@ class EventScreen extends PureComponent {
 
               <Center
                 position='absolute'
-                top={isOnMobile ? 'auto' : '5px'}
+                bottom={isOnMobile ? 'auto' : '5px'}
                 right={isOnMobile ? 'auto' : '10px'}
                 left={isOnMobile ? '0px' : 'auto'}
                 zIndex={10}
                 width={isOnMobile ? '100%' : 'auto'}
-                bottom={isOnMobile ? '10px' : 'auto'}
+                top={isOnMobile ? 0 : 'auto'}
               >
                 <Button
                   h='3em'
@@ -273,7 +273,7 @@ class EventScreen extends PureComponent {
                   onClick={this.handleReminderText}
                 >
                   <BiMessageSquareDots size={26} />
-                  <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Text me 5 min before</Text>
+                  <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Anunta-ma cu 5 min inainte</Text>
                 </Button>
               </Center>
             </Stack>

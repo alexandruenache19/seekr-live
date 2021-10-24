@@ -17,7 +17,7 @@ import {
 import moment from 'moment'
 
 class EventScreen extends PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.handleFollow = this.handleFollow.bind(this)
@@ -26,25 +26,25 @@ class EventScreen extends PureComponent {
     this.handleShare = this.handleShare.bind(this)
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', { username: sellerInfo.username })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  handleReminderText () {
+  handleReminderText() {
     const { eventInfo } = this.props
     this.props.onOpenModal('text', { eventId: eventInfo.id })
   }
 
-  handleReminderEmail () {
+  handleReminderEmail() {
     this.props.onOpenModal('email', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -92,7 +92,7 @@ class EventScreen extends PureComponent {
         onClick={args.onClick}
         h='3em'
         shadow='md'
-        borderRadius='1.5em'
+        borderRadius='15px'
         bg='#FFF'
       >
 
@@ -132,12 +132,9 @@ class EventScreen extends PureComponent {
           <Flex
             justify='space-between'
             alignItems='center'
-            h='auto'
+            h='12vh'
             w='100%'
           >
-            {/* <Text fontWeight='bold' fontSize='2xl'>
-              seekr.
-            </Text> */}
             <Flex
               h='100%'
               p='10px'
@@ -185,7 +182,7 @@ class EventScreen extends PureComponent {
             </Flex>
           </Flex>
           <Center
-            style={{ marginTop: '1rem' }}
+            style={{ marginTop: '1rem', maxHeight: 'calc(94vh - 16vh)' }}
             h='100%'
             w='100%'
           >
@@ -197,22 +194,22 @@ class EventScreen extends PureComponent {
               overflow='hidden'
               position='relative'
             >
-              <ReactPlayer
+              {/* <ReactPlayer
                 className='bg-player'
                 url={eventInfo.videoURL}
                 width='100%'
                 height='100%'
                 playing
                 loop
-              />
+              /> */}
 
               <ReactPlayer
                 className='react-player'
                 url={eventInfo.videoURL}
                 width='100%'
-                height='100%'
+                height='120%'
                 playing
-                style={{ marginTop: 0 }}
+                style={{ marginTop: -20 }}
                 loop
               />
 
@@ -238,7 +235,7 @@ class EventScreen extends PureComponent {
                 <Button
                   h='3em'
                   shadow='md'
-                  borderRadius='1.5em'
+                  borderRadius='15px'
                   bg='#FFF'
                   onClick={this.handleReminderText}
                 >

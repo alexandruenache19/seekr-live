@@ -10,6 +10,13 @@ export default async function handler (req, res) {
         shipping_address_collection: {
           allowed_countries: ['RO']
         },
+        payment_intent_data: {
+          on_behalf_of: 'acct_1JqIogR8NKnkhQia',
+          application_fee_amount: parseFloat(price) * 100 * 0.08,
+          transfer_data: {
+            destination: 'acct_1JqIogR8NKnkhQia'
+          }
+        },
         line_items: [
           {
             price_data: {

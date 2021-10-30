@@ -5,8 +5,10 @@ import ReactPlayer from 'react-player'
 import AddToCalendarHOC from 'react-add-to-calendar-hoc'
 import {
   FaShareSquare,
-  FaPlus
+  FaPlus,
+  FaVolumeMute
 } from 'react-icons/fa'
+import { FiShare } from 'react-icons/fi'
 import {
   BiCalendarHeart,
   BiTimeFive,
@@ -14,11 +16,16 @@ import {
   BiCalendarPlus,
   BiMessageSquareDots
 } from 'react-icons/bi'
+
 import moment from 'moment'
 
 class EventScreen extends PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props)
+
+    this.state = {
+      muted: true
+    }
 
     this.handleFollow = this.handleFollow.bind(this)
     this.handleReminderText = this.handleReminderText.bind(this)
@@ -26,25 +33,26 @@ class EventScreen extends PureComponent {
     this.handleShare = this.handleShare.bind(this)
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', { username: sellerInfo.username })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  handleReminderText () {
+  handleReminderText() {
     const { eventInfo } = this.props
     this.props.onOpenModal('text', { eventId: eventInfo.id })
   }
 
-  handleReminderEmail () {
+  handleReminderEmail() {
     this.props.onOpenModal('email', {})
   }
 
-  render () {
+  render() {
+    const { muted } = this.state
     const {
       isOnMobile,
       sellerInfo,
@@ -52,7 +60,7 @@ class EventScreen extends PureComponent {
       comments,
       username
     } = this.props
-    const date = moment(eventInfo.timestamp).format('dddd, DD MMM')
+    const date = moment(eventInfo.timestamp).format('DD MMM')
     const time = moment(eventInfo.timestamp).format('HH:mm')
 
     const startDatetime = moment(eventInfo.timestamp)
@@ -92,13 +100,13 @@ class EventScreen extends PureComponent {
         onClick={args.onClick}
         h='3em'
         shadow='md'
-        borderRadius='1.5em'
+        borderRadius='15px'
         bg='#FFF'
       >
 
         <BiTimeFive size={30} />
         <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>
-          {`${date} at ${time}`}
+          {`${time} - ${date}`}
         </Text>
         {/* <a>{args.children}</a>
         <Center pl='5px'>
@@ -120,6 +128,9 @@ class EventScreen extends PureComponent {
         justify='center'
         alignItems='center'
         bg='url("https://images.unsplash.com/photo-1564951434112-64d74cc2a2d7?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=774&q=80")'
+        backgroundSize='cover'
+        backgroundPosition='center'
+        className='perfect-height-wrapper'
       >
         <Stack
           w={isOnMobile ? '100%' : '70vw'}
@@ -132,32 +143,29 @@ class EventScreen extends PureComponent {
           <Flex
             justify='space-between'
             alignItems='center'
-            h='auto'
+            h='10vh'
             w='100%'
           >
-            {/* <Text fontWeight='bold' fontSize='2xl'>
-              seekr.
-            </Text> */}
             <Flex
               h='100%'
-              p='10px'
+              py='10px'
               w='100%'
-              bg='#F2F4F9'
-              borderRadius='xl'
+              // bg='#F2F4F9'
+              borderRadius='15px'
               overflow='hidden'
               justify='space-between'
             >
-              <Center>
+              <Flex>
                 <Avatar name={sellerInfo.name} src={sellerInfo.imageURL} />
                 <Stack ml='10px'>
-                  <Text fontWeight='bold' fontSize='lg'>
-                    {eventInfo.title} by @{sellerInfo.username}
+                  <Text fontWeight='bold' fontSize='md'>
+                    {eventInfo.title}
                   </Text>
-                  {/* <Text color='#718096' fontSize='sm'>
-                    {sellerInfo.category}
-                  </Text> */}
+                  <Text style={{ marginTop: -3 }}>
+                    @{sellerInfo.username}
+                  </Text>
                 </Stack>
-              </Center>
+              </Flex>
 
               <Center>
                 {/* <Button
@@ -178,14 +186,13 @@ class EventScreen extends PureComponent {
                   bg='#FFF'
                   onClick={this.handleShare}
                 >
-                  <Text fontWeight='bold' fontSize='md' marginRight='0.5rem'>Share</Text>
-                  <FaShareSquare size={20} />
+                  <FiShare size={20} />
                 </Button>
               </Center>
             </Flex>
           </Flex>
           <Center
-            style={{ marginTop: '1rem' }}
+            style={{ marginTop: '1rem', maxHeight: 'calc(94vh - 16vh)' }}
             h='100%'
             w='100%'
           >
@@ -193,32 +200,55 @@ class EventScreen extends PureComponent {
               h='100%'
               w='100%'
               bg='rgba(0,0,0,0.9)'
-              borderRadius='xl'
+              borderRadius='15px'
               overflow='hidden'
               position='relative'
             >
-              <ReactPlayer
+              {/* <ReactPlayer
                 className='bg-player'
                 url={eventInfo.videoURL}
                 width='100%'
                 height='100%'
                 playing
                 loop
-              />
+              /> */}
 
               <ReactPlayer
                 className='react-player'
                 url={eventInfo.videoURL}
                 width='100%'
-                height='100%'
+                height='120%'
                 playing
-                style={{ marginTop: 0 }}
+                muted={muted}
+                playsinline
+                style={{ marginTop: -20 }}
                 loop
               />
 
+              {muted ? (
+                <Center
+                  onClick={() => this.setState({ muted: false })}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    position: 'absolute',
+                    zIndex: 3,
+                    top: 0,
+                    left: 0,
+                    marginTop: 0,
+                    cursor: 'pointer',
+                    backgroundColor: 'rgba(0,0,0,0.3)'
+                  }}
+                >
+                  <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
+                    <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
+                  </Center>
+                </Center>
+              ) : null}
+
               <Center
                 position='absolute'
-                top='5px'
+                bottom='5px'
                 width={isOnMobile ? '100%' : 'auto'}
                 left={isOnMobile ? 'auto' : '10px'}
                 zIndex={10}
@@ -228,22 +258,22 @@ class EventScreen extends PureComponent {
 
               <Center
                 position='absolute'
-                top={isOnMobile ? 'auto' : '5px'}
+                bottom={isOnMobile ? 'auto' : '5px'}
                 right={isOnMobile ? 'auto' : '10px'}
                 left={isOnMobile ? '0px' : 'auto'}
                 zIndex={10}
                 width={isOnMobile ? '100%' : 'auto'}
-                bottom={isOnMobile ? '10px' : 'auto'}
+                top={isOnMobile ? 0 : 'auto'}
               >
                 <Button
                   h='3em'
                   shadow='md'
-                  borderRadius='1.5em'
+                  borderRadius='15px'
                   bg='#FFF'
                   onClick={this.handleReminderText}
                 >
                   <BiMessageSquareDots size={26} />
-                  <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Text me 5 min before</Text>
+                  <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Anunta-ma cu 5 min inainte</Text>
                 </Button>
               </Center>
             </Stack>

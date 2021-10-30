@@ -25,17 +25,28 @@ export default async function handler (req, res) {
   await runMiddleware(req, res, cors)
 
   console.log('req', req.body)
+  let detailedTitle = null
+
+  try {
+    const titleRequest = await axios.get(`https://api.instagram.com/oembed/?url=${req.body.url}`)
+    detailedTitle = titleRequest.data.title
+  } catch (error) {
+
+  }
 
   const request = await axios.post('https://wg2q96jx3d.execute-api.us-east-1.amazonaws.com/prod/collect-return', {
     ...req.body
   })
-
-  console.log('request', request)
 
   //   await axios.post('https://wg2q96jx3d.execute-api.us-east-1.amazonaws.com/prod/collect', {
   //     input: req.body.input,
   //     stateMachineArn: 'arn:aws:states:us-east-1:855360957117:stateMachine:InvokeCollectStateFunc'
   //   })
 
-  res.status(200).json({ data: request.data })
+  res.status(200).json({
+    data: {
+      ...request.data,
+      title: detailedTitle || request.data.title
+    }
+  })
 }

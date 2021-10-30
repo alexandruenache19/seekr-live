@@ -10,9 +10,12 @@ import {
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
-  NumberDecrementStepper
+  NumberDecrementStepper,
+  Spinner
 } from '@chakra-ui/react'
 import axios from 'axios'
+import { generateId } from '../../actions/helper'
+import firebase from '../../firebase/clientApp'
 
 const format = (val) => 'RON ' + val
 const parse = (val) => val.replace(/RON /, '')
@@ -26,7 +29,8 @@ export default class GeneratePaymentScreen extends PureComponent {
       quantity: 1,
       isLinkFetched: false,
       title: '',
-      imageUrl: ''
+      imageUrl: '',
+      loading: false
     }
 
     this.handleFetchPost = this.handleFetchPost.bind(this)
@@ -39,105 +43,98 @@ export default class GeneratePaymentScreen extends PureComponent {
 
   async handleFetchPost () {
     const { link } = this.state
-    const postReq = await axios.post('/api/fetch-post', {
-      uid: 'NJv0oXqKUwcmWTW4VMjsr5HWJ4W2',
-      url: link,
-      saveInFirebase: false
-    })
-
     this.setState({
-      imageUrl: postReq.data.data.imageUrl,
-      title: postReq.data.data.title,
-      isLinkFetched: true
-    })
+      loading: true
+    }, async () => {
+      const postReq = await axios.post('/api/fetch-post', {
+        uid: 'NJv0oXqKUwcmWTW4VMjsr5HWJ4W2',
+        url: link,
+        saveInFirebase: false
+      })
 
-    console.log('post', postReq.data)
+      this.setState({
+        imageUrl: postReq.data.data.imageUrl,
+        title: postReq.data.data.title,
+        isLinkFetched: true,
+        loading: false
+      })
+
+      console.log('post', postReq.data)
+    })
   }
 
   async handleGeneratePaymentLink () {
-    const { title, quantity, price, imageUrl } = this.state
-    const req = await axios.post('/api/checkout', {
-      name: title,
-      quantity: quantity,
-      price: price,
-      imageUrl: imageUrl
-    })
-
-    try {
-      window.open(req.data.url, '_self')
-    } catch (err) {
-      console.log('err', err)
-    }
-  }
-
-  async handleDone () {
-    return false
-    /**
-                                                                                                                                                                                                                             * add order in events/eventId/orders/orderId
-                                                                                                                                                                                                                             * decrease stock in events/eventId/products/productId
-                                                                                                                                                                                                                             */
-
-    if (
-      name === null || phoneNumber === null || address === null ||
-            name === '' || phoneNumber === '' || address === ''
-    ) {
-      alert('Please fill in all required fields')
-    } else {
-      await addOrder(eventInfo.id, {
-        address: address,
-        addressDetails: addressDetails,
-        name: name,
-        phoneNumber: phoneNumber,
-        priceToPay: totalPrice,
-        quantity: orderQuantity,
-        productId: productInfo.id,
-        currency: productInfo.currency,
-        imageURL: productInfo.imageURL
+    const { title, quantity, price, imageUrl, link } = this.state
+    this.setState({
+      loading: true
+    }, async () => {
+      const productId = generateId(7)
+      const req = await axios.post('/api/checkout', {
+        productId: productId,
+        name: title,
+        quantity: quantity,
+        price: price,
+        imageUrl: imageUrl
       })
 
-      setDetailsInHomeState({
-        address: address,
-        addressDetails: addressDetails,
-        name: name,
-        phoneNumber: phoneNumber
+      this.setState({
+        loading: false
       })
-    }
 
-    addComment(
-      {
-        text: orderQuantity === 1 ? 'I just ordered this!' : `I just ordered ${orderQuantity} of these`,
-        username: name
-      },
-      eventInfo.id
-    )
+      await firebase.database().ref(`products/${productId}`).update({
+        url: link,
+        id: productId,
+        name: title,
+        price: parseFloat(price),
+        imageUrl: imageUrl,
+        quantity: parseFloat(quantity),
+        paymentUrl: req.data.url
+      })
 
-    toast({
-      title: 'Order Places Successfully!',
-      status: 'success',
-      duration: 3000,
-      isClosable: false
+      console.log(`https://seekrlive/p/${productId}`)
+
+      //   try {
+      //     window.open(req.data.url, '_self')
+      //   } catch (err) {
+      //     console.log('err', err)
+      //   }
     })
-    onCloseModal()
   }
 
   render () {
-    const { link, price, quantity, isLinkFetched, imageUrl, title } = this.state
+    const { link, price, quantity, isLinkFetched, imageUrl, title, loading } = this.state
     return (
       <Stack align='center' w='100vw'>
-        <Stack style={{ height: '100vh', overflow: 'scroll' }} w='100%' maxW='500px' justify='center' align='center'>
-          <Stack style={{ overflow: 'scroll', paddingBottom: '1rem', width: '100%' }}>
+        {loading ? (
+          <Stack
+            w='100%'
+            h='100%'
+            position='absolute'
+            top={0}
+            zIndex={5}
+            justifyContent='center'
+            alignItems='center'
+            bg='rgba(255,255,255,0.3)'
+          >
+            <Spinner color='#121212' size='md' />
+          </Stack>
+        ) : null}
+        <Stack style={{ height: '100vh', overflow: 'scroll' }} w='100%' maxW='500px' px='1rem' justify='center' align='center'>
+          <Stack style={{ overflow: 'scroll', paddingBottom: '1rem', width: '100%', marginTop: -50 }}>
             {isLinkFetched ? (
               <Stack align='center'>
                 <img
                   src={imageUrl}
                   style={{
+                    marginTop: '2rem',
+                    // boxShadow: '0px 0px 36px -9px rgba(0,0,0,0.49)',
                     backgroundColor: '#999',
                     maxWidth: '70%',
                     height: 'auto',
-                    maxHeight: 200,
+                    maxHeight: 250,
                     borderRadius: 15,
                     objectFit: 'cover',
-                    marginBottom: 10
+                    marginBottom: '1rem'
                   }}
                 />
                 <FormControl style={styles.formRow} id='title'>
@@ -145,6 +142,10 @@ export default class GeneratePaymentScreen extends PureComponent {
                     placeholder='Product Title'
                     value={title}
                     onChange={(e) => this.setState({ title: e.target.value })}
+                    _focus={{
+                      border: '1px solid #999',
+                      boxShadow: 'none'
+                    }}
                   />
                 </FormControl>
                 <FormControl style={styles.formRow} id='price'>
@@ -155,6 +156,10 @@ export default class GeneratePaymentScreen extends PureComponent {
                     onChange={(number) => {
                       console.log('v', number)
                       this.setState({ price: number })
+                    }}
+                    _focus={{
+                      border: '1px solid #999',
+                      boxShadow: 'none'
                     }}
                   >
                     <NumberInputField />
@@ -167,20 +172,32 @@ export default class GeneratePaymentScreen extends PureComponent {
                 </FormControl>
                 <FormControl style={styles.formRow} id='quantity'>
                   <FormLabel>Quantity</FormLabel>
-                  <Input
+                  <NumberInput
                     placeholder='Quantity'
                     value={quantity}
-                    onChange={(e) => this.setState({ quantity: e.target.value })}
-                  />
+                    onChange={(number) => {
+                      this.setState({ quantity: number })
+                    }}
+                    _focus={{
+                      border: '1px solid #999',
+                      boxShadow: 'none'
+                    }}
+                  >
+                    <NumberInputField />
+                  </NumberInput>
                 </FormControl>
               </Stack>
             ) : (
-              <FormControl id='link' isRequired>
+              <FormControl id='link'>
                 <FormLabel>Instagram Product Link</FormLabel>
                 <Input
                   value={link}
                   placeholder='Product Link'
                   onChange={(e) => this.setState({ link: e.target.value })}
+                  _focus={{
+                    border: '1px solid #999',
+                    boxShadow: 'none'
+                  }}
                 />
               </FormControl>
             )}

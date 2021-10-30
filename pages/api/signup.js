@@ -8,8 +8,8 @@ export default async function handler (req, res) {
 
   const accountLinks = await stripe.accountLinks.create({
     account: account.id,
-    refresh_url: 'https://example.com/reauth',
-    return_url: 'https://example.com/return',
+    refresh_url: 'https://seekrlive.com/signup',
+    return_url: 'https://seekrlive.com/signup',
     type: 'account_onboarding'
   })
 

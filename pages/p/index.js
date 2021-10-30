@@ -2,14 +2,20 @@ import React, { PureComponent, useState } from 'react'
 import {
   FormControl,
   FormLabel,
-  FormHelperText,
   Input,
-  useToast,
   Stack,
   Button,
-  Text
+  Text,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper
 } from '@chakra-ui/react'
 import axios from 'axios'
+
+const format = (val) => 'RON ' + val
+const parse = (val) => val.replace(/RON /, '')
 
 export default class GeneratePaymentScreen extends PureComponent {
   constructor (props) {
@@ -19,10 +25,12 @@ export default class GeneratePaymentScreen extends PureComponent {
       price: 0,
       quantity: 1,
       isLinkFetched: false,
-      imageURL: ''
+      title: '',
+      imageUrl: ''
     }
 
     this.handleFetchPost = this.handleFetchPost.bind(this)
+    this.handleGeneratePaymentLink = this.handleGeneratePaymentLink.bind(this)
   }
 
   componentDidMount () {
@@ -38,7 +46,7 @@ export default class GeneratePaymentScreen extends PureComponent {
     })
 
     this.setState({
-      imageURL: postReq.data.data.imageUrl,
+      imageUrl: postReq.data.data.imageUrl,
       title: postReq.data.data.title,
       isLinkFetched: true
     })
@@ -46,12 +54,28 @@ export default class GeneratePaymentScreen extends PureComponent {
     console.log('post', postReq.data)
   }
 
+  async handleGeneratePaymentLink () {
+    const { title, quantity, price, imageUrl } = this.state
+    const req = await axios.post('/api/checkout', {
+      name: title,
+      quantity: quantity,
+      price: price,
+      imageUrl: imageUrl
+    })
+
+    try {
+      window.open(req.data.url, '_self')
+    } catch (err) {
+      console.log('err', err)
+    }
+  }
+
   async handleDone () {
     return false
     /**
-                                                                                                                                     * add order in events/eventId/orders/orderId
-                                                                                                                                     * decrease stock in events/eventId/products/productId
-                                                                                                                                     */
+                                                                                                                                                                                                                             * add order in events/eventId/orders/orderId
+                                                                                                                                                                                                                             * decrease stock in events/eventId/products/productId
+                                                                                                                                                                                                                             */
 
     if (
       name === null || phoneNumber === null || address === null ||
@@ -97,16 +121,17 @@ export default class GeneratePaymentScreen extends PureComponent {
   }
 
   render () {
-    const { link, price, quantity, isLinkFetched, imageURL } = this.state
+    const { link, price, quantity, isLinkFetched, imageUrl, title } = this.state
     return (
       <Stack align='center' w='100vw'>
-        <Stack style={{ height: '100vh', overflow: 'scroll' }} w='100%' maxW='600px' justify='center' align='center'>
+        <Stack style={{ height: '100vh', overflow: 'scroll' }} w='100%' maxW='500px' justify='center' align='center'>
           <Stack style={{ overflow: 'scroll', paddingBottom: '1rem', width: '100%' }}>
             {isLinkFetched ? (
               <Stack align='center'>
                 <img
-                  src={imageURL}
+                  src={imageUrl}
                   style={{
+                    backgroundColor: '#999',
                     maxWidth: '70%',
                     height: 'auto',
                     maxHeight: 200,
@@ -115,13 +140,30 @@ export default class GeneratePaymentScreen extends PureComponent {
                     marginBottom: 10
                   }}
                 />
+                <FormControl style={styles.formRow} id='title'>
+                  <Input
+                    placeholder='Product Title'
+                    value={title}
+                    onChange={(e) => this.setState({ title: e.target.value })}
+                  />
+                </FormControl>
                 <FormControl style={styles.formRow} id='price'>
                   <FormLabel>Product Price</FormLabel>
-                  <Input
-                    placeholder='Price'
+                  <NumberInput
+                    placeholder='Price (RON)'
+                    value={price}
+                    onChange={(number) => {
+                      console.log('v', number)
+                      this.setState({ price: number })
+                    }}
+                  >
+                    <NumberInputField />
+                  </NumberInput>
+                  {/* <Input
+                    placeholder='Price (RON)'
                     value={price}
                     onChange={(e) => this.setState({ price: e.target.value })}
-                  />
+                  /> */}
                 </FormControl>
                 <FormControl style={styles.formRow} id='quantity'>
                   <FormLabel>Quantity</FormLabel>

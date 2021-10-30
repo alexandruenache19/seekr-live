@@ -5,7 +5,6 @@ import Lottie from 'react-lottie'
 import { FaShareSquare, FaPlus, FaMinus } from 'react-icons/fa'
 import { FiEye, FiShare } from 'react-icons/fi'
 import { AiFillTags } from 'react-icons/ai'
-
 import * as animationData from './live.json'
 import { MessageInput, CommentsList } from '../../../components'
 import firebase from '../../../firebase/clientApp'
@@ -41,10 +40,23 @@ class LiveScreen extends Component {
       .ref(`events/${eventInfo.id}/info/viewers`)
       .set(firebase.database.ServerValue.increment(1))
 
+    //   const prodSn = await firebase.database()
+    //   .ref(`events/${eventId}/info/products/${eventInfo.currentProductId}`)
+    //   .once('value')
+    // const prod = prodSn.val()
+    // console.log('propd', prod)
+    // await addComment(
+    //   {
+    //     text: prod && prod.hasOwnProperty('description') ? prod.description : 'I just added a new product!',
+    //     username: sellerInfo.username
+    //   },
+    //   eventInfo.id
+    // )
+
     this.productInfoListener = firebase
       .database()
       .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
-      .on('value', snapshot => {
+      .on('value', async snapshot => {
         this.setState({
           productInfo: snapshot.val()
         })

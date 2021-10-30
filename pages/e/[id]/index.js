@@ -15,6 +15,7 @@ import {
   getEventInfo,
   getSellerInfo
 } from "../../../fetchData/getData";
+import { addComment } from '../../../actions/event'
 import firebase from "../../../firebase/clientApp";
 
 class EventPage extends PureComponent {

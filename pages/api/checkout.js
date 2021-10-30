@@ -11,10 +11,10 @@ export default async function handler(req, res) {
           allowed_countries: ["RO"]
         },
         payment_intent_data: {
-          on_behalf_of: "acct_1JqIogR8NKnkhQia",
+          on_behalf_of: "acct_1JqLwaR2ZKxkbXte",
           // application_fee_amount: parseFloat(price) * 100 * 0.001,
           transfer_data: {
-            destination: "acct_1JqIogR8NKnkhQia"
+            destination: "acct_1JqLwaR2ZKxkbXte"
           }
         },
         line_items: [

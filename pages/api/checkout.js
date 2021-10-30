@@ -1,6 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
-export default async function handler (req, res) {
+export default async function handler(req, res) {
   const { quantity, price, name, imageUrl, productId } = req.body
   console.log('req', req.body)
   if (req.method === 'POST') {
@@ -36,8 +36,8 @@ export default async function handler (req, res) {
         mode: 'payment',
         // success_url: `${req.headers.referer}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
         // cancel_url: `${req.headers.referer}/?canceled=true`,
-        success_url: `https://seekrlive/p${productId}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://seekrlive/p${productId}/?canceled=true`
+        success_url: `https://seekrlive.com/p/${productId}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://seekrlive.com/p/${productId}/?canceled=true`
       })
 
       console.log('session', session)

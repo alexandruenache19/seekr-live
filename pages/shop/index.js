@@ -19,8 +19,6 @@ import { useUser } from '../../context/userContext'
 import { FetchingActions } from '../../actions'
 import GenerateNewProduct from '../p/index'
 
-const { getShopProducts } = FetchingActions
-
 function CopyLink ({ value }) {
   const { hasCopied, onCopy } = useClipboard(value)
 
@@ -33,18 +31,22 @@ function CopyLink ({ value }) {
   )
 }
 
+const { getShopProducts, getShopOrders } = FetchingActions
+
 export const SignInComponent = () => {
   const auth = useUser()
   const { user } = auth
   const router = useRouter()
   const [products, setProducts] = useState([])
-
+  const [orders, setOrders] = useState([])
   useEffect(async () => {
     if (user) {
       const products = await getShopProducts(user.uid)
       setProducts(products)
+      const orders = await getShopOrders(user.uid)
+      setOrders(orders)
     }
-  })
+  }, [user])
 
   if (auth.loadingUser) {
     return (
@@ -59,14 +61,10 @@ export const SignInComponent = () => {
       w='100vw'
       maxWidth='800'
       h='100vh'
-      style={{
-        alignItems: 'center',
-        backgroundColor: '#FFF'
-      }}
     >
-      {/* <GenerateNewProduct uid={user.uid} /> */}
-      <Stack>
-        <Button
+
+      <GenerateNewProduct uid={user.uid} />
+      {/* <Button
           style={{
             backgroundColor: '#28A445',
             width: '100%',
@@ -75,8 +73,16 @@ export const SignInComponent = () => {
           onClick={() => null}
         >
           <Text style={{ color: '#FFFFFF' }}>Add product</Text>
-        </Button>
-      </Stack>
+        </Button> */}
+      <Text style={{ marginTop: '2rem', fontWeight: 'bold' }}>Orders</Text>
+      <Grid templateColumns='repeat(3, 1fr)' gap={6}>
+        {orders.map(order => (
+          <Stack key={order.info.id} borderRadius='xl' bg='#FFF' p='6' boxShadow='lg'>
+            <Text>{order.info.name}</Text>
+            <Text>{order.info.phoneNumber}</Text>
+          </Stack>
+        ))}
+      </Grid>
       <Grid
         style={{ marginTop: '2rem' }}
         templateColumns='repeat(3, 1fr)'

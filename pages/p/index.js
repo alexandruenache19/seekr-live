@@ -1,4 +1,4 @@
-import React, { PureComponent, useState } from 'react';
+import React, { PureComponent, useState } from 'react'
 import {
   FormControl,
   FormLabel,
@@ -15,10 +15,10 @@ import {
   Spinner,
   Flex,
   useClipboard
-} from '@chakra-ui/react';
-import axios from 'axios';
-import { generateId } from '../../actions/helper';
-import firebase from '../../firebase/clientApp';
+} from '@chakra-ui/react'
+import axios from 'axios'
+import { generateId } from '../../actions/helper'
+import firebase from '../../firebase/clientApp'
 
 const format = val => 'RON ' + val
 const parse = val => val.replace(/RON /, '')
@@ -174,7 +174,7 @@ export default class GeneratePaymentScreen extends PureComponent {
     }
 
     return (
-      <Stack borderRadius='xl' bg='#FFF' overflow='hidden' p='6' boxShadow='lg'>
+      <Stack borderRadius='xl' bg='#FFF' p='6' boxShadow='lg'>
         {loading && (
           <Stack
             w='100%'

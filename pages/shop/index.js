@@ -1,5 +1,13 @@
 import React, { PureComponent, useEffect, useState } from "react";
-import { Stack, Button, Text, Spinner, Flex, Grid } from "@chakra-ui/react";
+import {
+  Stack,
+  Button,
+  Text,
+  Spinner,
+  Flex,
+  Grid,
+  Box
+} from "@chakra-ui/react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import firebase from "../../firebase/clientApp";
 import { useRouter } from "next/router";
@@ -17,7 +25,10 @@ export const SignInComponent = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(async () => {
-    const products = await getShopProducts(user.uid);
+    if (user) {
+      const products = await getShopProducts(user.uid);
+      setProducts(products);
+    }
   });
 
   if (auth.loadingUser) {
@@ -46,12 +57,9 @@ export const SignInComponent = () => {
         templateColumns="repeat(3, 1fr)"
         gap={6}
       >
-        {products.map(post => (
-          <Box w="100%" h="250" bg="#999">
-            <img
-              src={imgSrc}
-              style={{ width: "100%", objectFit: "cover", height: "100%" }}
-            />
+        {products.map(product => (
+          <Box bg="#999">
+            <img src={product.imageUrl} style={{ objectFit: "contain" }} />
           </Box>
         ))}
       </Grid>

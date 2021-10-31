@@ -1,11 +1,11 @@
 import React, { PureComponent, useState } from 'react'
 import { Button, Flex, Stack, Text, Spinner } from '@chakra-ui/react'
-import { useUser } from '../context/userContext'
+import { useUser } from '../../context/userContext'
 import PhoneInput from 'react-phone-input-2'
 import ReactCodeInput from 'react-verification-code-input'
 import 'react-phone-input-2/lib/bootstrap.css'
 
-import firebase from '../firebase/clientApp'
+import firebase from '../../firebase/clientApp'
 import { useRouter } from 'next/router'
 
 export const SignInComponent = () => {
@@ -13,11 +13,9 @@ export const SignInComponent = () => {
   const [code, setCode] = useState('')
   const auth = useUser()
 
+  console.log('auth', auth)
   const router = useRouter()
   // auth.signOut();
-  if (auth.user) {
-    router.push('/shop')
-  }
 
   if (auth.loadingUser) {
     return (
@@ -25,6 +23,10 @@ export const SignInComponent = () => {
         <Spinner size='xl' thickness='3px' />
       </Flex>
     )
+  }
+
+  if (auth.user) {
+    router.push('/shop')
   }
 
   if (auth.hasCode) {

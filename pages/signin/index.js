@@ -20,7 +20,7 @@ export const SignInComponent = () => {
   if (auth.loadingUser) {
     return (
       <Flex bg='#FFF' w='100vw' h='100vh' justify='center' align='center'>
-        <Spinner size='xl' thickness='3px' />
+        <Spinner color='#121212' size='md' />
       </Flex>
     )
   }

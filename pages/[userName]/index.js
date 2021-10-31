@@ -2,9 +2,9 @@ import React, { PureComponent } from 'react';
 import { withRouter } from 'next/router';
 import { Center, Spinner } from '@chakra-ui/react'
 
-import { getUser, getUserId } from '../actions/auth'
+import { getUser, getUserId } from '../../actions/auth'
 
-import EventPage from './e/[id]'
+import EventPage from '../e/[id]'
 
 class UserPage extends PureComponent {
     constructor(props) {

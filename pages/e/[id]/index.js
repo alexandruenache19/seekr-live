@@ -149,7 +149,7 @@ class EventPage extends PureComponent {
     if (loading || !eventInfo || !sellerInfo) {
       return (
         <Center bg="#FFF" w="100vw" h="100vh">
-          <Spinner size="xl" thickness="3px" />
+          <Spinner color='#121212' size='md' />
         </Center>
       );
     }

@@ -117,7 +117,11 @@ class LiveScreen extends Component {
       productInfo,
       orderQuantity,
       address,
-      addressDetails,
+      city,
+      country,
+      postalCode,
+      addressLine1,
+      addressLine2,
       name,
       phoneNumber
     } = this.state
@@ -127,13 +131,21 @@ class LiveScreen extends Component {
       orderQuantity: orderQuantity,
       totalPrice: productInfo.price * orderQuantity,
       address: address,
-      addressDetails: addressDetails,
+      city: city,
+      country: country,
+      postalCode: postalCode,
+      addressLine1: addressLine1,
+      addressLine2: addressLine2,
       name: name,
       phoneNumber: phoneNumber,
       setDetailsInHomeState: (details) => {
         this.setState({
           address: details.address,
-          addressDetails: details.addressDetails,
+          city: details.city,
+          country: details.country,
+          postalCode: details.postalCode,
+          addressLine1: details.addressLine1 || null,
+          addressLine2: details.addressLine2 || null,
           name: details.name,
           phoneNumber: details.phoneNumber
         })

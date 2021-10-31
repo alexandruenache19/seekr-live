@@ -19,7 +19,7 @@ import { useUser } from '../../context/userContext'
 import { FetchingActions } from '../../actions'
 import GenerateNewProduct from '../p/index'
 
-function CopyLink({ value }) {
+function CopyLink ({ value }) {
   const { hasCopied, onCopy } = useClipboard(value)
 
   return (
@@ -61,7 +61,6 @@ export const SignInComponent = () => {
       w='100vw'
       maxWidth='800'
       h='100%'
-      marginTop
     >
       <Text style={{ marginTop: '2rem', fontWeight: 'bold' }}>New payment link</Text>
       <GenerateNewProduct uid={user.uid} />
@@ -145,12 +144,12 @@ export const SignInComponent = () => {
 }
 
 export default class ShopScreen extends PureComponent {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {}
   }
 
-  render() {
+  render () {
     const {
       loading,
       isAvailable,

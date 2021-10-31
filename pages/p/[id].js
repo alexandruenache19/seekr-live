@@ -35,7 +35,6 @@ export default class PaymentScreen extends PureComponent {
     async componentDidMount() {
         const { id } = this.props
         const productSn = await firebase.database().ref(`products/${id}`).once('value')
-        console.log('productSn', productSn.val())
         if (productSn.val()) {
             if (router.query && router.query.success) {
                 this.setState({

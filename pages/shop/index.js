@@ -7,6 +7,11 @@ import {
   Flex,
   Grid,
   Box,
+  Modal,
+  ModalBody,
+  ModalOverlay,
+  ModalCloseButton,
+  ModalContent,
   useClipboard
 } from '@chakra-ui/react'
 import { AiOutlineCheckCircle } from 'react-icons/ai'
@@ -19,26 +24,25 @@ import { useUser } from '../../context/userContext'
 import { FetchingActions } from '../../actions'
 import GenerateNewProduct from '../p/index'
 
-function CopyLink ({ value }) {
+function CopyLink({ value }) {
   const { hasCopied, onCopy } = useClipboard(value)
 
   return (
     <Button onClick={onCopy}>
-      {hasCopied ? 'Copied' : (
-        <FiLink style={{ fontSize: 18 }} />
-      )}
+      {hasCopied ? 'Copied' : <FiLink style={{ fontSize: 18 }} />}
     </Button>
   )
 }
 
 const { getShopProducts, getShopOrders } = FetchingActions
 
-export const SignInComponent = () => {
+export const SignInComponent = ({ isOnMobile }) => {
   const auth = useUser()
   const { user } = auth
   const router = useRouter()
   const [products, setProducts] = useState([])
   const [orders, setOrders] = useState([])
+  const [isModalOpen, setOpenModal] = useState(false)
   useEffect(async () => {
     if (user) {
       const products = await getShopProducts(user.uid)
@@ -57,27 +61,21 @@ export const SignInComponent = () => {
   }
 
   return (
-    <Stack
-      w='100vw'
-      maxWidth='800'
-      h='100%'
-    >
-      <Text style={{ marginTop: '2rem', fontWeight: 'bold' }}>New payment link</Text>
+    <Stack w='100vw' maxWidth='800' h='100%'>
+      <Text style={{ marginTop: '2rem', fontWeight: 'bold' }}>
+        New payment link
+      </Text>
       <GenerateNewProduct uid={user.uid} />
-      {/* <Button
-          style={{
-            backgroundColor: '#28A445',
-            width: '100%',
-            marginTop: '1rem'
-          }}
-          onClick={() => null}
-        >
-          <Text style={{ color: '#FFFFFF' }}>Add product</Text>
-        </Button> */}
       <Text style={{ marginTop: '2rem', fontWeight: 'bold' }}>Orders</Text>
       <Grid templateColumns='repeat(3, 1fr)' gap={6}>
         {orders.map(order => (
-          <Stack key={order.info.id} borderRadius='xl' bg='#FFF' p='6' boxShadow='lg'>
+          <Stack
+            key={order.info.id}
+            borderRadius='xl'
+            bg='#FFF'
+            p='6'
+            boxShadow='lg'
+          >
             <Text>{order.info.name}</Text>
             <Text>{order.info.phoneNumber}</Text>
           </Stack>
@@ -90,39 +88,52 @@ export const SignInComponent = () => {
         gap={6}
       >
         {products.map(product => (
-          <Box w='100%' h='250px' bg='#999' position='relative' key={product.id}>
+          <Box
+            w='100%'
+            h='250px'
+            bg='#999'
+            position='relative'
+            key={product.id}
+          >
             {product.quantity <= 0 ? (
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'rgba(0,0,0,0.45)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 15
-              }}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(0,0,0,0.45)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 15
+                }}
               >
                 <Text color='#FFFFFF'>Out of stock</Text>
               </div>
             ) : (
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'rgba(0,0,0,0.1)',
-                display: 'flex',
-                alignItems: 'flex-end',
-                justifyContent: 'space-between',
-                padding: 8,
-                borderRadius: 15
-              }}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  justifyContent: 'space-between',
+                  padding: 8,
+                  borderRadius: 15
+                }}
               >
-                <Stack style={{ backgroundColor: 'rgba(0,0,0,0.8)' }} py='6px' px='10px' borderRadius='xl'>
+                <Stack
+                  style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
+                  py='6px'
+                  px='10px'
+                  borderRadius='xl'
+                >
                   <Text color='#FFFFFF' fontSize={14}>
                     {`${product.quantity} remaining`}
                   </Text>
@@ -135,21 +146,49 @@ export const SignInComponent = () => {
                 </Stack> */}
               </div>
             )}
-            <img src={product.imageUrl} style={{ borderRadius: 15, width: '100%', objectFit: 'cover', height: '100%' }} />
+            <img
+              src={product.imageUrl}
+              style={{
+                borderRadius: 15,
+                width: '100%',
+                objectFit: 'cover',
+                height: '100%'
+              }}
+            />
           </Box>
         ))}
       </Grid>
+
+      <Modal
+        motionPreset='scale'
+        isCentered
+        isOpen={isModalOpen}
+        onClose={() => setOpenModal(false)}
+        size='2xl'
+      >
+        <ModalOverlay />
+        <ModalContent
+          p={isOnMobile ? 0 : 10}
+          py={isOnMobile ? 5 : 10}
+          borderRadius={isOnMobile ? 10 : 30}
+        >
+          <ModalCloseButton />
+          <ModalBody>
+            <Stack />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Stack>
   )
 }
 
 export default class ShopScreen extends PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {}
   }
 
-  render () {
+  render() {
     const {
       loading,
       isAvailable,
@@ -157,10 +196,11 @@ export default class ShopScreen extends PureComponent {
       product,
       paidProduct
     } = this.state
+    const { isOnMobile } = this.props
 
     return (
       <Stack justifyContent='center' alignItems='center'>
-        <SignInComponent />
+        <SignInComponent isOnMobile={isOnMobile} />
       </Stack>
     )
   }

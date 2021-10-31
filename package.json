@@ -10,6 +10,7 @@
   },
   "main": "server.js",
   "dependencies": {
+    "@chakra-ui/icons": "^1.0.16",
     "@chakra-ui/react": "^1.6.7",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
@@ -37,9 +38,11 @@
     "react-lottie": "^1.2.3",
     "react-modal-video": "^1.2.8",
     "react-native-web": "^0.17.1",
+    "react-phone-input-2": "^2.14.0",
     "react-places-autocomplete": "^7.3.0",
     "react-player": "^2.9.0",
     "react-share": "^4.4.0",
+    "react-verification-code-input": "^1.2.9",
     "stripe": "^8.184.0",
     "styled-components": "^5.3.1",
     "video.js": "^7.15.4"

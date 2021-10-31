@@ -17,7 +17,9 @@ import {
   useClipboard
 } from '@chakra-ui/react'
 import axios from 'axios'
+import imageCompression from 'browser-image-compression'
 import { generateId } from '../../actions/helper'
+import { HiOutlineCamera } from 'react-icons/hi'
 import firebase from '../../firebase/clientApp'
 
 const format = val => 'RON ' + val
@@ -53,6 +55,7 @@ export default class GeneratePaymentScreen extends PureComponent {
 
     this.handleFetchPost = this.handleFetchPost.bind(this)
     this.handleGeneratePaymentLink = this.handleGeneratePaymentLink.bind(this)
+    this.handleUploadImage = this.handleUploadImage.bind(this)
   }
 
   async componentDidMount () {
@@ -141,6 +144,72 @@ export default class GeneratePaymentScreen extends PureComponent {
     )
   }
 
+  async handleUploadImage (event) {
+    event.preventDefault()
+    const file = event.target.files[0]
+
+    if (file && file.name) {
+      const fileParts = file.name.split('.')
+      const fileName = fileParts[0]
+      const fileType = fileParts[1]
+
+      const options = {
+        maxSizeMB: 1, // (default: Number.POSITIVE_INFINITY)
+        fileType: 'image/jpeg' // optional, fileType override
+      }
+
+      options.maxSizeMB = 0.3
+
+      console.log('options', options)
+
+      const compressedFile = await imageCompression(file, options)
+      const resizedImageBase64 = await imageCompression.getDataUrlFromFile(compressedFile)
+
+      this.setState({
+        isUploadingImage: true
+      }, async () => {
+        const base64String = resizedImageBase64
+
+        const config = {
+          onUploadProgress: (event) => {
+            console.log('Current progress:', Math.round((event.loaded * 100) / event.total))
+          },
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity
+        }
+
+        const itemId = generateId(11)
+
+        const req = await axios({
+          method: 'post',
+          url: '/api/upload-image',
+          data: {
+            base64file: base64String,
+            objectId: itemId,
+            bucket: 'odin-images',
+            keyPrefix: 'images'
+          },
+          ...config
+        }).catch(err => console.log('err', err))
+
+        // const req = await axios.post(`/api/${auth.user.uid}/upload-image`, {
+        //   base64file: base64String,
+        //   objectId: itemId,
+        //   bucket: 'odin-images',
+        //   keyPrefix: 'images'
+        // }, config)
+
+        // console.log(req.data.data)
+
+        this.setState({
+          imageUrl: req.data.data,
+          isLinkFetched: true,
+          isUploadingImage: false
+        })
+      })
+    }
+  }
+
   render () {
     const {
       link,
@@ -153,6 +222,7 @@ export default class GeneratePaymentScreen extends PureComponent {
       isComplete,
       productLink
     } = this.state
+
     if (isComplete) {
       return (
         <Stack
@@ -279,6 +349,36 @@ export default class GeneratePaymentScreen extends PureComponent {
             <Text style={{ color: '#FFFFFF' }}>Generate Payment Link</Text>
           </Button>
         )}
+
+        <Stack style={{ width: '100%', height: 150, marginTop: '1rem' }}>
+          <label
+            className='image-upload'
+            style={{
+              ...styles.imageUploadLabel,
+              marginTop: 0,
+              backgroundImage: `url(${imageUrl})`
+            }}
+          >
+            <Flex style={{ ...styles.imageUploadLabel, borderRadius: 13, marginTop: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)' }}>
+              <HiOutlineCamera size={24} style={{ color: '#FFFFFF' }} />
+              <Text style={{ color: '#FFFFFF', marginTop: 7 }}>Upload Image</Text>
+              <input
+                onChange={this.handleUploadImage}
+                type='file'
+              />
+            </Flex>
+          </label>
+          {/* {collectionBgImage ? (
+            <Pressable
+              style={{ ...styles.removeImgBtn, backgroundColor: Colors.HIGH_EMPHASIS_WHITE }}
+              onPress={() => this.setState({
+                collectionBgImage: null
+              })}
+            >
+              <Text style={{ color: Colors.MAIN_BG_COLOR }}>Remove Cover</Text>
+            </Pressable>
+          ) : null} */}
+        </Stack>
       </Stack>
     )
   }

@@ -75,18 +75,31 @@ export default class PaymentScreen extends PureComponent {
       paidProduct: true,
       product: null,
       outOfStock: false,
-      isModalOpen: false
+      isModalOpen: false,
+      sellerUsername: null,
+      sellerPhotoUrl: null
     }
 
     this.handlePlaceOrder = this.handlePlaceOrder.bind(this)
   }
 
   async componentDidMount() {
-    const { id } = this.props;
+    const { id } = this.props
     const productSn = await firebase
       .database()
       .ref(`products/${id}`)
       .once('value');
+
+    /** get user information */
+    const sellerUsernameSn = await firebase
+      .database()
+      .ref(`users/${productSn.val().uid}/info/username`)
+      .once('value')
+
+    const sellerPhotoSn = await firebase
+      .database()
+      .ref(`users/${productSn.val().uid}/info/imageURL`)
+      .once('value')
 
     if (productSn.val()) {
       if (router.query && router.query.success) {
@@ -94,7 +107,9 @@ export default class PaymentScreen extends PureComponent {
           {
             product: productSn.val(),
             paidProduct: true,
-            loading: false
+            loading: false,
+            sellerUsername: sellerUsernameSn.val(),
+            sellerPhotoUrl: sellerPhotoSn.val()
           },
           async () => {
             const req = await axios.post("/api/retrive-session", {
@@ -152,12 +167,16 @@ export default class PaymentScreen extends PureComponent {
         this.setState({
           product: productSn.val(),
           paidProduct: false,
-          loading: false
+          loading: false,
+          sellerUsername: sellerUsernameSn.val(),
+          sellerPhotoUrl: sellerPhotoSn.val()
         });
       } else {
         this.setState({
           product: productSn.val(),
           paidProduct: false,
+          sellerUsername: sellerUsernameSn.val(),
+          sellerPhotoUrl: sellerPhotoSn.val()
         },
           () => {
             if (productSn.val().quantity >= 1) {
@@ -240,11 +259,14 @@ export default class PaymentScreen extends PureComponent {
       product,
       paidProduct,
       outOfStock,
-      isModalOpen
-    } = this.state;
+      isModalOpen,
+      sellerUsername,
+      sellerPhotoUrl
+    } = this.state
+
     const { isOnMobile } = this.props
     return (
-      <Stack align="center" w="100vw" h="100vh" justify="center">
+      <Stack align="center" w="100vw" h="100vh" justify="center" className='perfect-height-wrapper'>
         <CashOrderModal
           isOpen={isModalOpen}
           onClose={() => this.setState({ isModalOpen: false })}
@@ -293,7 +315,13 @@ export default class PaymentScreen extends PureComponent {
             </Stack>
           ) : (
             <Stack align="center" maxW="500px" px="1rem">
-              <Text textAlign="center">{product.name}</Text>
+              {sellerPhotoUrl ? (
+                <img src={sellerPhotoUrl} style={{ height: 42, width: 42, marginBlock: 5, borderRadius: '50%', objectFit: 'cover' }} />
+              ) : null}
+              <Text textAlign="center" fontWeight='bold' fontSize={18}>{product.name}</Text>
+              {sellerUsername ? (
+                <Text textAlign="center">{`sold by ${sellerUsername}`}</Text>
+              ) : null}
               <img
                 src={product.imageUrl}
                 style={{

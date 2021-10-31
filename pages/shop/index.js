@@ -19,7 +19,7 @@ import { useUser } from '../../context/userContext'
 import { FetchingActions } from '../../actions'
 import GenerateNewProduct from '../p/index'
 
-function CopyLink ({ value }) {
+function CopyLink({ value }) {
   const { hasCopied, onCopy } = useClipboard(value)
 
   return (
@@ -60,9 +60,10 @@ export const SignInComponent = () => {
     <Stack
       w='100vw'
       maxWidth='800'
-      h='100vh'
+      h='100%'
+      marginTop
     >
-
+      <Text style={{ marginTop: '2rem', fontWeight: 'bold' }}>New payment link</Text>
       <GenerateNewProduct uid={user.uid} />
       {/* <Button
           style={{
@@ -83,6 +84,7 @@ export const SignInComponent = () => {
           </Stack>
         ))}
       </Grid>
+      <Text style={{ marginTop: '2rem', fontWeight: 'bold' }}>Products</Text>
       <Grid
         style={{ marginTop: '2rem' }}
         templateColumns='repeat(3, 1fr)'
@@ -100,7 +102,8 @@ export const SignInComponent = () => {
                 backgroundColor: 'rgba(0,0,0,0.45)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                borderRadius: 15
               }}
               >
                 <Text color='#FFFFFF'>Out of stock</Text>
@@ -116,7 +119,8 @@ export const SignInComponent = () => {
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'space-between',
-                padding: 8
+                padding: 8,
+                borderRadius: 15
               }}
               >
                 <Stack style={{ backgroundColor: 'rgba(0,0,0,0.8)' }} py='6px' px='10px' borderRadius='xl'>
@@ -132,7 +136,7 @@ export const SignInComponent = () => {
                 </Stack> */}
               </div>
             )}
-            <img src={product.imageUrl} style={{ width: '100%', objectFit: 'cover', height: '100%' }} />
+            <img src={product.imageUrl} style={{ borderRadius: 15, width: '100%', objectFit: 'cover', height: '100%' }} />
           </Box>
         ))}
       </Grid>
@@ -141,12 +145,12 @@ export const SignInComponent = () => {
 }
 
 export default class ShopScreen extends PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {}
   }
 
-  render () {
+  render() {
     const {
       loading,
       isAvailable,

@@ -1,9 +1,10 @@
-import React, { PureComponent, useState } from "react";
+import React, { PureComponent, useState, useEffect } from "react";
 import {
   FormControl,
   FormLabel,
   Input,
   Stack,
+  Flex,
   Button,
   Text,
   Modal,
@@ -23,6 +24,7 @@ import firebase from "../../firebase/clientApp";
 import router from "next/router";
 import axios from "axios";
 import { OrderModalContent } from "../../components/modals/content";
+import moment from 'moment'
 const format = val => "RON " + val;
 const parse = val => val.replace(/RON /, "");
 
@@ -65,6 +67,34 @@ const CashOrderModal = ({ isOnMobile, ...props }) => {
   )
 }
 
+const CountDownTimer = ({ endTime }) => {
+  const calculateTimeLeft = () => {
+    let eventTime = endTime / 1000
+    let currentTime = +Date.now() / 1000
+    let leftTime = eventTime - currentTime;
+    let duration = moment.duration(leftTime, 'seconds');
+    let interval = 1000;
+    if (duration.asSeconds() <= 0) {
+      clearInterval(interval);
+      //window.location.reload(true); //#skip the cache and reload the page from the server
+    }
+    duration = moment.duration(duration.asSeconds() - 1, 'seconds');
+    return (duration.days() + ' Days ' + duration.hours() + ' Hours ' + duration.minutes() + ' Minutes ' + duration.seconds() + ' Seconds');
+  }
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+  useEffect(() => {
+    setTimeout(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+  });
+
+  return (
+    <Text fontWeight='bold' fontSize={20} textAlign='center'>{timeLeft}</Text>
+  )
+}
+
 export default class PaymentScreen extends PureComponent {
   constructor(props) {
     super(props);
@@ -77,7 +107,8 @@ export default class PaymentScreen extends PureComponent {
       outOfStock: false,
       isModalOpen: false,
       sellerUsername: null,
-      sellerPhotoUrl: null
+      sellerPhotoUrl: null,
+      newPrice: null
     }
 
     this.handlePlaceOrder = this.handlePlaceOrder.bind(this)
@@ -89,6 +120,8 @@ export default class PaymentScreen extends PureComponent {
       .database()
       .ref(`products/${id}`)
       .once('value');
+
+    const product = productSn.val()
 
     /** get user information */
     const sellerUsernameSn = await firebase
@@ -199,56 +232,78 @@ export default class PaymentScreen extends PureComponent {
   }
 
   async handlePlaceOrder(details) {
-    const { product } = this.state
+    const { product, newPrice } = this.state
     const phoneNumber = details.phoneNumber
     const address = details.address
     const { id } = product
 
-    await firebase
-      .database()
-      .ref(`users/${product.uid}/shop/orders/${phoneNumber}/info`)
-      .update({
-        id: phoneNumber,
-        name: details.name,
-        phoneNumber: phoneNumber,
-        status: 'pending',
-        address: `${address.line1} ${address.line2} ${address.city} ${address.country} ${address.state} ${address.postal_code}`,
-        shipping: address,
-        paymentType: 'cash-on-delivery'
+    if (product.isAuction) {
+      await firebase
+        .database()
+        .ref(`products/${product.id}`)
+        .update({
+          price: parseFloat(newPrice)
+        })
+
+      await firebase
+        .database()
+        .ref(`products/${product.id}/bids`)
+        .push({
+          ...details,
+          price: parseFloat(newPrice)
+        })
+
+      this.setState({
+        isModalOpen: false,
+        paidProduct: true
       })
+    } else {
+      await firebase
+        .database()
+        .ref(`users/${product.uid}/shop/orders/${phoneNumber}/info`)
+        .update({
+          id: phoneNumber,
+          name: details.name,
+          phoneNumber: phoneNumber,
+          status: 'pending',
+          address: `${address.line1} ${address.line2} ${address.city} ${address.country} ${address.state} ${address.postal_code}`,
+          shipping: address,
+          paymentType: 'cash-on-delivery'
+        })
 
-    const productRef = firebase
-      .database()
-      .ref(`users/${product.uid}/shop/orders/${phoneNumber}/products`).push()
+      const productRef = firebase
+        .database()
+        .ref(`users/${product.uid}/shop/orders/${phoneNumber}/products`).push()
 
-    await firebase
-      .database()
-      .ref(`users/${product.uid}/shop/orders/${phoneNumber}/products/${productRef.key}`)
-      .update({
-        id: productRef.key,
-        productId: id,
-        isPacked: false,
-        imageURL: product.imageUrl,
-        currency: product.currency || 'ron',
-        price: product.price,
-        quantity: 1,
-        paymentType: 'cash-on-delivery'
+      await firebase
+        .database()
+        .ref(`users/${product.uid}/shop/orders/${phoneNumber}/products/${productRef.key}`)
+        .update({
+          id: productRef.key,
+          productId: id,
+          isPacked: false,
+          imageURL: product.imageUrl,
+          currency: product.currency || 'ron',
+          price: product.price,
+          quantity: 1,
+          paymentType: 'cash-on-delivery'
+        })
+
+      await firebase
+        .database()
+        .ref(`products/${id}/quantity`)
+        .set(firebase.database.ServerValue.increment(-1));
+
+      await firebase
+        .database()
+        .ref(`users/${product.uid}/shop/products/${id}/quantity`)
+        .set(firebase.database.ServerValue.increment(-1))
+
+      this.setState({
+        paidProduct: true,
+        isModalOpen: false
       })
-
-    await firebase
-      .database()
-      .ref(`products/${id}/quantity`)
-      .set(firebase.database.ServerValue.increment(-1));
-
-    await firebase
-      .database()
-      .ref(`users/${product.uid}/shop/products/${id}/quantity`)
-      .set(firebase.database.ServerValue.increment(-1))
-
-    this.setState({
-      paidProduct: true,
-      isModalOpen: false
-    })
+    }
   }
 
   render() {
@@ -261,10 +316,12 @@ export default class PaymentScreen extends PureComponent {
       outOfStock,
       isModalOpen,
       sellerUsername,
-      sellerPhotoUrl
+      sellerPhotoUrl,
+      newPrice
     } = this.state
 
     const { isOnMobile } = this.props
+
     return (
       <Stack align="center" w="100vw" h="100vh" justify="center" className='perfect-height-wrapper'>
         <CashOrderModal
@@ -289,18 +346,18 @@ export default class PaymentScreen extends PureComponent {
         ) : null}
         {product ? (
           paidProduct ? (
-            <Stack align="center" maxW="500px" px="1rem">
+            <Stack align="center" maxW="500px" width='100%' px="1rem">
               <AiOutlineCheckCircle
                 style={{ fontSize: 40, color: "#28A445" }}
               />
-              <Text textAlign="center">Order confirmed</Text>
+              <Text textAlign="center">{product.isAuction ? 'Bid confirmed' : 'Order confirmed'}</Text>
               <img
                 src={product.imageUrl}
                 style={{
                   marginTop: "1.5rem",
                   // boxShadow: '0px 0px 36px -9px rgba(0,0,0,0.49)',
                   backgroundColor: "#999",
-                  maxWidth: "90%",
+                  maxWidth: "95%",
                   height: "auto",
                   maxHeight: 250,
                   borderRadius: 15,
@@ -308,13 +365,17 @@ export default class PaymentScreen extends PureComponent {
                   marginBottom: "1.5rem"
                 }}
               />
-              <Text textAlign="center">Thank you for your order!</Text>
+              <Text textAlign="center">{product.isAuction ? 'Thank you for your bid!' : 'Thank you for your order!'}</Text>
               <Text textAlign="center">
-                We'll contact you to confirm shipping details in the next 24h.
+                {product.isAuction ? (
+                  `We'll contact you when the auction is over to let you know if you won!`
+                ) : (
+                  `We'll contact you to confirm shipping details in the next 24h.`
+                )}
               </Text>
             </Stack>
           ) : (
-            <Stack align="center" maxW="500px" px="1rem">
+            <Stack align="center" maxW="500px" w='100%' px="1.5rem">
               {sellerPhotoUrl ? (
                 <img src={sellerPhotoUrl} style={{ height: 42, width: 42, marginBlock: 5, borderRadius: '50%', objectFit: 'cover' }} />
               ) : null}
@@ -328,23 +389,47 @@ export default class PaymentScreen extends PureComponent {
                   marginTop: "1.5rem",
                   // boxShadow: '0px 0px 36px -9px rgba(0,0,0,0.49)',
                   backgroundColor: "#999",
-                  maxWidth: "90%",
+                  maxWidth: "95%",
                   height: "auto",
                   maxHeight: 250,
                   borderRadius: 15,
                   objectFit: "cover",
-                  marginBottom: "1.5rem"
+                  marginBottom: "1.1rem"
                 }}
               />
-              <Text
-                textAlign="center"
-                fontSize={"18px"}
-              >
-                {`RON ${product.price}`}
-              </Text>
-              {!outOfStock ? (
-                <Text textAlign="center">{`Only ${product.quantity} left at this price!`}</Text>
-              ) : null}
+              {product.isAuction ? (
+                <Stack style={{ width: '100%' }}>
+                  {product.bids ? (
+                    <div style={{ width: '100%', marginBottom: '1rem' }}>
+                      <Text textAlign="center">{`Latest bids`}</Text>
+                      {Object.values(product.bids).slice(-3).map(bid => {
+                        return (
+                          <Flex key={bid.name} style={{ width: '100%', marginTop: 5 }} justify='space-between'>
+                            <Text>{bid.name}</Text>
+                            <Text fontWeight='bold'>{`${bid.price} RON`}</Text>
+                          </Flex>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    null
+                  )}
+                  <Text textAlign="center" color='#999'>{`Auction ending in`}</Text>
+                  <CountDownTimer endTime={product.auctionEndDate} />
+                </Stack>
+              ) : (
+                <Stack>
+                  <Text
+                    textAlign="center"
+                    fontSize={"18px"}
+                  >
+                    {`RON ${product.price}`}
+                  </Text>
+                  {!outOfStock ? (
+                    <Text textAlign="center">{`Only ${product.quantity} left at this price!`}</Text>
+                  ) : null}
+                </Stack>
+              )}
               {outOfStock ? (
                 <Button
                   style={{
@@ -357,13 +442,46 @@ export default class PaymentScreen extends PureComponent {
                 >
                   <Text style={{ color: "#FFFFFF" }}>{"Out of stock"}</Text>
                 </Button>
-              ) : (
-                <div>
+              ) : product.isAuction ? (
+                <div style={{ width: '100%', marginTop: '1.5rem' }}>
+                  <NumberInput
+                    placeholder='Your Bid'
+                    min={product.price + 10}
+                    value={newPrice || product.price + 10}
+                    onChange={number => {
+                      console.log('v', number)
+                      this.setState({ newPrice: number })
+                    }}
+                    _focus={{
+                      border: '1px solid #999',
+                      boxShadow: 'none'
+                    }}
+                  >
+                    <NumberInputField />
+                  </NumberInput>
                   <Button
                     style={{
                       backgroundColor: "#28A445",
                       width: "100%",
-                      marginTop: "1rem"
+                      marginTop: "0.5rem"
+                    }}
+                    onClick={
+                      () => this.setState({
+                        newPrice: this.state.newPrice || product.price + 10,
+                        isModalOpen: true
+                      })
+                    }
+                  >
+                    <Text style={{ color: "#FFFFFF" }}>{`Bid ${newPrice || product.price + 10} RON`}</Text>
+                  </Button>
+                </div>
+              ) : (
+                <div style={{ width: '100%' }}>
+                  <Button
+                    style={{
+                      backgroundColor: "#28A445",
+                      width: "100%",
+                      marginTop: "0.5rem"
                     }}
                     onClick={() => (window.location.href = product.paymentUrl)}
                   >
@@ -373,7 +491,7 @@ export default class PaymentScreen extends PureComponent {
                     style={{
                       backgroundColor: "#28A445",
                       width: "100%",
-                      marginTop: "1rem"
+                      marginTop: "0.5rem"
                     }}
                     onClick={() => this.setState({ isModalOpen: true })}
                   >

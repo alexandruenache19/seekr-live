@@ -1,5 +1,4 @@
 import Cors from 'cors'
-import axios from 'axios'
 import Instagram from 'instagram-web-api'
 
 // const instagram = require('user-instagram');
@@ -11,7 +10,7 @@ const cors = Cors({
 
 // Helper method to wait for a middleware to execute before continuing
 // And to throw an error when an error happens in a middleware
-function runMiddleware(req, res, fn) {
+function runMiddleware (req, res, fn) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result) => {
       if (result instanceof Error) {
@@ -23,7 +22,7 @@ function runMiddleware(req, res, fn) {
   })
 }
 
-export default async function handler(req, res) {
+export default async function handler (req, res) {
   // Run the middleware
   await runMiddleware(req, res, cors)
 

@@ -174,7 +174,7 @@ export default class GeneratePaymentScreen extends PureComponent {
     }
 
     return (
-      <Stack borderRadius="xl" bg="#FFF" overflow="hidden" p="6" boxShadow="lg">
+      <Stack borderRadius="xl" bg="#FFF" p="6" boxShadow="lg">
         {loading && (
           <Stack
             w="100%"
@@ -256,10 +256,10 @@ export default class GeneratePaymentScreen extends PureComponent {
               value={link}
               placeholder="Product Link"
               onChange={e => this.setState({ link: e.target.value })}
-              _focus={{
-                border: "1px solid #999",
-                boxShadow: "none"
-              }}
+              // _focus={{
+              //   border: "1px solid #999",
+              //   boxShadow: "none"
+              // }}
             />
           </FormControl>
         )}

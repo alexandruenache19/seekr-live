@@ -13,6 +13,19 @@ export const getShopProducts = async uid => {
   return [];
 };
 
+export const getShopOrders = async uid => {
+  const snapshot = await firebase
+    .database()
+    .ref(`users/${uid}/shop/orders`)
+    .once("value");
+
+  if (snapshot.exists()) {
+    const ordersObj = snapshot.val();
+    return Object.values(ordersObj);
+  }
+  return [];
+};
+
 // export const getSpaceItems = async (spaceId) => {
 //   const snapshot = await firebase.database().ref(`spaces/${spaceId}/collected`).once('value')
 //   if (snapshot.exists()) {

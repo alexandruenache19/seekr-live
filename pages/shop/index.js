@@ -17,17 +17,20 @@ import { useUser } from "../../context/userContext";
 import { FetchingActions } from "../../actions";
 import GenerateNewProduct from "../p/index";
 
-const { getShopProducts } = FetchingActions;
+const { getShopProducts, getShopOrders } = FetchingActions;
+
 export const SignInComponent = () => {
   const auth = useUser();
   const { user } = auth;
   const router = useRouter();
   const [products, setProducts] = useState([]);
-
+  const [orders, setOrders] = useState([]);
   useEffect(async () => {
     if (user) {
       const products = await getShopProducts(user.uid);
       setProducts(products);
+      const orders = await getShopOrders(user.uid);
+      setOrders(orders);
     }
   });
 
@@ -40,24 +43,22 @@ export const SignInComponent = () => {
   }
 
   return (
-    <Stack
-      w="100vw"
-      maxWidth="800"
-      h="100vh"
-      style={{
-        alignItems: "center",
-        backgroundColor: "#FFF"
-      }}
-    >
+    <Stack w="100vw" maxWidth="800" h="100vh" p={6}>
       <GenerateNewProduct uid={user.uid} />
-      <Grid
-        style={{ marginTop: "2rem" }}
-        templateColumns="repeat(3, 1fr)"
-        gap={6}
-      >
+      <Text style={{ marginTop: "2rem", fontWeight: "bold" }}>Orders</Text>
+      <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+        {orders.map(order => (
+          <Stack borderRadius="xl" bg="#FFF" p="6" boxShadow="lg">
+            <Text>{order.info.name}</Text>
+            <Text>{order.info.phoneNumber}</Text>
+          </Stack>
+        ))}
+      </Grid>
+      <Text style={{ marginTop: "2rem", fontWeight: "bold" }}>Products</Text>
+      <Grid templateColumns="repeat(3, 1fr)" gap={6}>
         {products.map(product => (
           <Box bg="#999">
-            <img src={product.imageUrl} style={{ objectFit: "contain" }} />
+            <img src={product.imageUrl} style={{ objectFit: "cover" }} />
           </Box>
         ))}
       </Grid>

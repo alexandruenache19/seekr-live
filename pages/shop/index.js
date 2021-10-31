@@ -42,18 +42,16 @@ export const SignInComponent = () => {
   return (
     <Stack
       w="100vw"
+      maxWidth="800"
       h="100vh"
       style={{
-        justifyContent: "'flex-start'",
         alignItems: "center",
-        backgroundColor: "#FFF",
-        padding: 40
+        backgroundColor: "#FFF"
       }}
     >
       <GenerateNewProduct uid={user.uid} />
       <Grid
         style={{ marginTop: "2rem" }}
-        w="100%"
         templateColumns="repeat(3, 1fr)"
         gap={6}
       >
@@ -82,7 +80,11 @@ export default class ShopScreen extends PureComponent {
       paidProduct
     } = this.state;
 
-    return <SignInComponent />;
+    return (
+      <Stack justifyContent="center" alignItems="center">
+        <SignInComponent />
+      </Stack>
+    );
   }
 }
 

@@ -115,7 +115,24 @@ export default class GeneratePaymentScreen extends PureComponent {
             price: parseFloat(price),
             imageUrl: imageUrl,
             quantity: parseFloat(quantity),
-            paymentUrl: req.data.url
+            paymentUrl: req.data.url,
+            uid: this.props.uid,
+            timestamp: +new Date()
+          })
+
+        await firebase
+          .database()
+          .ref(`users/${this.props.uid}/shop/products/${productId}`)
+          .update({
+            url: link,
+            id: productId,
+            name: title,
+            price: parseFloat(price),
+            imageUrl: imageUrl,
+            quantity: parseFloat(quantity),
+            paymentUrl: req.data.url,
+            uid: this.props.uid,
+            timestamp: +new Date()
           })
 
         //   try {

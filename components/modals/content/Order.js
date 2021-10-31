@@ -9,7 +9,8 @@ import {
   useToast,
   Stack,
   Button,
-  Text
+  Text,
+  Flex
 } from '@chakra-ui/react'
 
 import PlacesAutocomplete, {
@@ -118,14 +119,19 @@ const OrderModalContent = ({
   totalPrice,
   orderQuantity,
   setDetailsInHomeState,
+  handlePlaceOrder,
   ...props
 }) => {
   const toast = useToast()
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState(props.name || null)
   const [phoneNumber, setPhoneNumber] = useState(props.phoneNumber || null)
-  const [address, setAddress] = useState(props.address || null)
-  const [addressDetails, setAddressDetails] = useState(props.addressDetails || null)
+
+  const [country, setCountry] = useState(props.country || null)
+  const [addressLine1, setAddressLine1] = useState(props.addressLine1 || null)
+  const [addressLine2, setAddressLine2] = useState(props.addressLine2 || null)
+  const [city, setCity] = useState(props.city || null)
+  const [postalCode, setPostalCode] = useState(props.postalCode || null)
 
   const handleDone = async () => {
     /**
@@ -134,16 +140,25 @@ const OrderModalContent = ({
      */
 
     if (
-      name === null || phoneNumber === null || address === null ||
-      name === '' || phoneNumber === '' || address === ''
+      name === null || phoneNumber === null || country === null || city === null || postalCode === null || addressLine1 === null ||
+      name === '' || phoneNumber === '' || country === '' || city === '' || postalCode === '' || addressLine1 === ''
     ) {
       alert('Please fill in all required fields')
     } else {
       await addOrder(eventInfo.id, {
-        address: address,
-        addressDetails: addressDetails,
+        id: phoneNumber,
         name: name,
         phoneNumber: phoneNumber,
+        status: 'pending',
+        address: `${addressLine1} ${addressLine2} ${city} ${country} ${postalCode}`,
+        shipping: {
+          city: city,
+          country: country,
+          line1: addressLine1,
+          line2: addressLine2,
+          postalCode: postalCode
+        },
+        price: totalPrice,
         priceToPay: totalPrice,
         quantity: orderQuantity,
         productId: productInfo.id,
@@ -152,8 +167,13 @@ const OrderModalContent = ({
       })
 
       setDetailsInHomeState({
-        address: address,
-        addressDetails: addressDetails,
+        city: city,
+        country: country,
+        addressLine1: addressLine1,
+        addressLine2: addressLine2,
+        postalCode: postalCode,
+        // address: address,
+        // addressDetails: addressDetails,
         name: name,
         phoneNumber: phoneNumber
       })
@@ -180,15 +200,55 @@ const OrderModalContent = ({
     <Stack>
       <Stack style={{ overflow: 'scroll', maxHeight: '60vh', paddingBottom: '1rem' }}>
         <FormControl id='name' isRequired>
-          <FormLabel>Name</FormLabel>
           <Input
             value={name}
             placeholder='Name'
             onChange={(e) => setName(e.target.value)}
           />
         </FormControl>
+        <FormControl style={styles.formRow} id='country'>
+          <Input
+            placeholder='Country'
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+          />
+
+        </FormControl>
+        <FormControl style={styles.formRow} id='address-line-1'>
+          <Input
+            placeholder='Address line 1'
+            value={addressLine1}
+            onChange={(e) => setAddressLine1(e.target.value)}
+          />
+
+        </FormControl>
+        <FormControl style={styles.formRow} id='address-line-2'>
+          <Input
+            placeholder='Address line 2'
+            value={addressLine2}
+            onChange={(e) => setAddressLine2(e.target.value)}
+          />
+
+        </FormControl>
+        <Flex>
+          <FormControl style={styles.formRow} id='city'>
+            <Input
+              placeholder='City'
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+            />
+
+          </FormControl>
+          <FormControl style={styles.formRow} id='postal-code'>
+            <Input
+              placeholder='Postal Code'
+              value={postalCode}
+              onChange={(e) => setPostalCode(e.target.value)}
+            />
+
+          </FormControl>
+        </Flex>
         <FormControl style={styles.formRow} id='phone' isRequired>
-          <FormLabel>Phone Number (Please include country code)</FormLabel>
           <Input
             placeholder='Phone Number'
             value={phoneNumber}
@@ -196,24 +256,27 @@ const OrderModalContent = ({
           />
           <FormHelperText>The seller may contact you about your order</FormHelperText>
         </FormControl>
-        <FormControl style={styles.formRow} id='address' isRequired>
-          <FormLabel>Delivery Address</FormLabel>
-          <LocationSearchInput
-            address={address}
-            setAddress={setAddress}
-          />
-        </FormControl>
-        <FormControl style={styles.formRow} id='address-details'>
-          <FormLabel>Other Address Details</FormLabel>
-          <Input
-            placeholder='House Number, Flat, County, etc.'
-            value={addressDetails}
-            onChange={(e) => setAddressDetails(e.target.value)}
-          />
-          <FormHelperText>Any details you want to add about your delivery</FormHelperText>
-        </FormControl>
       </Stack>
-      <Button style={{ backgroundColor: '#28A445' }} onClick={handleDone}>
+      <Button
+        style={{ backgroundColor: '#28A445' }}
+        onClick={() => {
+          if (handlePlaceOrder) {
+            handlePlaceOrder({
+              name: name,
+              phoneNumber: phoneNumber,
+              address: {
+                city: city,
+                country: country,
+                line1: addressLine1,
+                line2: addressLine2,
+                postalCode: postalCode
+              }
+            })
+          } else {
+            handleDone()
+          }
+        }}
+      >
         <Text style={{ color: '#FFFFFF' }}>
           {'Place Order'}
         </Text>
@@ -224,7 +287,7 @@ const OrderModalContent = ({
 
 const styles = {
   formRow: {
-    marginTop: '1rem'
+
   }
 }
 

@@ -13,6 +13,8 @@ import axios from 'axios'
 
 import { useUser } from '../../context/userContext'
 
+import GenerateNewProduct from '../p/index'
+
 export const SignInComponent = () => {
   const auth = useUser()
 
@@ -22,9 +24,13 @@ export const SignInComponent = () => {
   //     router.push('/signin')
   //   }
 
-  useEffect(() => {
-    console.log('auth', auth)
-  }, [])
+  //   useEffect(() => {
+  //     console.log('auth', auth)
+  //   }, [])
+
+  console.log('auth', auth)
+
+  const { user } = auth
 
   if (auth.loadingUser) {
     return (
@@ -35,7 +41,11 @@ export const SignInComponent = () => {
   }
 
   return (
-    <Stack bg='red' width='100vw' h='100vh' />
+    <Stack bg='red' width='100vw' h='100vh'>
+      <Stack>
+        <GenerateNewProduct uid={user.uid} />
+      </Stack>
+    </Stack>
   )
 }
 

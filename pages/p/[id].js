@@ -6,6 +6,11 @@ import {
   Stack,
   Button,
   Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  ModalCloseButton,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -17,8 +22,48 @@ import { AiOutlineCheckCircle } from "react-icons/ai";
 import firebase from "../../firebase/clientApp";
 import router from "next/router";
 import axios from "axios";
+import { OrderModalContent } from "../../components/modals/content";
 const format = val => "RON " + val;
 const parse = val => val.replace(/RON /, "");
+
+const CashOrderModal = ({ isOnMobile, ...props }) => {
+  return (
+    <Modal
+      // initialFocusRef={initialRef}
+      // finalFocusRef={finalRef}
+      motionPreset='scale'
+      isCentered
+      isOpen={props.isOpen}
+      onClose={props.onClose}
+      size='2xl'
+    >
+      <ModalOverlay />
+      <ModalContent
+        p={isOnMobile ? 0 : 10}
+        py={isOnMobile ? 5 : 10}
+        borderRadius={isOnMobile ? 10 : 30}
+        {...styles}
+      >
+        {/* <ModalHeader>
+          <Text>{info[type].title}</Text>
+          <Text fontSize={14} fontWeight='normal'>
+            {info[type].subtitle}
+          </Text>
+        </ModalHeader> */}
+        <ModalCloseButton />
+        <ModalBody>
+          <OrderModalContent {...props} />
+          {/* {renderContent(type, {
+            ...props,
+            isOnMobile,
+            onClose,
+            callback
+          })} */}
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  )
+}
 
 export default class PaymentScreen extends PureComponent {
   constructor(props) {
@@ -28,8 +73,12 @@ export default class PaymentScreen extends PureComponent {
       isAvailable: false,
       paymentUrl: null,
       paidProduct: true,
-      product: null
-    };
+      product: null,
+      outOfStock: false,
+      isModalOpen: false
+    }
+
+    this.handlePlaceOrder = this.handlePlaceOrder.bind(this)
   }
 
   async componentDidMount() {
@@ -37,7 +86,7 @@ export default class PaymentScreen extends PureComponent {
     const productSn = await firebase
       .database()
       .ref(`products/${id}`)
-      .once("value");
+      .once('value');
 
     if (productSn.val()) {
       if (router.query && router.query.success) {
@@ -50,12 +99,53 @@ export default class PaymentScreen extends PureComponent {
           async () => {
             const req = await axios.post("/api/retrive-session", {
               sessionId: router.query.session_id
-            });
+            })
+
+            console.log('req', req.data)
+            if (req && req.data) {
+              const phoneNumber = req.data.customer_details.phone
+              const address = req.data.shipping.address
+              await firebase
+                .database()
+                .ref(`users/${productSn.val().uid}/shop/orders/${phoneNumber}/info`)
+                .update({
+                  id: phoneNumber,
+                  name: req.data.shipping.name,
+                  phoneNumber: phoneNumber,
+                  status: 'pending',
+                  address: `${address.line1} ${address.line2} ${address.city} ${address.country} ${address.state} ${address.postal_code}`,
+                  shipping: address,
+                  paymentType: 'card'
+                })
+
+              const productRef = firebase
+                .database()
+                .ref(`users/${productSn.val().uid}/shop/orders/${phoneNumber}/products`).push()
+
+              await firebase
+                .database()
+                .ref(`users/${productSn.val().uid}/shop/orders/${phoneNumber}/products/${productRef.key}`)
+                .update({
+                  id: productRef.key,
+                  productId: id,
+                  isPacked: false,
+                  imageURL: productSn.val().imageUrl,
+                  currency: req.data.currency,
+                  price: req.data.amount_total / 100,
+                  quantity: 1,
+                  paymentType: 'card'
+                })
+            }
 
             await firebase
               .database()
               .ref(`products/${id}/quantity`)
               .set(firebase.database.ServerValue.increment(-1));
+
+            await firebase
+              .database()
+              .ref(`users/${productSn.val().uid}/shop/products/${id}/quantity`)
+              .set(firebase.database.ServerValue.increment(-1))
           }
         );
       } else if (router.query && router.query.canceled) {
@@ -65,26 +155,81 @@ export default class PaymentScreen extends PureComponent {
           loading: false
         });
       } else {
-        this.setState(
-          {
-            product: productSn.val(),
-            paidProduct: false
-          },
+        this.setState({
+          product: productSn.val(),
+          paidProduct: false,
+        },
           () => {
             if (productSn.val().quantity >= 1) {
               // window.open(productSn.val().paymentUrl)
               // let newTab = window.open('_self');
-              window.location.href = productSn.val().paymentUrl;
-              // this.setState({
-              //     paymentUrl: productSn.val().paymentUrl,
-              //     isAvailable: true,
-              //     loading: false
-              // })
+              // window.location.href = productSn.val().paymentUrl;
+              this.setState({
+                loading: false
+              })
+            } else {
+              this.setState({
+                loading: false,
+                outOfStock: true
+              })
             }
           }
         );
       }
     }
+  }
+
+  async handlePlaceOrder(details) {
+    const { product } = this.state
+    const phoneNumber = details.phoneNumber
+    const address = details.address
+    const { id } = product
+
+    await firebase
+      .database()
+      .ref(`users/${product.uid}/shop/orders/${phoneNumber}/info`)
+      .update({
+        id: phoneNumber,
+        name: details.name,
+        phoneNumber: phoneNumber,
+        status: 'pending',
+        address: `${address.line1} ${address.line2} ${address.city} ${address.country} ${address.state} ${address.postal_code}`,
+        shipping: address,
+        paymentType: 'cash-on-delivery'
+      })
+
+    const productRef = firebase
+      .database()
+      .ref(`users/${product.uid}/shop/orders/${phoneNumber}/products`).push()
+
+    await firebase
+      .database()
+      .ref(`users/${product.uid}/shop/orders/${phoneNumber}/products/${productRef.key}`)
+      .update({
+        id: productRef.key,
+        productId: id,
+        isPacked: false,
+        imageURL: product.imageUrl,
+        currency: product.currency || 'ron',
+        price: product.price,
+        quantity: 1,
+        paymentType: 'cash-on-delivery'
+      })
+
+    await firebase
+      .database()
+      .ref(`products/${id}/quantity`)
+      .set(firebase.database.ServerValue.increment(-1));
+
+    await firebase
+      .database()
+      .ref(`users/${product.uid}/shop/products/${id}/quantity`)
+      .set(firebase.database.ServerValue.increment(-1))
+
+    this.setState({
+      paidProduct: true,
+      isModalOpen: false
+    })
   }
 
   render() {
@@ -93,10 +238,19 @@ export default class PaymentScreen extends PureComponent {
       isAvailable,
       paymentUrl,
       product,
-      paidProduct
+      paidProduct,
+      outOfStock,
+      isModalOpen
     } = this.state;
+    const { isOnMobile } = this.props
     return (
       <Stack align="center" w="100vw" h="100vh" justify="center">
+        <CashOrderModal
+          isOpen={isModalOpen}
+          onClose={() => this.setState({ isModalOpen: false })}
+          isOnMobile={isOnMobile}
+          handlePlaceOrder={this.handlePlaceOrder}
+        />
         {loading ? (
           <Stack
             w="100%"
@@ -157,18 +311,48 @@ export default class PaymentScreen extends PureComponent {
               <Text
                 textAlign="center"
                 fontSize={"18px"}
-              >{`RON ${product.price}`}</Text>
-              <Text textAlign="center">{`Only ${product.quantity} left at this price!`}</Text>
-              <Button
-                style={{
-                  backgroundColor: "#28A445",
-                  width: "100%",
-                  marginTop: "1rem"
-                }}
-                onClick={() => (window.location.href = product.paymentUrl)}
               >
-                <Text style={{ color: "#FFFFFF" }}>{"Buy Now"}</Text>
-              </Button>
+                {`RON ${product.price}`}
+              </Text>
+              {!outOfStock ? (
+                <Text textAlign="center">{`Only ${product.quantity} left at this price!`}</Text>
+              ) : null}
+              {outOfStock ? (
+                <Button
+                  style={{
+                    backgroundColor: "#28A445",
+                    width: "100%",
+                    marginTop: "1rem"
+                  }}
+                  disabled
+                  onClick={() => null}
+                >
+                  <Text style={{ color: "#FFFFFF" }}>{"Out of stock"}</Text>
+                </Button>
+              ) : (
+                <div>
+                  <Button
+                    style={{
+                      backgroundColor: "#28A445",
+                      width: "100%",
+                      marginTop: "1rem"
+                    }}
+                    onClick={() => (window.location.href = product.paymentUrl)}
+                  >
+                    <Text style={{ color: "#FFFFFF" }}>{"Pay by card"}</Text>
+                  </Button>
+                  <Button
+                    style={{
+                      backgroundColor: "#28A445",
+                      width: "100%",
+                      marginTop: "1rem"
+                    }}
+                    onClick={() => this.setState({ isModalOpen: true })}
+                  >
+                    <Text style={{ color: "#FFFFFF" }}>{"Cash on delivery (Ramburs)"}</Text>
+                  </Button>
+                </div>
+              )}
             </Stack>
           )
         ) : null}

@@ -1,4 +1,4 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY_DEVELOPMENT)
 
 export default async function handler(req, res) {
   const { quantity, price, name, imageUrl, productId } = req.body

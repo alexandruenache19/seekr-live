@@ -1,5 +1,18 @@
-// import firebase from '../firebase/clientApp'
-//
+import firebase from "../firebase/clientApp";
+
+export const getShopProducts = async uid => {
+  const snapshot = await firebase
+    .database()
+    .ref(`users/${uid}/shop/products`)
+    .once("value");
+
+  if (snapshot.exists()) {
+    const productsObj = snapshot.val();
+    return Object.values(productsObj);
+  }
+  return [];
+};
+
 // export const getSpaceItems = async (spaceId) => {
 //   const snapshot = await firebase.database().ref(`spaces/${spaceId}/collected`).once('value')
 //   if (snapshot.exists()) {

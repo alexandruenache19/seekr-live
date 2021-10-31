@@ -75,7 +75,8 @@ export const addOrder = async (eventId, orderData) => {
       info: {
         id: orderData.phoneNumber,
         address: orderData.address,
-        addressDetails: orderData.addressDetails,
+        addressDetails: orderData.addressDetails || '',
+        shipping: orderData.shipping,
         name: orderData.name,
         phoneNumber: orderData.phoneNumber,
         status: 'pending'

@@ -177,23 +177,23 @@ const OrderModalContent = ({
         name: name,
         phoneNumber: phoneNumber
       })
+
+      addComment(
+        {
+          text: orderQuantity === 1 ? 'I just ordered this!' : `I just ordered ${orderQuantity} of these`,
+          username: name
+        },
+        eventInfo.id
+      )
+
+      toast({
+        title: 'Order Places Successfully!',
+        status: 'success',
+        duration: 3000,
+        isClosable: false
+      })
+      onCloseModal()
     }
-
-    addComment(
-      {
-        text: orderQuantity === 1 ? 'I just ordered this!' : `I just ordered ${orderQuantity} of these`,
-        username: name
-      },
-      eventInfo.id
-    )
-
-    toast({
-      title: 'Order Places Successfully!',
-      status: 'success',
-      duration: 3000,
-      isClosable: false
-    })
-    onCloseModal()
   }
 
   return (

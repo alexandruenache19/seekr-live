@@ -1,17 +1,29 @@
 import React, { Component } from 'react'
 import { withRouter } from 'next/router'
-import { Flex, Stack, Text, Avatar, Center, Button } from '@chakra-ui/react'
+import {
+  Flex,
+  Stack,
+  Text,
+  Avatar,
+  Center,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalCloseButton,
+  ModalBody
+} from '@chakra-ui/react'
 import Lottie from 'react-lottie'
-import { FaShareSquare, FaPlus, FaMinus } from 'react-icons/fa'
+import { FaPlus, FaMinus } from 'react-icons/fa'
 import { FiEye, FiShare } from 'react-icons/fi'
-import { AiFillTags } from 'react-icons/ai'
 import * as animationData from './live.json'
 import { MessageInput, CommentsList } from '../../../components'
 import firebase from '../../../firebase/clientApp'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
+import StripeCheckout from '../../checkout'
 
 class LiveScreen extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -20,14 +32,15 @@ class LiveScreen extends Component {
       address: null,
       addressDetails: null,
       name: null,
-      phoneNumber: null
+      phoneNumber: null,
+      isCheckoutModalOpen: false
     }
     this.handleOrder = this.handleOrder.bind(this)
     this.handleShare = this.handleShare.bind(this)
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -81,7 +94,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate (prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -102,7 +115,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -111,8 +124,14 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder() {
-    const { eventInfo } = this.props
+  handleOrder () {
+    const { eventInfo, sellerInfo } = this.props
+    // this.setState({ isCheckoutModalOpen: true })
+
+    // return false
+
+    console.log('sellerInfo', sellerInfo)
+
     const {
       productInfo,
       orderQuantity,
@@ -125,7 +144,9 @@ class LiveScreen extends Component {
       name,
       phoneNumber
     } = this.state
-    this.props.onOpenModal('order', {
+    // this.props.onOpenModal('order', {
+    this.props.onOpenModal('payment', {
+      sellerUsername: sellerInfo.username,
       productInfo: productInfo,
       eventInfo: eventInfo,
       orderQuantity: orderQuantity,
@@ -138,6 +159,7 @@ class LiveScreen extends Component {
       addressLine2: addressLine2,
       name: name,
       phoneNumber: phoneNumber,
+      sellerStripeId: sellerInfo.stripeId,
       setDetailsInHomeState: (details) => {
         this.setState({
           address: details.address,
@@ -153,7 +175,7 @@ class LiveScreen extends Component {
     })
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -161,11 +183,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  render() {
+  render () {
     const {
       isOnMobile,
       sellerInfo,
@@ -173,7 +195,7 @@ class LiveScreen extends Component {
       comments,
       username
     } = this.props
-    const { productInfo, orderQuantity, viewers } = this.state
+    const { productInfo, orderQuantity, viewers, isCheckoutModalOpen } = this.state
 
     if (isOnMobile) {
       return (
@@ -454,51 +476,6 @@ class LiveScreen extends Component {
     return (
       <Flex bg='#FFF' h='100vh' w='100vw' justify='space-between'>
         <Stack w='70vw'>
-          {/* <Flex
-            justify='space-between'
-            alignItems='center'
-            p='20px'
-            h='15vh'
-            w='100%'
-          >
-            <Text fontWeight='bold' fontSize='2xl'>
-              seekr.
-            </Text>
-            <Flex
-              h='100%'
-              p='10px'
-              w='85%'
-              bg='#F2F4F9'
-              borderRadius='xl'
-              overflow='hidden'
-              justify='space-between'
-            >
-              <Flex>
-                <Avatar name={sellerInfo.name} src={sellerInfo.imageURL} />
-                <Stack ml='10px'>
-                  <Text fontWeight='bold' fontSize={20}>
-                    {eventInfo.title} by @{sellerInfo.username}
-                  </Text>
-                  <Text color='#718096' fontSize={14} style={{ marginTop: 0 }}>
-                    {sellerInfo.category}
-                  </Text>
-                </Stack>
-              </Flex>
-              <Center>
-                <Button
-                  h='3em'
-                  shadow='md'
-                  ml='1em'
-                  borderRadius='1.5em'
-                  bg='#FFF'
-                  onClick={this.handleShare}
-                >
-                  <Text pr='5px'>Share</Text>
-                  <FaShareSquare size={30} />
-                </Button>
-              </Center>
-            </Flex>
-          </Flex> */}
           <Center
             p='20px'
             pb={0}

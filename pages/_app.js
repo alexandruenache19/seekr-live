@@ -1,6 +1,7 @@
 import UserProvider from '../context/userContext'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import '../styles/styles.css'
+import '../styles/checkout.css'
 
 import 'react-modal-video/css/modal-video.css'
 

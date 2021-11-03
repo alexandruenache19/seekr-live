@@ -18,7 +18,8 @@ import {
   FollowModalContent,
   CommentModelContent,
   TextModalContent,
-  EmailModalContent
+  EmailModalContent,
+  PaymentModalContent
 } from './content'
 
 const info = {
@@ -43,6 +44,7 @@ const info = {
     subtitle: 'Get an email 5 minutes before the event starts.'
   },
   order: { title: 'Complete Your Order', subtitle: '' },
+  payment: { title: 'Complete Your Order', subtitle: '' },
   follow: { title: 'Download the app to follow', subtitle: 'Down' }
 }
 
@@ -62,6 +64,8 @@ const renderContent = (type, props) => {
       return <FollowModalContent {...props} />
     case 'order':
       return <OrderModalContent {...props} />
+    case 'payment':
+      return <PaymentModalContent {...props} />
     default:
   }
 }
@@ -74,7 +78,7 @@ const CustomModal = ({ isOnMobile, callback }, ref) => {
   const finalRef = React.useRef()
 
   useImperativeHandle(ref, () => ({
-    openModal(type, props) {
+    openModal (type, props) {
       setType(type)
       setProps({ ...props, onCloseModal: onClose })
       onOpen()

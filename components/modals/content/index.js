@@ -1,6 +1,7 @@
 export { default as CalendarModalContent } from './AddToCalendar'
 export { default as ShareModalContent } from './Share'
 export { default as OrderModalContent } from './Order'
+export { default as PaymentModalContent } from './Payment'
 
 export { default as CommentModelContent } from './Comment'
 export { default as TextModalContent } from './Text'

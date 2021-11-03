@@ -15,7 +15,7 @@ import {
   getEventInfo,
   getSellerInfo
 } from "../../../fetchData/getData";
-import { addComment } from '../../../actions/event'
+import { addComment } from "../../../actions/event";
 import firebase from "../../../firebase/clientApp";
 
 class EventPage extends PureComponent {
@@ -94,7 +94,7 @@ class EventPage extends PureComponent {
       sellerInfo,
       currentProductId
     } = this.state;
-
+    console.log(eventInfo.status);
     switch (eventInfo.status) {
       case "scheduled":
         return (
@@ -129,8 +129,17 @@ class EventPage extends PureComponent {
             username={username}
           />
         );
-
       default:
+        return (
+          <EventScreen
+            isOnMobile={isOnMobile}
+            onOpenModal={this.handleOpenModal}
+            sellerInfo={sellerInfo}
+            eventInfo={eventInfo}
+            comments={comments}
+            username={username}
+          />
+        );
     }
   }
 
@@ -149,7 +158,7 @@ class EventPage extends PureComponent {
     if (loading || !eventInfo || !sellerInfo) {
       return (
         <Center bg="#FFF" w="100vw" h="100vh">
-          <Spinner color='#121212' size='md' />
+          <Spinner color="#121212" size="md" />
         </Center>
       );
     }

@@ -403,7 +403,7 @@ const PaymentModalContent = ({ sellerUsername, ...props }) => {
     clientSecret,
     appearance
   };
-  console.log(options);
+
   return (
     <div className="CustomCheckout">
       <CheckoutForm

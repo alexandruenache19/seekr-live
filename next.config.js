@@ -4,7 +4,9 @@ module.exports = {
   },
   distDir: "nextjs",
   env: {
-    FIREBASE_PROJECT_ID: "seekr-live"
+    FIREBASE_PROJECT_ID: "seekr-live",
+    STRIPE_PUBLISHABLE_KEY:
+      "pk_live_51JqH7mJS5YvXoP5fXZxVMzl7NZJBEf5y439bUpgYhYf7MDIy5hcusqMs8CwexRjGZPD9vBP53Fu8SkzkdBucDVbL00RjfEQC7C"
   },
   experimental: {
     sprFlushToDisk: false

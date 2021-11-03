@@ -27,9 +27,7 @@ import { addComment } from "../../../actions/event";
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
 // loadStripe is initialized with a fake API key.
-const stripePromise = loadStripe(
-  "pk_test_51JqH7mJS5YvXoP5fVpadoRegDsa1Pc3Cx796EaHQkglDBlYM9in7D1luOVJ6tLHnCmzk6CSocyyerFRO22GzZwnQ00u21tRbNV"
-);
+const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY);
 
 const StripeCardCheckout = ({ handleSubmitOrder, returnUrl }) => {
   /** stripe logic */

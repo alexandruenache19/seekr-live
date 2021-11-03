@@ -1,7 +1,5 @@
 // This is a sample test API key.
-const stripe = require("stripe")(
-  "sk_test_51JqH7mJS5YvXoP5fFrT7swMVfhHemWiIKwp4Saxh2TiyBzX6bpT0ZobpzihUWZJbWyIR7aDmaGwIFUQinYe5B0rM00ilvMB45I"
-);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
   const { item, sellerStripeId } = req.body;

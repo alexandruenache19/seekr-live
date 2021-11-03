@@ -14,7 +14,6 @@ export const SignInComponent = () => {
   const auth = useUser();
 
   const router = useRouter();
-  // auth.signOut();
 
   if (auth.loadingUser) {
     return (

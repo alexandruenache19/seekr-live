@@ -1,7 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 export default async function handler (req, res) {
-  const { quantity, price, name, imageUrl, productId } = req.body
+  const { quantity, price, name, imageUrl, productId, stripeSellerId } = req.body
   console.log('req', req.body)
   if (req.method === 'POST') {
     try {
@@ -11,10 +11,10 @@ export default async function handler (req, res) {
           allowed_countries: ['RO']
         },
         payment_intent_data: {
-          on_behalf_of: 'acct_1JqLwaR2ZKxkbXte',
-          // application_fee_amount: parseFloat(price) * 100 * 0.001,
+          on_behalf_of: stripeSellerId,
+          application_fee_amount: parseFloat(price) * 4,
           transfer_data: {
-            destination: 'acct_1JqLwaR2ZKxkbXte'
+            destination: stripeSellerId
           }
         },
         line_items: [

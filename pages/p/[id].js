@@ -101,13 +101,13 @@ export default class PaymentScreen extends PureComponent {
     this.state = {
       loading: true,
       isAvailable: false,
-      paymentUrl: null,
       paidProduct: true,
       product: null,
       outOfStock: false,
       isModalOpen: false,
       sellerUsername: null,
       sellerPhotoUrl: null,
+      stripeSellerId: null,
       newPrice: null
     }
 
@@ -134,6 +134,11 @@ export default class PaymentScreen extends PureComponent {
       .ref(`users/${productSn.val().uid}/info/imageURL`)
       .once('value')
 
+    const sellerStripeIdSn = await firebase
+      .database()
+      .ref(`users/${productSn.val().uid}/info/stripeId`)
+      .once('value')
+
     if (productSn.val()) {
       if (router.query && router.query.success) {
         this.setState(
@@ -142,7 +147,8 @@ export default class PaymentScreen extends PureComponent {
             paidProduct: true,
             loading: false,
             sellerUsername: sellerUsernameSn.val(),
-            sellerPhotoUrl: sellerPhotoSn.val()
+            sellerPhotoUrl: sellerPhotoSn.val(),
+            stripeSellerId: sellerStripeIdSn.val()
           },
           async () => {
             const req = await axios.post("/api/retrive-session", {
@@ -202,6 +208,7 @@ export default class PaymentScreen extends PureComponent {
           paidProduct: false,
           loading: false,
           sellerUsername: sellerUsernameSn.val(),
+          stripeSellerId: sellerStripeIdSn.val(),
           sellerPhotoUrl: sellerPhotoSn.val()
         });
       } else {
@@ -209,13 +216,11 @@ export default class PaymentScreen extends PureComponent {
           product: productSn.val(),
           paidProduct: false,
           sellerUsername: sellerUsernameSn.val(),
+          stripeSellerId: sellerStripeIdSn.val(),
           sellerPhotoUrl: sellerPhotoSn.val()
         },
           () => {
             if (productSn.val().quantity >= 1) {
-              // window.open(productSn.val().paymentUrl)
-              // let newTab = window.open('_self');
-              // window.location.href = productSn.val().paymentUrl;
               this.setState({
                 loading: false
               })
@@ -310,14 +315,14 @@ export default class PaymentScreen extends PureComponent {
     const {
       loading,
       isAvailable,
-      paymentUrl,
       product,
       paidProduct,
       outOfStock,
       isModalOpen,
       sellerUsername,
       sellerPhotoUrl,
-      newPrice
+      newPrice,
+      stripeSellerId
     } = this.state
 
     const { isOnMobile } = this.props
@@ -483,7 +488,17 @@ export default class PaymentScreen extends PureComponent {
                       width: "100%",
                       marginTop: "0.5rem"
                     }}
-                    onClick={() => (window.location.href = product.paymentUrl)}
+                    onClick={async () => {
+                      const req = await axios.post("/api/checkout", {
+                        productId: product.id,
+                        name: product.name,
+                        quantity: 1,
+                        price: product.price,
+                        imageUrl: product.imageUrl,
+                        stripeSellerId: stripeSellerId
+                      });
+                      window.location.href = req.data.url
+                    }}
                   >
                     <Text style={{ color: "#FFFFFF" }}>{"Pay by card"}</Text>
                   </Button>

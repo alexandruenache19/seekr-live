@@ -1,74 +1,85 @@
-import React, { useState, forwardRef, useImperativeHandle } from 'react'
-import { Flex, Input, Button, InputGroup, InputRightElement, useDisclosure } from '@chakra-ui/react'
-import { FaRegPaperPlane } from 'react-icons/fa'
-import { EventActions } from '../../../actions'
-const { addComment } = EventActions
+import React, { useState, forwardRef, useImperativeHandle } from "react";
+import {
+  Flex,
+  Input,
+  Button,
+  InputGroup,
+  InputRightElement,
+  useDisclosure
+} from "@chakra-ui/react";
+import { FaRegPaperPlane } from "react-icons/fa";
+import { EventActions } from "../../../actions";
+const { addComment } = EventActions;
 
 const MessageInput = ({ eventId, onOpenModal, username }) => {
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState("");
 
   function handleChange(event) {
-    setMessage(event.target.value)
+    setMessage(event.target.value);
   }
 
   function handleSendMessage() {
-    if (message !== '' && username !== '') {
+    if (message !== "" && username !== "") {
       addComment(
         {
           text: message,
           username: username
         },
         eventId
-      )
-      setMessage('')
+      );
+      setMessage("");
     } else {
-      onOpenModal('comment', {
-        onSendMessage: (usr) => {
+      onOpenModal("comment", {
+        onSendMessage: usr => {
           addComment(
             {
               text: message,
               username: usr
             },
             eventId
-          )
-          setMessage('')
+          );
+          setMessage("");
         }
-      })
-      console.log('username', username)
+      });
     }
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    handleSendMessage()
-  }
+  const handleSubmit = e => {
+    e.preventDefault();
+    handleSendMessage();
+  };
 
   return (
     <Flex
-      borderRadius='20px'
+      borderRadius="20px"
       // p='10px'
-      bg='#FFF'
-      style={{ justifyContent: 'space-between', marginTop: 0 }}
+      bg="#FFF"
+      style={{ justifyContent: "space-between", marginTop: 0 }}
     >
-      <InputGroup as='form' style={{ borderRadius: 20 }}>
+      <InputGroup as="form" style={{ borderRadius: 20 }}>
         <Input
           value={message}
           onChange={handleChange}
           onSubmit={handleSubmit}
           style={{ borderRadius: 20 }}
-          placeholder='Ask a question...'
+          placeholder="Ask a question..."
         />
-        <InputRightElement children={(
-          <Button type='submit' onClick={handleSubmit} style={{ padding: 0, borderRadius: 20 }}>
-            <FaRegPaperPlane style={{ fontSize: 16 }} />
-          </Button>
-        )}
+        <InputRightElement
+          children={
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              style={{ padding: 0, borderRadius: 20 }}
+            >
+              <FaRegPaperPlane style={{ fontSize: 16 }} />
+            </Button>
+          }
         />
       </InputGroup>
     </Flex>
-  )
-}
+  );
+};
 
-const styles = {}
+const styles = {};
 
-export default MessageInput
+export default MessageInput;

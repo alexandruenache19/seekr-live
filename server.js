@@ -7,17 +7,16 @@ admin.initializeApp();
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({
-	dev,
-	// the absolute directory from the package.json file that initialises this module
-	// IE: the absolute path from the root of the Cloud Function
-	conf: config,
+  dev,
+  // the absolute directory from the package.json file that initialises this module
+  // IE: the absolute path from the root of the Cloud Function
+  conf: config
 });
 const handle = app.getRequestHandler();
 
 const server = functions.https.onRequest((request, response) => {
-	// log the page.js file or resource being requested
-	console.log("File: " + request.originalUrl);
-	return app.prepare().then(() => handle(request, response));
+  // log the page.js file or resource being requested
+  return app.prepare().then(() => handle(request, response));
 });
 
 exports.nextjs = { server };

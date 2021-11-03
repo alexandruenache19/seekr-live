@@ -1,4 +1,4 @@
-import React, { PureComponent, useState } from 'react';
+import React, { PureComponent, useState } from 'react'
 import {
   FormControl,
   FormLabel,
@@ -15,12 +15,12 @@ import {
   Spinner,
   Flex,
   useClipboard
-} from '@chakra-ui/react';
-import axios from 'axios';
-import imageCompression from 'browser-image-compression';
-import { generateId } from '../../actions/helper';
-import { HiOutlineCamera } from 'react-icons/hi';
-import firebase from '../../firebase/clientApp';
+} from '@chakra-ui/react'
+import axios from 'axios'
+import imageCompression from 'browser-image-compression'
+import { generateId } from '../../actions/helper'
+import { HiOutlineCamera } from 'react-icons/hi'
+import firebase from '../../firebase/clientApp'
 
 const format = val => 'RON ' + val
 const parse = val => val.replace(/RON /, '')
@@ -78,8 +78,6 @@ export default class GeneratePaymentScreen extends PureComponent {
         isLinkFetched: true,
         loading: false
       })
-
-      console.log('post', postReq.data)
     })
   }
 
@@ -134,12 +132,6 @@ export default class GeneratePaymentScreen extends PureComponent {
             uid: this.props.uid,
             timestamp: +new Date()
           })
-
-        //   try {
-        //     window.open(req.data.url, '_self')
-        //   } catch (err) {
-        //     console.log('err', err)
-        //   }
       }
     )
   }
@@ -159,8 +151,6 @@ export default class GeneratePaymentScreen extends PureComponent {
       }
 
       options.maxSizeMB = 0.3
-
-      console.log('options', options)
 
       const compressedFile = await imageCompression(file, options)
       const resizedImageBase64 = await imageCompression.getDataUrlFromFile(
@@ -198,15 +188,6 @@ export default class GeneratePaymentScreen extends PureComponent {
             },
             ...config
           }).catch(err => console.log('err', err))
-
-          // const req = await axios.post(`/api/${auth.user.uid}/upload-image`, {
-          //   base64file: base64String,
-          //   objectId: itemId,
-          //   bucket: 'odin-images',
-          //   keyPrefix: 'images'
-          // }, config)
-
-          // console.log(req.data.data)
 
           this.setState({
             imageUrl: req.data.data,
@@ -299,7 +280,6 @@ export default class GeneratePaymentScreen extends PureComponent {
                 placeholder='Price (RON)'
                 value={price}
                 onChange={number => {
-                  console.log('v', number)
                   this.setState({ price: number })
                 }}
                 _focus={{

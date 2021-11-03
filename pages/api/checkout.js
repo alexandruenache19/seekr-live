@@ -2,7 +2,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 export default async function handler (req, res) {
   const { quantity, price, name, imageUrl, productId, stripeSellerId } = req.body
-  console.log('req', req.body)
   if (req.method === 'POST') {
     try {
       const session = await stripe.checkout.sessions.create({
@@ -40,8 +39,6 @@ export default async function handler (req, res) {
         cancel_url: `https://seekrlive.com/p/${productId}/?canceled=true`
       })
 
-      console.log('session', session)
-      // res.redirect(303, session.url)
       res.status(200).json({ url: session.url })
     } catch (err) {
       console.log('err.statusCode', err.statusCode, err.message)

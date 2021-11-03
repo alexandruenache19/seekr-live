@@ -27,12 +27,9 @@ import { addComment } from '../../../actions/event'
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
 // loadStripe is initialized with a fake API key.
-const stripePromise = loadStripe('pk_test_51JqH7mJS5YvXoP5fVpadoRegDsa1Pc3Cx796EaHQkglDBlYM9in7D1luOVJ6tLHnCmzk6CSocyyerFRO22GzZwnQ00u21tRbNV')
+const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY)
 
-const StripeCardCheckout = ({
-  handleSubmitOrder,
-  returnUrl
-}) => {
+const StripeCardCheckout = ({ handleSubmitOrder, returnUrl }) => {
   /** stripe logic */
   const stripe = useStripe()
   const elements = useElements()
@@ -114,7 +111,11 @@ const StripeCardCheckout = ({
   return (
     <Stack>
       <PaymentElement id='payment-element' />
-      <button disabled={isLoading || !stripe || !elements} id='submit' onClick={handleSubmitPayment}>
+      <button
+        disabled={isLoading || !stripe || !elements}
+        id='submit'
+        onClick={handleSubmitPayment}
+      >
         <span id='button-text'>
           {isLoading ? (
             <div className='spinner' id='spinner' />
@@ -131,7 +132,9 @@ const StripeCardCheckout = ({
               }}
               // onClick={handleSubmit}
             >
-              <Text pr='10px' color='#FFFFFF'>Buy Now</Text>
+              <Text pr='10px' color='#FFFFFF'>
+                                Buy Now
+              </Text>
             </div>
           )}
         </span>
@@ -165,16 +168,26 @@ const CheckoutForm = ({
   const [postalCode, setPostalCode] = useState(props.postalCode || null)
   const [completeShippingInfo, setCompleteShipping] = useState(false)
 
-  const handleSubmitOrder = async (e) => {
+  const handleSubmitOrder = async e => {
     e && e.preventDefault()
     /**
-                                                                                                                                                     * add order in events/eventId/orders/orderId
-                                                                                                                                                     * decrease stock in events/eventId/products/productId
-                                                                                                                                      */
+             * add order in events/eventId/orders/orderId
+             * decrease stock in events/eventId/products/productId
+             */
 
     if (
-      name === null || phoneNumber === null || country === null || city === null || postalCode === null || addressLine1 === null ||
-            name === '' || phoneNumber === '' || country === '' || city === '' || postalCode === '' || addressLine1 === ''
+      name === null ||
+            phoneNumber === null ||
+            country === null ||
+            city === null ||
+            postalCode === null ||
+            addressLine1 === null ||
+            name === '' ||
+            phoneNumber === '' ||
+            country === '' ||
+            city === '' ||
+            postalCode === '' ||
+            addressLine1 === ''
     ) {
       alert('Please fill in all required fields')
       return false
@@ -214,7 +227,10 @@ const CheckoutForm = ({
 
       addComment(
         {
-          text: orderQuantity === 1 ? 'I just ordered this!' : `I just ordered ${orderQuantity} of these`,
+          text:
+                        orderQuantity === 1
+                          ? 'I just ordered this!'
+                          : `I just ordered ${orderQuantity} of these`,
           username: name
         },
         eventInfo.id
@@ -235,7 +251,13 @@ const CheckoutForm = ({
   return (
     <form>
       {completeShippingInfo ? (
-        <Stack style={{ overflow: 'scroll', maxHeight: '60vh', paddingBottom: '1rem' }}>
+        <Stack
+          style={{
+            overflow: 'scroll',
+            maxHeight: '60vh',
+            paddingBottom: '1rem'
+          }}
+        >
           {props.clientSecret ? (
             <Elements options={props.options} stripe={stripePromise}>
               <StripeCardCheckout
@@ -256,68 +278,77 @@ const CheckoutForm = ({
           )}
         </Stack>
       ) : (
-        <Stack style={{ overflow: 'scroll', maxHeight: '60vh', paddingBottom: '1rem' }}>
+        <Stack
+          style={{
+            overflow: 'scroll',
+            maxHeight: '60vh',
+            paddingBottom: '1rem'
+          }}
+        >
           <FormControl id='name' isRequired style={{ marginBottom: 10 }}>
-            <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>Full Name</Text>
+            <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>
+                            Full Name
+            </Text>
             <Input
               value={name}
               placeholder='Name'
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
             />
           </FormControl>
           <Stack style={{ marginBottom: 10 }}>
             <FormControl style={styles.formRow} id='country'>
-              <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>Shipping Details</Text>
+              <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>
+                                Shipping Details
+              </Text>
               <Input
                 placeholder='Country'
                 value={country}
-                onChange={(e) => setCountry(e.target.value)}
+                onChange={e => setCountry(e.target.value)}
               />
-
             </FormControl>
             <FormControl style={styles.formRow} id='address-line-1'>
               <Input
                 placeholder='Address line 1'
                 value={addressLine1}
-                onChange={(e) => setAddressLine1(e.target.value)}
+                onChange={e => setAddressLine1(e.target.value)}
               />
-
             </FormControl>
             <FormControl style={styles.formRow} id='address-line-2'>
               <Input
                 placeholder='Address line 2'
                 value={addressLine2}
-                onChange={(e) => setAddressLine2(e.target.value)}
+                onChange={e => setAddressLine2(e.target.value)}
               />
-
             </FormControl>
             <Flex>
               <FormControl style={styles.formRow} id='city'>
                 <Input
                   placeholder='City'
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  onChange={e => setCity(e.target.value)}
                 />
-
               </FormControl>
               <FormControl style={styles.formRow} id='postal-code'>
                 <Input
                   placeholder='Postal Code'
                   value={postalCode}
-                  onChange={(e) => setPostalCode(e.target.value)}
+                  onChange={e => setPostalCode(e.target.value)}
                 />
-
               </FormControl>
             </Flex>
           </Stack>
           <FormControl id='phone' isRequired style={{ marginBottom: 10 }}>
-            <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>Phone Number</Text>
+            <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>
+                            Phone Number
+            </Text>
             <Input
               placeholder='Phone Number'
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={e => setPhoneNumber(e.target.value)}
             />
-            <FormHelperText>The seller may contact you about your order</FormHelperText>
+            <FormHelperText>
+                            The seller may contact you about your order
+            </FormHelperText>
           </FormControl>
           <Button
             style={{ backgroundColor: '#28A445', flex: 1, padding: 10 }}
@@ -326,9 +357,7 @@ const CheckoutForm = ({
               await props.createPaymentIntent()
             }}
           >
-            <Text style={{ color: '#FFFFFF' }}>
-              {'Next'}
-            </Text>
+            <Text style={{ color: '#FFFFFF' }}>Next</Text>
           </Button>
         </Stack>
       )}
@@ -362,8 +391,8 @@ const PaymentModalContent = ({ sellerUsername, ...props }) => {
         sellerStripeId: props.sellerStripeId
       })
     })
-      .then((res) => res.json())
-      .then((data) => setClientSecret(data.clientSecret))
+      .then(res => res.json())
+      .then(data => setClientSecret(data.clientSecret))
   }
 
   const appearance = {
@@ -389,9 +418,7 @@ const PaymentModalContent = ({ sellerUsername, ...props }) => {
 }
 
 const styles = {
-  formRow: {
-
-  }
+  formRow: {}
 }
 
 export default PaymentModalContent

@@ -576,7 +576,7 @@ export default class PaymentScreen extends PureComponent {
                     }}
                     onClick={() => this.setState({ isModalOpen: true })}
                   >
-                    Plata Ramburd
+                    Plata ramburs
                   </Text>
                 </div>
               )}

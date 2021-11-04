@@ -148,7 +148,7 @@ export default class PaymentScreen extends PureComponent {
     const sellerStripeIdSn = await firebase
       .database()
       .ref(`users/${productSn.val().uid}/info/stripeId`)
-      .once('value')
+      .once("value");
 
     if (productSn.val()) {
       if (router.query && router.query.success) {
@@ -187,7 +187,8 @@ export default class PaymentScreen extends PureComponent {
               const productRef = firebase
                 .database()
                 .ref(
-                  `users/${productSn.val().uid
+                  `users/${
+                    productSn.val().uid
                   }/shop/orders/${phoneNumber}/products`
                 )
                 .push();
@@ -195,7 +196,8 @@ export default class PaymentScreen extends PureComponent {
               await firebase
                 .database()
                 .ref(
-                  `users/${productSn.val().uid
+                  `users/${
+                    productSn.val().uid
                   }/shop/orders/${phoneNumber}/products/${productRef.key}`
                 )
                 .update({
@@ -231,13 +233,14 @@ export default class PaymentScreen extends PureComponent {
           sellerPhotoUrl: sellerPhotoSn.val()
         });
       } else {
-        this.setState({
-          product: productSn.val(),
-          paidProduct: false,
-          sellerUsername: sellerUsernameSn.val(),
-          stripeSellerId: sellerStripeIdSn.val(),
-          sellerPhotoUrl: sellerPhotoSn.val()
-        },
+        this.setState(
+          {
+            product: productSn.val(),
+            paidProduct: false,
+            sellerUsername: sellerUsernameSn.val(),
+            stripeSellerId: sellerStripeIdSn.val(),
+            sellerPhotoUrl: sellerPhotoSn.val()
+          },
           () => {
             if (productSn.val().quantity >= 1) {
               this.setState({
@@ -345,7 +348,7 @@ export default class PaymentScreen extends PureComponent {
       sellerPhotoUrl,
       newPrice,
       stripeSellerId
-    } = this.state
+    } = this.state;
 
     const { isOnMobile } = this.props;
 
@@ -413,24 +416,29 @@ export default class PaymentScreen extends PureComponent {
             </Stack>
           ) : (
             <Stack align="center" maxW="500px" w="100%" px="1.5rem">
-              {sellerPhotoUrl ? (
-                <img
-                  src={sellerPhotoUrl}
-                  style={{
-                    height: 42,
-                    width: 42,
-                    marginBlock: 5,
-                    borderRadius: "50%",
-                    objectFit: "cover"
-                  }}
-                />
-              ) : null}
-              <Text textAlign="center" fontWeight="bold" fontSize={18}>
-                {product.name}
-              </Text>
-              {sellerUsername ? (
-                <Text textAlign="center">{`sold by ${sellerUsername}`}</Text>
-              ) : null}
+              <Stack alignItems="center">
+                {sellerPhotoUrl ? (
+                  <img
+                    src={sellerPhotoUrl}
+                    style={{
+                      height: 50,
+                      width: 50,
+                      marginBlock: 5,
+                      borderRadius: "50%",
+                      objectFit: "cover"
+                    }}
+                  />
+                ) : null}
+                {sellerUsername ? (
+                  <Text
+                    ml={2}
+                    fontWeight="bold"
+                    fontSize={18}
+                  >{`@${sellerUsername}`}</Text>
+                ) : null}
+              </Stack>
+              <Text textAlign="center">{product.name}</Text>
+
               <img
                 src={product.imageUrl}
                 style={{
@@ -474,11 +482,11 @@ export default class PaymentScreen extends PureComponent {
                 </Stack>
               ) : (
                 <Stack>
-                  <Text textAlign="center" fontSize={"18px"}>
-                    {`RON ${product.price}`}
+                  <Text textAlign="center" fontSize={"18px"} fontWeight="bold">
+                    {`Pret: ${product.price} RON`}
                   </Text>
                   {!outOfStock ? (
-                    <Text textAlign="center">{`Only ${product.quantity} left at this price!`}</Text>
+                    <Text textAlign="center">{`${product.quantity} in stock`}</Text>
                   ) : null}
                 </Stack>
               )}
@@ -528,10 +536,18 @@ export default class PaymentScreen extends PureComponent {
                   </Button>
                 </div>
               ) : (
-                <div style={{ width: "100%" }}>
+                <div
+                  style={{
+                    width: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flex: 1,
+                    textAlign: "center"
+                  }}
+                >
                   <Button
                     style={{
-                      backgroundColor: "#28A445",
+                      backgroundColor: "#000",
                       width: "100%",
                       marginTop: "0.5rem"
                     }}
@@ -544,23 +560,24 @@ export default class PaymentScreen extends PureComponent {
                         imageUrl: product.imageUrl,
                         stripeSellerId: stripeSellerId
                       });
-                      window.location.href = req.data.url
+                      window.location.href = req.data.url;
                     }}
                   >
-                    <Text style={{ color: "#FFFFFF" }}>{"Pay by card"}</Text>
+                    <Text style={{ color: "#FFFFFF" }}>Plata card</Text>
                   </Button>
-                  <Button
+
+                  <Text style={{ color: "#999", marginTop: "0.5rem" }}>or</Text>
+
+                  <Text
                     style={{
-                      backgroundColor: "#28A445",
-                      width: "100%",
-                      marginTop: "0.5rem"
+                      marginTop: "0.5rem",
+                      color: "#666",
+                      textDecorationLine: "underline"
                     }}
                     onClick={() => this.setState({ isModalOpen: true })}
                   >
-                    <Text style={{ color: "#FFFFFF" }}>
-                      {"Cash on delivery (Ramburs)"}
-                    </Text>
-                  </Button>
+                    Plata Ramburd
+                  </Text>
                 </div>
               )}
             </Stack>

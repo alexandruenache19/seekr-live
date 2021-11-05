@@ -14,17 +14,14 @@ import {
   ModalContent,
   useClipboard
 } from '@chakra-ui/react'
-import { AiOutlineCheckCircle } from 'react-icons/ai'
-import firebase from '../../firebase/clientApp'
 import { useRouter } from 'next/router'
-import axios from 'axios'
 import { FiLink } from 'react-icons/fi'
 
 import { useUser } from '../../context/userContext'
 import { FetchingActions } from '../../actions'
 import GenerateNewProduct from '../p/index'
 
-function CopyLink({ value }) {
+function CopyLink ({ value }) {
   const { hasCopied, onCopy } = useClipboard(value)
 
   return (
@@ -43,6 +40,7 @@ export const SignInComponent = ({ isOnMobile }) => {
   const [products, setProducts] = useState([])
   const [orders, setOrders] = useState([])
   const [isModalOpen, setOpenModal] = useState(false)
+
   useEffect(async () => {
     if (user) {
       const products = await getShopProducts(user.uid)
@@ -183,12 +181,12 @@ export const SignInComponent = ({ isOnMobile }) => {
 }
 
 export default class ShopScreen extends PureComponent {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {}
   }
 
-  render() {
+  render () {
     const {
       loading,
       isAvailable,

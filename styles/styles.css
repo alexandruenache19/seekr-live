@@ -47,3 +47,28 @@ a.left {
 	height: 100vh; /* Fallback for browsers that do not support Custom Properties */
 	height: calc(var(--vh, 1vh) * 100);
 }
+
+.product-layer {
+	transition: all 0.2s ease-in;
+}
+
+.product-layer:hover {
+	background-color: transparent !important;
+}
+
+.quantity-label {
+	opacity: 0;
+	transition: all 0.2s ease-in;
+}
+
+.product-layer:hover > .quantity-label {
+	opacity: 1;
+}
+
+.product-layer:hover > .product-bottom-info {
+	display: none
+}
+
+.product-layer:hover > .product-order-button {
+	display: flex !important;
+}

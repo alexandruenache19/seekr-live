@@ -485,8 +485,17 @@ export default class PaymentScreen extends PureComponent {
                   <Text textAlign="center" fontSize={"18px"} fontWeight="bold">
                     {`Pret: ${product.price} RON`}
                   </Text>
+                  <Text
+                    textAlign="center"
+                    style={{ marginTop: 0, fontSize: 8, color: "#999" }}
+                  >
+                    {`+20 RON transport`}
+                  </Text>
                   {!outOfStock ? (
-                    <Text textAlign="center">{`${product.quantity} in stock`}</Text>
+                    <Text
+                      fontSize={"18px"}
+                      textAlign="center"
+                    >{`${product.quantity} in stock`}</Text>
                   ) : null}
                 </Stack>
               )}
@@ -552,11 +561,12 @@ export default class PaymentScreen extends PureComponent {
                       marginTop: "0.5rem"
                     }}
                     onClick={async () => {
+                      const fullPrice = product.price + 20;
                       const req = await axios.post("/api/checkout", {
                         productId: product.id,
                         name: product.name,
                         quantity: 1,
-                        price: product.price,
+                        price: fullPrice,
                         imageUrl: product.imageUrl,
                         stripeSellerId: stripeSellerId
                       });

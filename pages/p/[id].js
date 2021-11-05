@@ -562,7 +562,6 @@ export default class PaymentScreen extends PureComponent {
                     }}
                     onClick={async () => {
                       const fullPrice = product.price + 20;
-
                       const req = await axios.post("/api/checkout", {
                         productId: product.id,
                         name: product.name,

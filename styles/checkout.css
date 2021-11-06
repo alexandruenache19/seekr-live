@@ -129,7 +129,7 @@
   }
   
   @media only screen and (max-width: 600px) {
-    form {
+    form#payment-form {
       width: 80vw;
       min-width: initial;
     }

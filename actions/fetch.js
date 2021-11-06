@@ -1,30 +1,35 @@
-import firebase from "../firebase/clientApp";
+import firebase from '../firebase/clientApp'
 
 export const getShopProducts = async uid => {
   const snapshot = await firebase
     .database()
     .ref(`users/${uid}/shop/products`)
-    .once("value");
+    .once('value')
 
   if (snapshot.exists()) {
-    const productsObj = snapshot.val();
-    return Object.values(productsObj);
+    const productsObj = snapshot.val()
+    return Object.values(productsObj)
   }
-  return [];
-};
+  return []
+}
 
 export const getShopOrders = async uid => {
   const snapshot = await firebase
     .database()
     .ref(`users/${uid}/shop/orders`)
-    .once("value");
+    .once('value')
 
   if (snapshot.exists()) {
-    const ordersObj = snapshot.val();
-    return Object.values(ordersObj);
+    const ordersObj = snapshot.val()
+    return Object.values(ordersObj)
   }
-  return [];
-};
+  return []
+}
+
+export const getJointEvent = async (jointEventId) => {
+  const snapshot = await firebase.database().ref(`joint-events/${jointEventId}`).once('value')
+  return snapshot.val()
+}
 
 // export const getSpaceItems = async (spaceId) => {
 //   const snapshot = await firebase.database().ref(`spaces/${spaceId}/collected`).once('value')

@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react'
 
 import { getJointEvent } from '../../actions/fetch'
+import firebase from '../../firebase/clientApp'
 
 export default class JoinEvent extends Component {
   constructor(props) {
@@ -101,6 +102,8 @@ export const getServerSideProps = async context => {
   const { jointEventId } = context.params;
 
   const jointEvent = await getJointEvent(jointEventId)
+
+  console.log('join', jointEvent)
 
   let userAgent;
   if (context.req) {

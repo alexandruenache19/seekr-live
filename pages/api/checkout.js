@@ -10,10 +10,10 @@ export default async function handler (req, res) {
           allowed_countries: ['RO']
         },
         payment_intent_data: {
-          on_behalf_of: stripeSellerId,
+          on_behalf_of: stripeSellerId || 'acct_1JqIogR8NKnkhQia',
           application_fee_amount: parseFloat(price) * 4,
           transfer_data: {
-            destination: stripeSellerId
+            destination: stripeSellerId || 'acct_1JqIogR8NKnkhQia'
           }
         },
         line_items: [
@@ -22,7 +22,7 @@ export default async function handler (req, res) {
               currency: 'ron',
               unit_amount: parseFloat(price) * 100,
               product_data: {
-                name: name,
+                name: name || 'For Sale',
                 images: [imageUrl]
               }
             },

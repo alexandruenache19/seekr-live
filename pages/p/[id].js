@@ -19,6 +19,7 @@ import {
   NumberDecrementStepper,
   Spinner
 } from "@chakra-ui/react";
+import { Pressable } from 'react-native'
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import firebase from "../../firebase/clientApp";
 import router from "next/router";
@@ -187,8 +188,7 @@ export default class PaymentScreen extends PureComponent {
               const productRef = firebase
                 .database()
                 .ref(
-                  `users/${
-                    productSn.val().uid
+                  `users/${productSn.val().uid
                   }/shop/orders/${phoneNumber}/products`
                 )
                 .push();
@@ -196,8 +196,7 @@ export default class PaymentScreen extends PureComponent {
               await firebase
                 .database()
                 .ref(
-                  `users/${
-                    productSn.val().uid
+                  `users/${productSn.val().uid
                   }/shop/orders/${phoneNumber}/products/${productRef.key}`
                 )
                 .update({
@@ -439,20 +438,38 @@ export default class PaymentScreen extends PureComponent {
               </Stack>
               <Text textAlign="center">{product.name}</Text>
 
-              <img
-                src={product.imageUrl}
-                style={{
-                  marginTop: "1.5rem",
-                  // boxShadow: '0px 0px 36px -9px rgba(0,0,0,0.49)',
-                  backgroundColor: "#999",
-                  maxWidth: "95%",
-                  height: "auto",
-                  maxHeight: 250,
-                  borderRadius: 15,
-                  objectFit: "cover",
-                  marginBottom: "1.1rem"
-                }}
-              />
+              <div style={{
+                position: 'relative',
+                maxWidth: "95%",
+                height: "auto",
+                marginTop: "1.2rem",
+                marginBottom: "1.2rem",
+                maxHeight: 250,
+              }}>
+                <img
+                  src={product.imageUrl}
+                  style={{
+                    // boxShadow: '0px 0px 36px -9px rgba(0,0,0,0.49)',
+                    backgroundColor: "#999",
+                    width: '100%',
+                    height: "auto",
+                    maxHeight: 250,
+                    borderRadius: 15,
+                    objectFit: "cover",
+                  }}
+                />
+                <Stack
+                  style={{ backgroundColor: 'rgba(0,0,0,0.8)', position: 'absolute', top: 7, left: 7, zIndex: 3 }}
+                  py='5px'
+                  px='8px'
+                  borderRadius='xl'
+                // className='quantity-label'
+                >
+                  <Text color='#FFFFFF' fontSize={14}>
+                    {`${product.quantity} in stock`}
+                  </Text>
+                </Stack>
+              </div>
               {product.isAuction ? (
                 <Stack style={{ width: "100%" }}>
                   {product.bids ? (
@@ -487,16 +504,16 @@ export default class PaymentScreen extends PureComponent {
                   </Text>
                   <Text
                     textAlign="center"
-                    style={{ marginTop: 0, fontSize: 8, color: "#999" }}
+                    style={{ marginTop: 0, fontSize: 12, color: "#666" }}
                   >
                     {`+20 RON transport`}
                   </Text>
-                  {!outOfStock ? (
+                  {/* {!outOfStock ? (
                     <Text
                       fontSize={"18px"}
                       textAlign="center"
                     >{`${product.quantity} in stock`}</Text>
-                  ) : null}
+                  ) : null} */}
                 </Stack>
               )}
               {outOfStock ? (
@@ -576,18 +593,19 @@ export default class PaymentScreen extends PureComponent {
                     <Text style={{ color: "#FFFFFF" }}>Plata card</Text>
                   </Button>
 
-                  <Text style={{ color: "#999", marginTop: "0.5rem" }}>or</Text>
+                  <Text style={{ color: "#666", marginTop: "0.5rem" }}>or</Text>
 
-                  <Text
-                    style={{
-                      marginTop: "0.5rem",
-                      color: "#666",
-                      textDecorationLine: "underline"
-                    }}
-                    onClick={() => this.setState({ isModalOpen: true })}
-                  >
-                    Plata ramburs
-                  </Text>
+                  <Pressable onPress={() => this.setState({ isModalOpen: true })}>
+                    <Text
+                      style={{
+                        marginTop: "0.5rem",
+                        color: "#666",
+                        // textDecorationLine: "underline"
+                      }}
+                    >
+                      Plata ramburs
+                    </Text>
+                  </Pressable>
                 </div>
               )}
             </Stack>

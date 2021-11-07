@@ -20,7 +20,7 @@ import {
 import moment from 'moment'
 
 class EventScreen extends PureComponent {
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = {
@@ -33,25 +33,25 @@ class EventScreen extends PureComponent {
     this.handleShare = this.handleShare.bind(this)
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', { username: sellerInfo.username })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  handleReminderText() {
+  handleReminderText () {
     const { eventInfo } = this.props
     this.props.onOpenModal('text', { eventId: eventInfo.id })
   }
 
-  handleReminderEmail() {
+  handleReminderEmail () {
     this.props.onOpenModal('email', {})
   }
 
-  render() {
+  render () {
     const { muted } = this.state
     const {
       isOnMobile,
@@ -121,229 +121,287 @@ class EventScreen extends PureComponent {
     )
 
     return (
-      <Flex
-        bgColor='#FFF'
-        h='100vh'
+      <Stack
+        align='center'
         w='100vw'
+        h='100vh'
         justify='center'
-        alignItems='center'
-        bg='url("https://images.unsplash.com/photo-1564951434112-64d74cc2a2d7?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=774&q=80")'
-        backgroundSize='cover'
-        backgroundPosition='center'
         className='perfect-height-wrapper'
       >
-        <Stack
-          w={isOnMobile ? '100%' : '70vw'}
-          h={isOnMobile ? '100vh' : '94vh'}
-          bg='rgba(255,255,255,0.4)'
-          borderRadius={isOnMobile ? 0 : '20px'}
-          boxShadow='0px 0px 41px 6px rgba(0,0,0,0.45)'
-          p='1.4rem'
-        >
-          <Flex
-            justify='space-between'
-            alignItems='center'
-            h='10vh'
+        {false ? (
+          <Stack
             w='100%'
-          >
-            <Flex
-              h='100%'
-              py='10px'
-              w='100%'
-              // bg='#F2F4F9'
-              borderRadius='15px'
-              overflow='hidden'
-              justify='space-between'
-            >
-              <Flex>
-                <Avatar name={sellerInfo.name} src={sellerInfo.imageURL} />
-                <Stack ml='10px'>
-                  <Text fontWeight='bold' fontSize='md'>
-                    {eventInfo.title}
-                  </Text>
-                  <Text style={{ marginTop: -3 }}>
-                    @{sellerInfo.username}
-                  </Text>
-                </Stack>
-              </Flex>
-
-              <Center>
-                {/* <Button
-                  h='3em'
-                  shadow='md'
-                  borderRadius='1.5em'
-                  bg='#FFF'
-                  onClick={this.handleFollow}
-                >
-                  <a style={{ paddingRight: '5px' }}>Follow</a>
-                  <FaPlus size={26} />
-                </Button> */}
-                <Button
-                  h='3em'
-                  shadow='md'
-                  ml='1em'
-                  borderRadius='1.5em'
-                  bg='#FFF'
-                  onClick={this.handleShare}
-                >
-                  <FiShare size={20} />
-                </Button>
-              </Center>
-            </Flex>
-          </Flex>
-          <Center
-            style={{ marginTop: '1rem', maxHeight: 'calc(94vh - 16vh)' }}
             h='100%'
-            w='100%'
+            position='absolute'
+            top={0}
+            zIndex={5}
+            justifyContent='center'
+            alignItems='center'
+            bg='rgba(255,255,255,0.3)'
           >
-            <Stack
-              h='100%'
-              w='100%'
-              bg='rgba(0,0,0,0.9)'
-              borderRadius='15px'
-              overflow='hidden'
-              position='relative'
-            >
-              {/* <ReactPlayer
-                className='bg-player'
-                url={eventInfo.videoURL}
-                width='100%'
-                height='100%'
-                playing
-                loop
-              /> */}
-
-              <ReactPlayer
-                className='react-player'
-                url={eventInfo.videoURL}
-                width='100%'
-                height='120%'
-                playing
-                muted={muted}
-                playsinline
-                style={{ marginTop: -20 }}
-                loop
+            <Spinner color='#121212' size='md' />
+          </Stack>
+        ) : null}
+        <Stack align='center' maxW='500px' w='100%' px='1.5rem'>
+          <Stack alignItems='center'>
+            {sellerInfo.imageURL ? (
+              <img
+                src={sellerInfo.imageURL}
+                style={{
+                  height: 50,
+                  width: 50,
+                  marginBlock: 5,
+                  borderRadius: '50%',
+                  objectFit: 'cover'
+                }}
               />
+            ) : null}
+            {sellerInfo.name ? (
+              <Text
+                ml={2}
+                fontWeight='bold'
+                fontSize={18}
+              >{`@${sellerInfo.name}`}
+              </Text>
+            ) : null}
+          </Stack>
+          <Text textAlign='center'>{eventInfo.title}</Text>
 
-              {muted ? (
-                <Center
-                  onClick={() => this.setState({ muted: false })}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    position: 'absolute',
-                    zIndex: 3,
-                    top: 0,
-                    left: 0,
-                    marginTop: 0,
-                    cursor: 'pointer',
-                    backgroundColor: 'rgba(0,0,0,0.3)'
-                  }}
-                >
-                  <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
-                    <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
-                  </Center>
+          <div style={{
+            position: 'relative',
+            maxWidth: '95%',
+            marginTop: '1.2rem',
+            marginBottom: '1.2rem',
+            backgroundColor: 'red',
+            width: '100%',
+            height: 250
+          }}
+          >
+            <ReactPlayer
+              className='react-player'
+              url={eventInfo.videoURL}
+              width='100%'
+              height='120%'
+              playing
+              muted={muted}
+              playsinline
+              style={{ marginTop: -20 }}
+              loop
+            />
+
+            {muted ? (
+              <Center
+                onClick={() => this.setState({ muted: false })}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  position: 'absolute',
+                  zIndex: 3,
+                  top: 0,
+                  left: 0,
+                  marginTop: 0,
+                  cursor: 'pointer',
+                  backgroundColor: 'rgba(0,0,0,0.3)'
+                }}
+              >
+                <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
+                  <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
                 </Center>
-              ) : null}
-
-              <Center
-                position='absolute'
-                bottom='5px'
-                width={isOnMobile ? '100%' : 'auto'}
-                left={isOnMobile ? 'auto' : '10px'}
-                zIndex={10}
-              >
-                <AddToCalendarComp event={event} />
               </Center>
-
-              <Center
-                position='absolute'
-                bottom={isOnMobile ? 'auto' : '5px'}
-                right={isOnMobile ? 'auto' : '10px'}
-                left={isOnMobile ? '0px' : 'auto'}
-                zIndex={10}
-                width={isOnMobile ? '100%' : 'auto'}
-                top={isOnMobile ? 0 : 'auto'}
-              >
-                <Button
-                  h='3em'
-                  shadow='md'
-                  borderRadius='15px'
-                  bg='#FFF'
-                  onClick={this.handleReminderText}
-                >
-                  <BiMessageSquareDots size={26} />
-                  <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Anunta-ma cu 5 min inainte</Text>
-                </Button>
-              </Center>
-            </Stack>
-          </Center>
-
-          {/* <Center p='20px' h='15vh' w='100%'>
-            <Flex
-              h='100%'
-              w='100%'
-              p='10px'
-              bg='#F2F4F9'
+            ) : null}
+            <Stack
+              style={{ backgroundColor: 'rgba(0,0,0,0.8)', position: 'absolute', top: 7, left: 7, zIndex: 3 }}
+              py='5px'
+              px='8px'
               borderRadius='xl'
-              overflow='hidden'
+            // className='quantity-label'
+            >
+              <Text color='#FFFFFF' fontSize={14}>
+                {`${time} - ${date}`}
+              </Text>
+            </Stack>
+          </div>
+          <Stack>
+            <Text textAlign='center' fontSize='18px' fontWeight='bold'>
+              {`Pret: ${'product.price'} RON`}
+            </Text>
+            <Text
+              textAlign='center'
+              style={{ marginTop: 0, fontSize: 12, color: '#666' }}
+            >
+              {'+20 RON transport'}
+            </Text>
+            {/* {!outOfStock ? (
+                    <Text
+                      fontSize={"18px"}
+                      textAlign="center"
+                    >{`${product.quantity} in stock`}</Text>
+                  ) : null} */}
+          </Stack>
+          <div
+            style={{
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flex: 1,
+              textAlign: 'center'
+            }}
+          >
+            <Button
               style={{
-                justifyContent: 'center',
-                marginTop: 0,
-                alignItems: 'center'
+                backgroundColor: '#000',
+                width: '100%',
+                marginTop: '0.5rem'
+              }}
+              onClick={async () => {
+
               }}
             >
-              <Button
-                h='3em'
-                ml='10px'
-                shadow='md'
-                borderRadius='1.5em'
-                bg='#FFF'
-                onClick={this.handleReminderEmail}
-              >
-                <a>Remind me via email</a>
-                <Center pl='5px'>
-                  <BiMailSend size={26} />
-                </Center>
-              </Button>
-
-              <Button
-                h='3em'
-                ml='10px'
-                shadow='md'
-                borderRadius='1.5em'
-                bg='#FFF'
-                onClick={this.handleReminderText}
-              >
-                <a>Text me 5 min before</a>
-                <Center pl='5px'>
-                  <BiMessageSquareDots size={26} />
-                </Center>
-              </Button>
-            </Flex>
-          </Center> */}
+              <Text style={{ color: '#FFFFFF' }}>Anunta-ma cu 5 min inainte</Text>
+            </Button>
+          </div>
         </Stack>
-        {/* <Center p='20px' pl='0px' h='100vh' w='30vw'>
-          <Stack
-            h='100%'
-            p='20px'
-            w='100%'
-            bg='#EEF2F8'
-            borderRadius='xl'
-            style={{ justifyContent: 'space-between' }}
-          >
-            <Text color='#000' fontWeight='bold'>
-              Ask a question before the event
-            </Text>
-            <CommentsList comments={comments} />
-            <MessageInput
-              onOpenModal={this.props.onOpenModal}
-              username={username}
-              eventId={eventInfo.id}
-            />
-          </Stack>
-        </Center> */}
-      </Flex>
+
+      </Stack>
+      // <Flex
+      //   bgColor='#FFF'
+      //   h='100vh'
+      //   w='100vw'
+      //   justify='center'
+      //   alignItems='center'
+      //   backgroundSize='cover'
+      //   backgroundPosition='center'
+      //   className='perfect-height-wrapper'
+      // >
+      //   <Stack
+      //     w={isOnMobile ? '100%' : '70vw'}
+      //     h={isOnMobile ? '100vh' : '94vh'}
+      //     bg='rgba(255,255,255,0.4)'
+      //     borderRadius={isOnMobile ? 0 : '20px'}
+      //     p='1.4rem'
+      //   >
+      //     <Flex
+      //       justify='space-between'
+      //       alignItems='center'
+      //       h='10vh'
+      //       w='100%'
+      //     >
+      //       <Flex
+      //         h='100%'
+      //         py='10px'
+      //         w='100%'
+      //         // bg='#F2F4F9'
+      //         borderRadius='15px'
+      //         overflow='hidden'
+      //         justify='space-between'
+      //       >
+      //         <Flex>
+      //           <Avatar name={sellerInfo.name} src={sellerInfo.imageURL} />
+      //           <Stack ml='10px'>
+      //             <Text fontWeight='bold' fontSize='md'>
+      //               {eventInfo.title}
+      //             </Text>
+      //             <Text style={{ marginTop: -3 }}>
+      //               @{sellerInfo.username}
+      //             </Text>
+      //           </Stack>
+      //         </Flex>
+
+    //         <Center>
+    //           <Button
+    //             h='3em'
+    //             shadow='md'
+    //             ml='1em'
+    //             borderRadius='1.5em'
+    //             bg='#FFF'
+    //             onClick={this.handleShare}
+    //           >
+    //             <FiShare size={20} />
+    //           </Button>
+    //         </Center>
+    //       </Flex>
+    //     </Flex>
+    //     <Center
+    //       style={{ marginTop: '1rem', maxHeight: 'calc(94vh - 16vh)' }}
+    //       h='100%'
+    //       w='100%'
+    //     >
+    //       <Stack
+    //         h='100%'
+    //         w='100%'
+    //         bg='rgba(0,0,0,0.9)'
+    //         borderRadius='15px'
+    //         overflow='hidden'
+    //         position='relative'
+    //       >
+
+    //         <ReactPlayer
+    //           className='react-player'
+    //           url={eventInfo.videoURL}
+    //           width='100%'
+    //           height='120%'
+    //           playing
+    //           muted={muted}
+    //           playsinline
+    //           style={{ marginTop: -20 }}
+    //           loop
+    //         />
+
+    //         {muted ? (
+    //           <Center
+    //             onClick={() => this.setState({ muted: false })}
+    //             style={{
+    //               width: '100%',
+    //               height: '100%',
+    //               position: 'absolute',
+    //               zIndex: 3,
+    //               top: 0,
+    //               left: 0,
+    //               marginTop: 0,
+    //               cursor: 'pointer',
+    //               backgroundColor: 'rgba(0,0,0,0.3)'
+    //             }}
+    //           >
+    //             <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
+    //               <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
+    //             </Center>
+    //           </Center>
+    //         ) : null}
+
+    //         <Center
+    //           position='absolute'
+    //           bottom='5px'
+    //           width={isOnMobile ? '100%' : 'auto'}
+    //           left={isOnMobile ? 'auto' : '10px'}
+    //           zIndex={10}
+    //         >
+    //           <AddToCalendarComp event={event} />
+    //         </Center>
+
+    //         <Center
+    //           position='absolute'
+    //           bottom={isOnMobile ? 'auto' : '5px'}
+    //           right={isOnMobile ? 'auto' : '10px'}
+    //           left={isOnMobile ? '0px' : 'auto'}
+    //           zIndex={10}
+    //           width={isOnMobile ? '100%' : 'auto'}
+    //           top={isOnMobile ? 0 : 'auto'}
+    //         >
+    //           <Button
+    //             h='3em'
+    //             shadow='md'
+    //             borderRadius='15px'
+    //             bg='#FFF'
+    //             onClick={this.handleReminderText}
+    //           >
+    //             <BiMessageSquareDots size={26} />
+    //             <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Anunta-ma cu 5 min inainte</Text>
+    //           </Button>
+    //         </Center>
+    //       </Stack>
+    //     </Center>
+    //   </Stack>
+    // </Flex>
     )
   }
 }

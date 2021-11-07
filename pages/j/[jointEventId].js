@@ -359,7 +359,7 @@ export default class JoinEvent extends Component {
                       }}
                       position="absolute"
                       bottom="0"
-                      p={2}
+                      p='10px'
                       w="100%"
                       borderBottomLeftRadius="15px"
                       borderBottomRightRadius="15px"
@@ -367,6 +367,7 @@ export default class JoinEvent extends Component {
                       alignItems="center"
                     >
                       <Flex
+                        align='center'
                         style={{
                           flex: 1,
                           overflow: "hidden"
@@ -377,7 +378,6 @@ export default class JoinEvent extends Component {
                           name={eventData.sellerInfo.username}
                           src={eventData.sellerInfo.imageURL}
                         />
-
                         <Text
                           noOfLines={1}
                           textOverflow="ellipsis"
@@ -402,7 +402,7 @@ export default class JoinEvent extends Component {
                             )
                           }
                         >
-                          <AiFillInstagram color="#FFF" size={30} />
+                          <AiFillInstagram color="#FFF" size={28} />
                         </Pressable>
                       )}
                     </Flex>

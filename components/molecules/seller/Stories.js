@@ -13,35 +13,32 @@ const Stories = ({ events }) => {
         marginTop: 0
       }}
     >
-      {events
-        .concat(events)
-        .concat(events)
-        .map(eventData => {
-          return (
-            <Pressable
-              style={{ marginRight: 10 }}
-              onPress={() => console.log("here")}
+      {events.map(eventData => {
+        return (
+          <Pressable
+            style={{ marginRight: 10 }}
+            onPress={() => console.log("here")}
+          >
+            <Stack
+              h="130px"
+              width="90px"
+              bg="#999"
+              borderRadius="15px"
+              key={eventData.event.id}
             >
-              <Stack
-                h="130px"
-                width="90px"
-                bg="#999"
-                borderRadius="15px"
-                key={eventData.event.id}
-              >
-                <AmazonIVSPreview
-                  id={eventData.event.id}
-                  url={
-                    eventData.event.info.status === "live" &&
-                    eventData.event.info.liveURL
-                      ? eventData.event.info.liveURL
-                      : eventData.event.info.videoURL
-                  }
-                />
-              </Stack>
-            </Pressable>
-          );
-        })}
+              <AmazonIVSPreview
+                id={eventData.event.id}
+                url={
+                  eventData.event.info.status === "live" &&
+                  eventData.event.info.liveURL
+                    ? eventData.event.info.liveURL
+                    : eventData.event.info.videoURL
+                }
+              />
+            </Stack>
+          </Pressable>
+        );
+      })}
     </Flex>
   );
 };

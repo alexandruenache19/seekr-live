@@ -187,7 +187,7 @@ export default class JoinEvent extends Component {
     }
 
     const that = this;
-    window.onpopstate = function(e) {
+    window.onpopstate = function (e) {
       if (e.state) {
         that.setState({
           displayEvent: false,
@@ -307,7 +307,7 @@ export default class JoinEvent extends Component {
                       id={eventData.event.id}
                       url={
                         eventData.event.info.status === "live" &&
-                        eventData.event.info.liveURL
+                          eventData.event.info.liveURL
                           ? eventData.event.info.liveURL
                           : eventData.event.info.videoURL
                       }
@@ -414,7 +414,7 @@ export default class JoinEvent extends Component {
           </SimpleGrid>
           <Flex position="absolute" bottom="2rem" justify="center" flex={1}>
             {jointEvent.info.timestamp &&
-            jointEvent.info.timestamp > new Date().getTime() ? (
+              jointEvent.info.timestamp > new Date().getTime() ? (
               <Stack
                 style={{
                   justifyContent: "center",
@@ -426,10 +426,11 @@ export default class JoinEvent extends Component {
                 <Button
                   style={{
                     backgroundColor: "#121212",
-                    padding: 10,
+                    padding: 12,
                     flex: 1,
                     flexDirection: "column",
-                    minWidth: isOnMobile ? 250 : 350
+                    minWidth: isOnMobile ? 250 : 350,
+                    borderRadius: 10
                   }}
                   maxW="500px"
                   boxShadow="0px 0px 38px -2px rgba(0,0,0,0.62)"
@@ -447,7 +448,7 @@ export default class JoinEvent extends Component {
                   >
                     Rezerva un loc
                   </Text>
-                  <Text style={{ color: "#FFF", fontSize: 12, paddingTop: 10 }}>
+                  <Text style={{ color: "#FFF", fontSize: 12, marginTop: 5 }}>
                     *primesti livrarea gratis
                   </Text>
                 </Button>

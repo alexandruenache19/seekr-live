@@ -242,6 +242,7 @@ class LiveScreen extends Component {
                   align='center'
                   w='auto'
                   minW={0}
+                  alignSelf='start'
                 >
                   {productInfo.imageURL ? (
                     <img
@@ -274,6 +275,7 @@ class LiveScreen extends Component {
                       justifyContent: 'center',
                       backgroundColor: '#000'
                     }}
+                    className='seekr-gradient-on-hover'
                     onClick={this.handleOrder}
                   >
                     <Text pr='10px' color='#FFFFFF'>
@@ -402,17 +404,17 @@ class LiveScreen extends Component {
     return (
       <Flex bg='#FFF' className='perfect-height-wrapper' w='100vw' justify='space-between'>
         <Stack w='70vw' p='20px'>
-          {this.props.handleGoBack ? (
-            <Pressable onPress={this.props.handleGoBack}>
-              <Flex align='center' pb='10px'>
-                <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                <Text fontWeight='bold'>Inapoi la evenimente</Text>
-              </Flex>
-            </Pressable>
-          ) : (
-            null
-          )}
-          <Center h='100%' w='100%'>
+          <Stack w='100%' h='100%'>
+            {this.props.handleGoBack ? (
+              <Pressable onPress={this.props.handleGoBack}>
+                <Flex align='center' pb='10px'>
+                  <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
+                  <Text fontWeight='bold'>Inapoi la evenimente</Text>
+                </Flex>
+              </Pressable>
+            ) : (
+              null
+            )}
             <Stack
               h='100%'
               w='100%'
@@ -529,6 +531,7 @@ class LiveScreen extends Component {
                     align='center'
                     w='auto'
                     minW={0}
+                    alignSelf='start'
                   >
                     {productInfo.imageURL ? (
                       <img
@@ -561,6 +564,7 @@ class LiveScreen extends Component {
                         justifyContent: 'center',
                         backgroundColor: '#000'
                       }}
+                      className='seekr-gradient-on-hover'
                       onClick={this.handleOrder}
                     >
                       <Text pr='10px' color='#FFFFFF'>
@@ -584,7 +588,7 @@ class LiveScreen extends Component {
                 </Stack>
               ) : null}
             </Stack>
-          </Center>
+          </Stack>
 
           {/* {eventInfo.currentProductId && productInfo ? (
             <Center px='20px' h='15vh' w='100%' style={{ marginTop: 0 }}>
@@ -699,7 +703,17 @@ class LiveScreen extends Component {
           )} */}
         </Stack>
 
-        <Center p='20px' pl='10px' h='100vh' w='30vw'>
+        <Stack p='20px' pl='10px' h='100vh' w='30vw'>
+          {this.props.handleGoBack ? (
+            <Pressable onPress={this.props.handleGoBack} style={{ opacity: 0 }}>
+              <Flex align='center' pb='10px'>
+                <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
+                <Text fontWeight='bold'>Inapoi la evenimente</Text>
+              </Flex>
+            </Pressable>
+          ) : (
+            null
+          )}
           <Stack
             h='100%'
             p='20px'
@@ -731,7 +745,7 @@ class LiveScreen extends Component {
               eventId={eventInfo.id}
             />
           </Stack>
-        </Center>
+        </Stack>
       </Flex>
     )
   }

@@ -16,43 +16,72 @@ import {
   ModalContent,
   useClipboard
 } from '@chakra-ui/react'
-
-import { getJointEvent } from '../../actions/fetch'
+import { Pressable } from 'react-native'
+import { MdArrowBack } from 'react-icons/md'
+import {
+  getJointEvent
+} from '../../actions/fetch'
+import {
+  getSellerInfo
+} from "../../fetchData/getData";
 import firebase from '../../firebase/clientApp'
+import EventPage from "../e/[id]";
 
 export default class JoinEvent extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      loading: true
+      loading: true,
+      events: [],
+      sellerInfo: null,
+      eventInfo: null,
+      comments: [],
+      displayEvent: false,
+      eventId: null
     }
+
+    this.handleGetSetEvent = this.handleGetSetEvent.bind(this)
   }
 
   async componentDidMount() {
     const { jointEvent } = this.props
     console.log('join', jointEvent)
     if (jointEvent && jointEvent.participants) {
-      Object.keys(jointEvent.participants).map(async (uid) => {
+      const events = []
+      for (const uid in jointEvent.participants) {
         /** get current event */
         const currentEventSn = await firebase
           .database()
           .ref(`users/${uid}/events/current`)
           .once('value')
+        if (currentEventSn.exists()) {
+          events.push(currentEventSn.val())
+        }
+      }
 
-        console.log('current', currentEventSn.val())
+      this.setState({
+        events: events,
+        loading: false
+      })
+    } else {
+      this.setState({
+        loading: false
       })
     }
-    // const joinEventSn = await firebase
-    //   .database()
-    //   .ref(`events/${eventInfo.id}/info/viewers`)
-    //   .once('value')
+  }
+
+  handleGetSetEvent(eventId) {
     this.setState({
-      loading: false
+      displayEvent: true,
+      eventId: eventId
     })
   }
 
   render() {
-    const { loading } = this.state
+    const { loading, events, displayEvent, eventId } = this.state
+    const { isOnMobile } = this.props
+
+    console.log('events', events)
     if (loading) {
       return (
         <Stack
@@ -69,6 +98,20 @@ export default class JoinEvent extends Component {
       )
     }
 
+    if (displayEvent) {
+      return (
+        <div style={{ width: '100%', height: '100%' }}>
+          <Pressable onPress={() => this.setState({ displayEvent: false, eventId: null })}>
+            <Flex align='center' pt='10px' px={isOnMobile ? '10px' : '20px'}>
+              <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
+              <Text fontWeight='bold'>Back to all events</Text>
+            </Flex>
+          </Pressable>
+          <EventPage eventId={eventId} isOnMobile={isOnMobile} />
+        </div>
+      )
+    }
+
     return (
       <Stack
         w='100vw'
@@ -82,15 +125,17 @@ export default class JoinEvent extends Component {
           columns={2}
           spacing='20px'
         >
-          {[1, 2, 3].map(product => (
-            <Box
-              w='100%'
-              h='250px'
-              bg='#999'
-              borderRadius='15px'
-              position='relative'
-              key={product}
-            />
+          {events.map(eventId => (
+            <Pressable onPress={() => this.handleGetSetEvent(eventId)}>
+              <Box
+                w='100%'
+                h='250px'
+                bg='#999'
+                borderRadius='15px'
+                position='relative'
+                key={eventId}
+              />
+            </Pressable>
           ))}
         </SimpleGrid>
       </Stack>
@@ -101,9 +146,9 @@ export default class JoinEvent extends Component {
 export const getServerSideProps = async context => {
   const { jointEventId } = context.params;
 
-  const jointEvent = await getJointEvent(jointEventId)
+  console.log('join', jointEventId)
 
-  console.log('join', jointEvent)
+  const jointEvent = await getJointEvent(jointEventId)
 
   let userAgent;
   if (context.req) {
@@ -119,5 +164,10 @@ export const getServerSideProps = async context => {
     )
   );
 
-  return { props: { jointEvent: jointEvent } };
+  return {
+    props: {
+      jointEvent: jointEvent,
+      isOnMobile: isOnMobile
+    }
+  };
 }

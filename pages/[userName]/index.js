@@ -43,8 +43,6 @@ function CopyLink({ value }) {
 const { getShopProducts, getShopOrders } = FetchingActions
 
 const ShopPage = ({ isOnMobile, userProfile }) => {
-
-  console.log('userProfile', userProfile)
   const auth = useUser()
   const { user } = auth
   const router = useRouter()
@@ -261,7 +259,6 @@ class UserPage extends PureComponent {
   render() {
     const { currentEventId } = this.state;
     const { isOnMobile, userProfile } = this.props;
-    console.log(userProfile);
     if (currentEventId) {
       return <EventPage eventId={currentEventId} isOnMobile={isOnMobile} />;
     } else {

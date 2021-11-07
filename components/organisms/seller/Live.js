@@ -186,35 +186,6 @@ class LiveScreen extends Component {
     if (isOnMobile) {
       return (
         <Stack w='100vw' bg='#FFF' p='10px' className='perfect-height-wrapper'>
-          {/* <Flex h='10vh' justify='space-between' alignItems='center'>
-            <Text p='10px' fontWeight='bold' fontSize='sm'>
-              seekr.
-            </Text>
-            <Flex
-              flex={1}
-              bg='#F2F4F9'
-              p='10px'
-              borderRadius='xl'
-              overflow='hidden'
-              justify='space-between'
-            >
-              <Text noOfLines={2} fontSize={10} textAlign='center'>
-                {eventInfo.title}
-              </Text>
-
-              <Center>
-                <Button
-                  ml='0.2em'
-                  borderRadius='1em'
-                  bg='#FFF'
-                  onClick={this.handleShare}
-                  o
-                >
-                  <FaShareSquare size={20} />
-                </Button>
-              </Center>
-            </Flex>
-          </Flex> */}
           <Stack
             h='100%'
             bg='rgba(0,0,0,0.9)'
@@ -237,10 +208,10 @@ class LiveScreen extends Component {
               borderRadius='50%'
               align='center'
               justify='center'
-              bg='#FFF'
+              bg='transparent'
               onClick={this.handleShare}
             >
-              <FiShare style={{ fontSize: 18 }} />
+              <FiShare style={{ fontSize: 18, color: '#FFF' }} />
             </Button>
 
             {productInfo ? (
@@ -345,7 +316,7 @@ class LiveScreen extends Component {
                     color='#FFF'
                     fontSize={12}
                   >
-                    @{sellerInfo.username + 'dasdasdkklldkmlkmda'}
+                    @{sellerInfo.username}
                   </Text>
                   <Center
                     style={{ marginTop: 0, justifyContent: 'flex-start' }}
@@ -399,85 +370,6 @@ class LiveScreen extends Component {
               eventId={eventInfo.id}
             />
           </Stack>
-
-          {/* <Flex
-            // p='10px'
-            h='10vh'
-            w='100%'
-            bg='#EEF2F8'
-            borderRadius='xl'
-            overflow='hidden'
-            style={{ justifyContent: 'space-between' }}
-          >
-            {eventInfo.currentProductId && productInfo ? (
-              <Center
-                w='100%'
-                // p='10px'
-                bg='#FFF'
-                style={{ justifyContent: 'space-between' }}
-              >
-                {productInfo.currentStock > 1 ? (
-                  <Flex
-                    justify='flex-start'
-                    alignItems='center'
-                    marginRight='25px'
-                  >
-                    <Button
-                      size='xs'
-                      marginRight='6px'
-                      bg='transparent'
-                      onClick={() => {
-                        if (orderQuantity > 1) {
-                          this.setState({ orderQuantity: orderQuantity - 1 })
-                        }
-                      }}
-                    >
-                      <FaMinus size={14} />
-                    </Button>
-                    <Text fontSize='xl'>{orderQuantity}</Text>
-                    <Button
-                      size='xs'
-                      marginLeft='6px'
-                      bg='transparent'
-                      onClick={() => {
-                        if (orderQuantity <= productInfo.currentStock - 1) {
-                          this.setState({ orderQuantity: orderQuantity + 1 })
-                        } else {
-                          alert('Not enough stock')
-                        }
-                      }}
-                    >
-                      <FaPlus size={14} />
-                    </Button>
-                    <Center marginLeft='10px'>
-                      <Text fontWeight='light' fontSize={9}>
-                        {productInfo.currency}
-                      </Text>
-                      <Text fontSize={22}>
-                        {productInfo.price * orderQuantity}
-                      </Text>
-                    </Center>
-                  </Flex>
-                ) : null}
-              </Center>
-            ) : (
-              <Center
-                w='100%'
-                p='10px'
-                bg='#FFF'
-                style={{ justifyContent: 'center' }}
-              >
-                <Text
-                  color='#000'
-                  fontWeight='bold'
-                  textAlign='center'
-                  fontSize='md'
-                >
-                  {`Waiting for ${sellerInfo.username} to add a product...`}
-                </Text>
-              </Center>
-            )}
-          </Flex> */}
         </Stack>
       )
     }
@@ -485,7 +377,7 @@ class LiveScreen extends Component {
     return (
       <Flex bg='#FFF' h='100vh' w='100vw' justify='space-between'>
         <Stack w='70vw'>
-          <Center p='20px' pb={0} h='85vh' w='100%'>
+          <Center p='20px' h='100%' w='100%'>
             <Stack
               h='100%'
               w='100%'
@@ -502,118 +394,160 @@ class LiveScreen extends Component {
                 <AmazonIVS url={eventInfo.liveURL} />
               </Flex>
 
-              <Center
+              <Button
                 position='absolute'
-                top='15px'
-                left='15px'
-                zIndex={10}
-                borderRadius='xl'
-                p='10px'
-                bg='#FFF'
-                style={{ marginTop: 0 }}
+                top='8px'
+                right='14px'
+                h='2em'
+                w='2em'
+                minW='0'
+                p='5px'
+                borderRadius='50%'
+                align='center'
+                justify='center'
+                bg='transparent'
+                onClick={this.handleShare}
               >
-                <Avatar name={sellerInfo.username} src={sellerInfo.imageURL} />
-                <Stack justify='center' pl='5px'>
-                  <Text fontWeight='bold'>@{sellerInfo.username}</Text>
-                  <Flex style={{ marginTop: 0 }} justify='space-between'>
-                    <Center>
-                      <Lottie
-                        options={{
-                          loop: true,
-                          autoplay: true,
-                          animationData: animationData
-                        }}
-                        height={20}
-                        width={20}
-                      />
-                      <Text pl='4px'>Live</Text>
+                <FiShare style={{ fontSize: 18, color: '#FFF' }} />
+              </Button>
+
+              <Stack
+                position='absolute'
+                left='15px'
+                top='15px'
+                borderRadius='xl'
+                p='5px'
+                bg='rgba(0,0,0,0.3)'
+                zIndex={10}
+                style={{ marginTop: 0, justifyContent: 'flex-start' }}
+              >
+                <Flex justify='flex-start' alignItems='center'>
+                  <Avatar
+                    // size='sm'
+                    style={{ width: 40, height: 40 }}
+                    name={sellerInfo.username}
+                    src={sellerInfo.imageURL}
+                  />
+                  <Stack
+                    style={{
+                      marginTop: 0,
+                      marginLeft: 8,
+                      alignItems: 'flex-start',
+                      justifyContent: 'flex-start'
+                    }}
+                  >
+                    <Text
+                      noOfLines={1}
+                      textOverflow='ellipsis'
+                      maxW='100px'
+                      fontWeight='bold'
+                      color='#FFF'
+                      fontSize={14}
+                    >
+                      @{sellerInfo.username}
+                    </Text>
+                    <Center
+                      style={{ marginTop: 0, justifyContent: 'flex-start' }}
+                    >
+                      <Center style={{ marginLeft: -3 }}>
+                        <Lottie
+                          options={{
+                            loop: true,
+                            autoplay: true,
+                            animationData: animationData
+                          }}
+                          height={20}
+                          width={20}
+                        />
+                        <Text pl='2px' color='#FFF' fontSize={12}>
+                          Live
+                        </Text>
+                      </Center>
+                      <Center ml='5px' textAlign='center'>
+                        <FiEye size={14} color='#FFF' />
+                        <Text fontSize={12} color='#FFF' textAlign='center' ml='3px'>
+                          {viewers}
+                        </Text>
+                      </Center>
                     </Center>
-                    <Center ml='10px' textAlign='center'>
-                      <FiEye size={14} />
-                      <Text textAlign='center' pl='4px'>
-                        {viewers}
-                      </Text>
-                    </Center>
-                  </Flex>
-                </Stack>
-              </Center>
+                  </Stack>
+                </Flex>
+              </Stack>
 
               {productInfo ? (
-                <Flex
+                <Stack
                   position='absolute'
                   left='0px'
-                  bottom='15px'
-                  px='15px'
-                  width='100%'
-                  justify='space-between'
-                  align='center'
+                  bottom='0px'
+                  p='15px'
+                  w='100%'
+                  flex={1}
                 >
-                  <Flex>
+                  <Flex
+                    borderRadius='xl'
+                    bg='rgba(0,0,0,0.3)'
+                    p='8px'
+                    align='center'
+                    w='auto'
+                    minW={0}
+                  >
+                    {productInfo.imageURL ? (
+                      <img
+                        src={productInfo.imageURL}
+                        style={{
+                          height: 50,
+                          width: 50,
+                          objectFit: 'cover',
+                          borderRadius: 10,
+                          marginRight: 8
+                        }}
+                      />
+                    ) : null}
                     <Stack
-                      borderRadius='xl'
-                      p='5px'
-                      px='10px'
-                      bg='#FFF'
-                      zIndex={10}
                       justifyContent='center'
-                      style={{ marginRight: '10px' }}
+                      style={{ marginTop: 0, paddingRight: 4 }}
                     >
-                      <Flex alignItems='center'>
-                        <Text color='#000' fontSize='17' fontWeight='bold'>
-                          {`${productInfo.currentStock} `}
-                        </Text>
-                        <Text
-                          color='#000'
-                          fontWeight='normal'
-                          fontSize='17'
-                          style={{ marginLeft: 5 }}
-                        >
-                          {'in stock'}
-                        </Text>
-                      </Flex>
-                    </Stack>
-                    <Stack
-                      borderRadius='xl'
-                      p='5px'
-                      px='10px'
-                      bg='#FFF'
-                      zIndex={10}
-                      justifyContent='center'
-                    >
-                      <Flex alignItems='center'>
-                        <Text color='#000' fontSize='17' fontWeight='bold'>
-                          {`${productInfo.currency}`}
-                        </Text>
-                        <Text
-                          color='#000'
-                          fontWeight='normal'
-                          fontSize='17'
-                          style={{ marginLeft: 5 }}
-                        >
-                          {`${productInfo.price}`}
-                        </Text>
-                      </Flex>
+                      <Text color='#FFF' fontSize='14' fontWeight='normal'>
+                        {`${productInfo.currentStock} remaining`}
+                      </Text>
+                      <Text color='#FFF' fontWeight='bold' fontSize='14' style={{ marginTop: '0.1rem' }}>
+                        {`${productInfo.price} ${productInfo.currency}`}
+                      </Text>
                     </Stack>
                   </Flex>
-                  <Button
-                    h='2em'
-                    w='2em'
-                    minW='0'
-                    p='5px'
-                    borderRadius='50%'
-                    align='center'
-                    justify='center'
-                    bg='#FFF'
-                    onClick={this.handleShare}
-                  >
-                    <FiShare style={{ fontSize: 18 }} />
-                  </Button>
-                </Flex>
+                  {productInfo.currentStock > 0 ? (
+                    <Button
+                      borderRadius='xl'
+                      style={{
+                        justifyContent: 'center',
+                        backgroundColor: '#000'
+                      }}
+                      onClick={this.handleOrder}
+                    >
+                      <Text pr='10px' color='#FFFFFF'>
+                        Place Order
+                      </Text>
+                    </Button>
+                  ) : (
+                    <Button
+                      borderRadius='xl'
+                      onClick={() => null}
+                      style={{
+                        justifyContent: 'center',
+                        backgroundColor: '#999'
+                      }}
+                    >
+                      <Text pr='10px' color='#FFFFFF'>
+                        Waiting for the next item
+                      </Text>
+                    </Button>
+                  )}
+                </Stack>
               ) : null}
             </Stack>
           </Center>
 
-          {eventInfo.currentProductId && productInfo ? (
+          {/* {eventInfo.currentProductId && productInfo ? (
             <Center px='20px' h='15vh' w='100%' style={{ marginTop: 0 }}>
               <Flex
                 h='100%'
@@ -694,15 +628,6 @@ class LiveScreen extends Component {
                     </Text>
                   </Button>
                 )}
-                {/* <Center
-                  w='40vw'
-                  borderRadius='xl'
-                  p='10px'
-                  bg='#FFF'
-                  justifyContent='space-between'
-                >
-
-                </Center> */}
               </Flex>
             </Center>
           ) : (
@@ -732,7 +657,7 @@ class LiveScreen extends Component {
                 </Center>
               </Flex>
             </Center>
-          )}
+          )} */}
         </Stack>
 
         <Center p='20px' pl='10px' h='100vh' w='30vw'>

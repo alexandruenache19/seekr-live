@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { withRouter } from 'next/router';
+import React, { Component } from 'react'
+import { withRouter } from 'next/router'
 import {
   Flex,
   Stack,
@@ -12,17 +12,17 @@ import {
   ModalContent,
   ModalCloseButton,
   ModalBody
-} from '@chakra-ui/react';
-import Lottie from 'react-lottie';
-import { Pressable } from 'react-native';
-import { FaPlus, FaMinus } from 'react-icons/fa';
-import { FiEye, FiShare } from 'react-icons/fi';
-import { MdArrowBack } from 'react-icons/md';
-import * as animationData from './live.json';
-import { MessageInput, CommentsList } from '../../../components';
-import firebase from '../../../firebase/clientApp';
-import AmazonIVS from '../../molecules/seller/AmazonIVS';
-import Stories from '../../molecules/seller/Stories';
+} from '@chakra-ui/react'
+import Lottie from 'react-lottie'
+import { Pressable } from 'react-native'
+import { FaPlus, FaMinus } from 'react-icons/fa'
+import { FiEye, FiShare } from 'react-icons/fi'
+import { MdArrowBack } from 'react-icons/md'
+import * as animationData from './live.json'
+import { MessageInput, CommentsList } from '../../../components'
+import firebase from '../../../firebase/clientApp'
+import AmazonIVS from '../../molecules/seller/AmazonIVS'
+import Stories from '../../molecules/seller/Stories'
 class LiveScreen extends Component {
   constructor (props) {
     super(props)
@@ -79,7 +79,7 @@ class LiveScreen extends Component {
         .database()
         .ref(`events/${eventInfo.id}/info/viewers`)
         .set(firebase.database.ServerValue.increment(-1))
-    };
+    }
   }
 
   async componentDidUpdate (prevProps, prevState) {
@@ -227,42 +227,42 @@ class LiveScreen extends Component {
               <FiShare style={{ fontSize: 18, color: '#FFF' }} />
             </Button>
 
-            {productInfo ? (
-              <Stack
-                position='absolute'
-                left='0px'
-                bottom='0px'
-                p='10px'
-                w='100%'
-                flex={1}
-              >
-                <Center style={{ overflow: 'scroll', height: 90 }}>
-                  <Center pt='120px'>
-                    <CommentsList comments={comments} />
-                  </Center>
+            <Stack
+              position='absolute'
+              left='0px'
+              bottom='0px'
+              p='10px'
+              w='100%'
+              flex={1}
+            >
+              <Center w='100%' style={{ overflow: 'scroll', height: 90 }}>
+                <Center w='100%' pt='120px'>
+                  <CommentsList comments={comments} />
                 </Center>
-                <Flex w='100%' justify='space-between' align='center' style={{ marginBottom: 10 }}>
-                  <Flex
-                    borderRadius='xl'
-                    bg='rgba(0,0,0,0.3)'
-                    p='6px'
-                    align='center'
-                    w='100%'
-                    minW={0}
-                    alignSelf='start'
-                  >
-                    {productInfo.imageURL ? (
-                      <img
-                        src={productInfo.imageURL}
-                        style={{
-                          height: 50,
-                          width: 50,
-                          objectFit: 'cover',
-                          borderRadius: 10,
-                          marginRight: 8
-                        }}
-                      />
-                    ) : null}
+              </Center>
+              <Flex w='100%' justify='space-between' align='center' style={{ marginBottom: 10 }}>
+                <Flex
+                  borderRadius='xl'
+                  bg='rgba(0,0,0,0.3)'
+                  p='6px'
+                  align='center'
+                  w='100%'
+                  minW={0}
+                  alignSelf='start'
+                >
+                  {productInfo && productInfo.imageURL ? (
+                    <img
+                      src={productInfo.imageURL}
+                      style={{
+                        height: 50,
+                        width: 50,
+                        objectFit: 'cover',
+                        borderRadius: 10,
+                        marginRight: 8
+                      }}
+                    />
+                  ) : null}
+                  {productInfo ? (
                     <Stack
                       justifyContent='center'
                       style={{ marginTop: 0, paddingRight: 4 }}
@@ -274,52 +274,57 @@ class LiveScreen extends Component {
                         {`${productInfo.price} ${productInfo.currency}`}
                       </Text>
                     </Stack>
-                    {productInfo.currentStock > 0 ? (
-                      <Button
-                        borderRadius='xl'
-                        // px='10px'
-                        style={{
-                          justifyContent: 'center',
-                          background: 'rgb(63,60,145)',
-                          background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
-                          minHeight: '100%',
-                          height: '100%',
-                          flex: 1,
-                          height: 50,
-                          // width: 'auto',
-                          minWidth: 120,
-                          marginLeft: 20
-                        }}
-                        className='seekr-gradient-on-hover'
-                        onClick={this.handleOrder}
-                      >
-                        <Text color='#FFFFFF' fontWeight='600'>
-                          Place Order
-                        </Text>
-                      </Button>
-                    ) : (
-                      <Button
-                        borderRadius='xl'
-                        onClick={() => null}
-                        style={{
-                          justifyContent: 'center',
-                          backgroundColor: '#999'
-                        }}
-                      >
-                        <Text color='#FFFFFF'>
-                          Waiting for the next item
-                        </Text>
-                      </Button>
-                    )}
-                  </Flex>
+                  ) : null}
+                  {productInfo && productInfo.currentStock > 0 ? (
+                    <Button
+                      borderRadius='xl'
+                      // px='10px'
+                      style={{
+                        justifyContent: 'center',
+                        background: 'rgb(63,60,145)',
+                        background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
+                        minHeight: '100%',
+                        flex: 1,
+                        height: 50,
+                        // width: 'auto',
+                        minWidth: 120,
+                        marginLeft: 20
+                      }}
+                      className='seekr-gradient-on-hover'
+                      onClick={this.handleOrder}
+                    >
+                      <Text color='#FFFFFF' fontWeight='600'>
+                        Place Order
+                      </Text>
+                    </Button>
+                  ) : (
+                    <Button
+                      borderRadius='xl'
+                      // px='10px'
+                      style={{
+                        justifyContent: 'center',
+                        backgroundColor: '#999',
+                        minHeight: '100%',
+                        flex: 1,
+                        height: 50,
+                        // width: 'auto',
+                        minWidth: 120
+                      }}
+                      onClick={() => null}
+                    >
+                      <Text color='#FFFFFF' fontWeight='600'>
+                        Waiting for the next item
+                      </Text>
+                    </Button>
+                  )}
                 </Flex>
-                <MessageInput
-                  onOpenModal={this.props.onOpenModal}
-                  username={username}
-                  eventId={eventInfo.id}
-                />
-              </Stack>
-            ) : null}
+              </Flex>
+              <MessageInput
+                onOpenModal={this.props.onOpenModal}
+                username={username}
+                eventId={eventInfo.id}
+              />
+            </Stack>
             <Flex
               position='absolute'
               left='10px'
@@ -606,117 +611,6 @@ class LiveScreen extends Component {
               ) : null}
             </Stack>
           </Center>
-          {/* {eventInfo.currentProductId && productInfo ? (
-            <Center px='20px' h='15vh' w='100%' style={{ marginTop: 0 }}>
-              <Flex
-                h='100%'
-                w='100%'
-                bg='#FFFFFF'
-                borderRadius='xl'
-                overflow='hidden'
-                align='center'
-                style={{ justifyContent: 'space-between', marginTop: 0 }}
-              >
-                <Flex justify='space-between' align='center'>
-                  <Button
-                    size='sm'
-                    bg='transparent'
-                    onClick={() => {
-                      if (orderQuantity > 1) {
-                        this.setState({ orderQuantity: orderQuantity - 1 })
-                      }
-                    }}
-                  >
-                    <FaMinus size={14} />
-                  </Button>
-                  <Text px='10px' fontSize='xl'>
-                    {orderQuantity}
-                  </Text>
-                  <Button
-                    size='sm'
-                    bg='transparent'
-                    onClick={() => {
-                      if (orderQuantity <= productInfo.currentStock - 1) {
-                        this.setState({ orderQuantity: orderQuantity + 1 })
-                      } else {
-                        alert('Not enough stock')
-                      }
-                    }}
-                  >
-                    <FaPlus size={14} />
-                  </Button>
-                </Flex>
-                <Flex align='flex-end' marginLeft='20px'>
-                  <Text fontSize={23} lineHeight='22px'>
-                    {productInfo.price * orderQuantity}
-                  </Text>
-                  <Text fontWeight='light' fontSize={19} lineHeight='19px'>
-                    {productInfo.currency}
-                  </Text>
-                </Flex>
-                {productInfo.currentStock > 0 ? (
-                  <Button
-                    size='lg'
-                    borderRadius='30px'
-                    style={{
-                      justifyContent: 'center',
-                      flex: 1,
-                      backgroundColor: '#121212',
-                      marginLeft: 30
-                    }}
-                    onClick={this.handleOrder}
-                  >
-                    <Text pr='10px' color='#FFFFFF'>
-                      Place Order
-                    </Text>
-                  </Button>
-                ) : (
-                  <Button
-                    size='lg'
-                    borderRadius='xl'
-                    onClick={() => null}
-                    style={{
-                      justifyContent: 'center',
-                      flex: 1,
-                      backgroundColor: '#999',
-                      marginLeft: 30
-                    }}
-                  >
-                    <Text pr='10px' color='#FFFFFF'>
-                      Waiting for the next item
-                    </Text>
-                  </Button>
-                )}
-              </Flex>
-            </Center>
-          ) : (
-            <Center p='20px' h='15vh' w='100%' style={{ marginTop: 0 }}>
-              <Flex
-                h='100%'
-                w='100%'
-                p='10px'
-                bg='#F2F4F9'
-                borderRadius='xl'
-                overflow='hidden'
-                style={{ justifyContent: 'space-between', marginTop: 0 }}
-              >
-                <Center w='100%'>
-                  <Stack
-                    borderRadius='xl'
-                    p='10px'
-                    bg='#FFF'
-                    w='100%'
-                    align='center'
-                    justify='center'
-                  >
-                    <Text color='#000' fontWeight='bold' fontSize='xl'>
-                      {`Waiting for ${sellerInfo.username} to add a product...`}
-                    </Text>
-                  </Stack>
-                </Center>
-              </Flex>
-            </Center>
-          )} */}
         </Stack>
 
         <Stack p='20px' pl='10px' h='100vh' w='30vw'>

@@ -29,15 +29,16 @@ const CommentsList = ({ comments }) => {
   })
 
   return (
-    <List style={{ overflowY: 'auto', width: '100%' }} spacing={3} pt='5px'>
+    <List style={{ overflowY: 'auto', width: '100%' }} spacing={3}>
       {comments.map((comment, i) => (
-        <ListItem key={i}>
+        <ListItem key={i} style={{ marginTop: 5 }}>
           <Flex justify='flex-start' alignItems=''>
             {/* <Avatar size='sm' style={{ width: 24, height: 24 }} name={comment.username} /> */}
             <Stack
               justify='center'
               ml='5px'
               borderRadius='xl'
+              style={{ marginTop: 0 }}
             >
               <Text color='#FFFFFF' fontSize={13}>
                 <span style={{ color: 'rgba(255,255,255,0.6)' }}>{`@${comment.username}  `}</span>

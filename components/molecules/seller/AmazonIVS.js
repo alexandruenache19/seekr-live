@@ -51,7 +51,7 @@ function AmazonIVSWorkaround({ url }) {
             height: '100%',
             flex: 1,
             zIndex: 4,
-            borderRadius: 20,
+            borderRadius: 13,
             backgroundColor: muted ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0)'
           }}
         >
@@ -79,7 +79,7 @@ function AmazonIVSWorkaround({ url }) {
       ) : null}
       <video
         id='video-player'
-        style={{ height: '100%', objectFit: 'cover', borderRadius: '12px' }}
+        style={{ height: '100%', objectFit: 'cover', borderRadius: '13px' }}
         ref={videoEl}
         // autoplay
         autoPlay

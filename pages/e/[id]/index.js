@@ -94,7 +94,6 @@ class EventPage extends PureComponent {
       sellerInfo,
       currentProductId
     } = this.state;
-    console.log(eventInfo.status);
     switch (eventInfo.status) {
       case "scheduled":
         return (

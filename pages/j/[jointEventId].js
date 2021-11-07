@@ -15,14 +15,18 @@ import {
   ModalCloseButton,
   ModalContent,
   useClipboard
-} from '@chakra-ui/react'
-import { Pressable } from 'react-native'
-import { MdArrowBack } from 'react-icons/md'
-import {
-  getJointEvent
-} from '../../actions/fetch'
-import firebase from '../../firebase/clientApp'
+} from "@chakra-ui/react";
+import { Pressable } from "react-native";
+import { MdArrowBack } from "react-icons/md";
+import { getJointEvent } from "../../actions/fetch";
+import firebase from "../../firebase/clientApp";
 import EventPage from "../e/[id]";
+import {
+  getSeller,
+  getEvent,
+  getEventInfo,
+  getSellerInfo
+} from "../../fetchData/getData";
 import AmazonIVSPreview from "../../components/molecules/seller/AmazonIVSPreview";
 
 export default class JoinEvent extends Component {
@@ -33,35 +37,40 @@ export default class JoinEvent extends Component {
       events: [],
       displayEvent: false,
       eventId: null
-    }
+    };
 
-    this.handleGetSetEvent = this.handleGetSetEvent.bind(this)
+    this.handleGetSetEvent = this.handleGetSetEvent.bind(this);
   }
 
   async componentDidMount() {
     const { jointEvent } = this.props;
-    console.log("join", jointEvent);
+
     if (jointEvent && jointEvent.participants) {
-      const events = []
+      const events = [];
       for (const uid in jointEvent.participants) {
         /** get current event */
         const currentEventSn = await firebase
           .database()
           .ref(`users/${uid}/events/current`)
-          .once('value')
+          .once("value");
         if (currentEventSn.exists()) {
-          events.push(currentEventSn.val())
+          const eventId = currentEventSn.val();
+          const eventData = await getEvent(eventId);
+          this.setState({
+            events: this.state.events.concat(eventData),
+            loading: false
+          });
         }
       }
 
-      this.setState({
-        events: events,
-        loading: false
-      })
+      // this.setState({
+      //   // events: events,
+      //   loading: false
+      // });
     } else {
       this.setState({
         loading: false
-      })
+      });
     }
   }
 
@@ -69,14 +78,13 @@ export default class JoinEvent extends Component {
     this.setState({
       displayEvent: true,
       eventId: eventId
-    })
+    });
   }
 
   render() {
-    const { loading, events, displayEvent, eventId } = this.state
-    const { isOnMobile } = this.props
+    const { loading, events, displayEvent, eventId } = this.state;
+    const { isOnMobile } = this.props;
 
-    console.log('events', events)
     if (loading) {
       return (
         <Stack
@@ -95,16 +103,20 @@ export default class JoinEvent extends Component {
 
     if (displayEvent) {
       return (
-        <div style={{ width: '100%', height: '100%' }}>
-          <Pressable onPress={() => this.setState({ displayEvent: false, eventId: null })}>
-            <Flex align='center' pt='10px' px={isOnMobile ? '10px' : '20px'}>
+        <div style={{ width: "100%", height: "100%" }}>
+          <Pressable
+            onPress={() =>
+              this.setState({ displayEvent: false, eventId: null })
+            }
+          >
+            <Flex align="center" pt="10px" px={isOnMobile ? "10px" : "20px"}>
               <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-              <Text fontWeight='bold'>Back to all events</Text>
+              <Text fontWeight="bold">Back to all events</Text>
             </Flex>
           </Pressable>
           <EventPage eventId={eventId} isOnMobile={isOnMobile} />
         </div>
-      )
+      );
     }
 
     return (
@@ -126,10 +138,11 @@ export default class JoinEvent extends Component {
           maxWidth="1000px"
           spacing="20px"
         >
-          {events.map(eventId => {
-            console.log(eventId);
+          {this.re}
+          {events.map(eventData => {
+            // const eventInfo = await getEvent(eventId);
             return (
-              <Pressable onPress={() => this.handleGetSetEvent(eventId)}>
+              <Pressable onPress={() => this.handleGetSetEvent(eventData.id)}>
                 <Flex
                   h="250px"
                   w="100%"
@@ -137,11 +150,11 @@ export default class JoinEvent extends Component {
                   bg="#999"
                   borderRadius="15px"
                   position="relative"
-                  key={eventId}
-                // style={{ boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)" }}
+                  key={eventData.id}
+                  style={{ boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)" }}
                 >
                   <AmazonIVSPreview
-                    id={eventId}
+                    id={eventData.id}
                     url={
                       "https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
                     }
@@ -160,8 +173,6 @@ export const getServerSideProps = async context => {
   const { jointEventId } = context.params;
 
   const jointEvent = await getJointEvent(jointEventId);
-
-  console.log("join", jointEvent);
 
   let userAgent;
   if (context.req) {
@@ -183,4 +194,4 @@ export const getServerSideProps = async context => {
       isOnMobile: isOnMobile
     }
   };
-}
+};

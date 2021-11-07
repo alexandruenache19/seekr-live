@@ -60,7 +60,7 @@ export const SignInComponent = ({ isOnMobile }) => {
       </Flex>
     );
   }
-  console.log(isModalOpen);
+
   return (
     <Stack w="100vw" maxWidth="800" h="100%">
       <Text style={{ marginTop: "2rem", fontWeight: "bold" }}>

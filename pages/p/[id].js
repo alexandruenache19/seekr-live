@@ -19,7 +19,7 @@ import {
   NumberDecrementStepper,
   Spinner
 } from "@chakra-ui/react";
-import { Pressable } from 'react-native'
+import { Pressable } from "react-native";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import firebase from "../../firebase/clientApp";
 import router from "next/router";
@@ -117,9 +117,8 @@ export default class PaymentScreen extends PureComponent {
       product: null,
       outOfStock: false,
       isModalOpen: false,
-      sellerUsername: null,
-      sellerPhotoUrl: null,
-      stripeSellerId: null,
+      sellerInfo: {},
+
       newPrice: null
     };
 
@@ -135,20 +134,9 @@ export default class PaymentScreen extends PureComponent {
 
     const product = productSn.val();
 
-    /** get user information */
-    const sellerUsernameSn = await firebase
+    const sellerInfoSn = await firebase
       .database()
-      .ref(`users/${productSn.val().uid}/info/username`)
-      .once("value");
-
-    const sellerPhotoSn = await firebase
-      .database()
-      .ref(`users/${productSn.val().uid}/info/imageURL`)
-      .once("value");
-
-    const sellerStripeIdSn = await firebase
-      .database()
-      .ref(`users/${productSn.val().uid}/info/stripeId`)
+      .ref(`users/${productSn.val().uid}/info`)
       .once("value");
 
     if (productSn.val()) {
@@ -158,9 +146,7 @@ export default class PaymentScreen extends PureComponent {
             product: productSn.val(),
             paidProduct: true,
             loading: false,
-            sellerUsername: sellerUsernameSn.val(),
-            sellerPhotoUrl: sellerPhotoSn.val(),
-            stripeSellerId: sellerStripeIdSn.val()
+            sellerInfo: sellerInfoSn.val()
           },
           async () => {
             const req = await axios.post("/api/retrive-session", {
@@ -188,7 +174,8 @@ export default class PaymentScreen extends PureComponent {
               const productRef = firebase
                 .database()
                 .ref(
-                  `users/${productSn.val().uid
+                  `users/${
+                    productSn.val().uid
                   }/shop/orders/${phoneNumber}/products`
                 )
                 .push();
@@ -196,7 +183,8 @@ export default class PaymentScreen extends PureComponent {
               await firebase
                 .database()
                 .ref(
-                  `users/${productSn.val().uid
+                  `users/${
+                    productSn.val().uid
                   }/shop/orders/${phoneNumber}/products/${productRef.key}`
                 )
                 .update({
@@ -227,18 +215,14 @@ export default class PaymentScreen extends PureComponent {
           product: productSn.val(),
           paidProduct: false,
           loading: false,
-          sellerUsername: sellerUsernameSn.val(),
-          stripeSellerId: sellerStripeIdSn.val(),
-          sellerPhotoUrl: sellerPhotoSn.val()
+          sellerInfo: sellerInfoSn.val()
         });
       } else {
         this.setState(
           {
             product: productSn.val(),
             paidProduct: false,
-            sellerUsername: sellerUsernameSn.val(),
-            stripeSellerId: sellerStripeIdSn.val(),
-            sellerPhotoUrl: sellerPhotoSn.val()
+            sellerInfo: sellerInfoSn.val()
           },
           () => {
             if (productSn.val().quantity >= 1) {
@@ -343,10 +327,8 @@ export default class PaymentScreen extends PureComponent {
       paidProduct,
       outOfStock,
       isModalOpen,
-      sellerUsername,
-      sellerPhotoUrl,
-      newPrice,
-      stripeSellerId
+      sellerInfo,
+      newPrice
     } = this.state;
 
     const { isOnMobile } = this.props;
@@ -416,9 +398,9 @@ export default class PaymentScreen extends PureComponent {
           ) : (
             <Stack align="center" maxW="500px" w="100%" px="1.5rem">
               <Stack alignItems="center">
-                {sellerPhotoUrl ? (
+                {sellerInfo.imageURL && (
                   <img
-                    src={sellerPhotoUrl}
+                    src={sellerInfo.imageURL}
                     style={{
                       height: 50,
                       width: 50,
@@ -427,45 +409,53 @@ export default class PaymentScreen extends PureComponent {
                       objectFit: "cover"
                     }}
                   />
-                ) : null}
-                {sellerUsername ? (
+                )}
+                {sellerInfo.username && (
                   <Text
                     ml={2}
                     fontWeight="bold"
                     fontSize={18}
-                  >{`@${sellerUsername}`}</Text>
-                ) : null}
+                  >{`@${sellerInfo.username}`}</Text>
+                )}
               </Stack>
               <Text textAlign="center">{product.name}</Text>
 
-              <div style={{
-                position: 'relative',
-                maxWidth: "95%",
-                height: "auto",
-                marginTop: "1.2rem",
-                marginBottom: "1.2rem",
-                maxHeight: 250,
-              }}>
+              <div
+                style={{
+                  position: "relative",
+                  maxWidth: "95%",
+                  height: "auto",
+                  marginTop: "1.2rem",
+                  marginBottom: "1.2rem",
+                  maxHeight: 250
+                }}
+              >
                 <img
                   src={product.imageUrl}
                   style={{
                     // boxShadow: '0px 0px 36px -9px rgba(0,0,0,0.49)',
                     backgroundColor: "#999",
-                    width: '100%',
+                    width: "100%",
                     height: "auto",
                     maxHeight: 250,
                     borderRadius: 15,
-                    objectFit: "cover",
+                    objectFit: "cover"
                   }}
                 />
                 <Stack
-                  style={{ backgroundColor: 'rgba(0,0,0,0.8)', position: 'absolute', top: 7, left: 7, zIndex: 3 }}
-                  py='5px'
-                  px='8px'
-                  borderRadius='xl'
-                // className='quantity-label'
+                  style={{
+                    backgroundColor: "rgba(0,0,0,0.8)",
+                    position: "absolute",
+                    top: 7,
+                    left: 7,
+                    zIndex: 3
+                  }}
+                  py="5px"
+                  px="8px"
+                  borderRadius="xl"
+                  // className='quantity-label'
                 >
-                  <Text color='#FFFFFF' fontSize={14}>
+                  <Text color="#FFFFFF" fontSize={14}>
                     {`${product.quantity} in stock`}
                   </Text>
                 </Stack>
@@ -502,12 +492,16 @@ export default class PaymentScreen extends PureComponent {
                   <Text textAlign="center" fontSize={"18px"} fontWeight="bold">
                     {`Pret: ${product.price} RON`}
                   </Text>
-                  <Text
-                    textAlign="center"
-                    style={{ marginTop: 0, fontSize: 12, color: "#666" }}
-                  >
-                    {`+20 RON transport`}
-                  </Text>
+                  {sellerInfo.transportFee && (
+                    <Text
+                      textAlign="center"
+                      style={{ marginTop: 0, fontSize: 12, color: "#666" }}
+                    >
+                      {`+${sellerInfo.transportFee} ${product.currency ||
+                        "RON"} transport`}
+                    </Text>
+                  )}
+
                   {/* {!outOfStock ? (
                     <Text
                       fontSize={"18px"}
@@ -571,41 +565,85 @@ export default class PaymentScreen extends PureComponent {
                     textAlign: "center"
                   }}
                 >
-                  <Button
-                    style={{
-                      backgroundColor: "#000",
-                      width: "100%",
-                      marginTop: "0.5rem"
-                    }}
-                    onClick={async () => {
-                      const fullPrice = product.price + 20;
-                      const req = await axios.post("/api/checkout", {
-                        productId: product.id,
-                        name: product.name,
-                        quantity: 1,
-                        price: fullPrice,
-                        imageUrl: product.imageUrl,
-                        stripeSellerId: stripeSellerId
-                      });
-                      window.location.href = req.data.url;
-                    }}
-                  >
-                    <Text style={{ color: "#FFFFFF" }}>Plata card</Text>
-                  </Button>
-
-                  <Text style={{ color: "#666", marginTop: "0.5rem" }}>or</Text>
-
-                  <Pressable onPress={() => this.setState({ isModalOpen: true })}>
-                    <Text
+                  {sellerInfo.paymentType === "card" ? (
+                    <Button
                       style={{
-                        marginTop: "0.5rem",
-                        color: "#666",
-                        // textDecorationLine: "underline"
+                        backgroundColor: "#000",
+                        width: "100%",
+                        marginTop: "0.5rem"
+                      }}
+                      onClick={async () => {
+                        const { sellerInfo } = this.state;
+                        const transportFee = sellerInfo.transportFee || 0;
+                        const fullPrice = product.price + transportFee;
+                        const req = await axios.post("/api/checkout", {
+                          productId: product.id,
+                          name: product.name,
+                          quantity: 1,
+                          price: fullPrice,
+                          imageUrl: product.imageUrl,
+                          stripeSellerId: sellerInfo.stripeId
+                        });
+                        window.location.href = req.data.url;
                       }}
                     >
-                      Plata ramburs
-                    </Text>
-                  </Pressable>
+                      <Text style={{ color: "#FFFFFF" }}>Plata card</Text>
+                    </Button>
+                  ) : sellerInfo.paymentType === "ramburs" ? (
+                    <Button
+                      style={{
+                        backgroundColor: "#000",
+                        width: "100%",
+                        marginTop: "0.5rem"
+                      }}
+                      onClick={() => this.setState({ isModalOpen: true })}
+                    >
+                      <Text style={{ color: "#FFFFFF" }}>Plata ramburs</Text>
+                    </Button>
+                  ) : (
+                    <Stack>
+                      <Button
+                        style={{
+                          backgroundColor: "#000",
+                          width: "100%",
+                          marginTop: "0.5rem"
+                        }}
+                        onClick={async () => {
+                          const { sellerInfo } = this.state;
+                          const transportFee = sellerInfo.transportFee || 0;
+                          const fullPrice = product.price + transportFee;
+                          const req = await axios.post("/api/checkout", {
+                            productId: product.id,
+                            name: product.name,
+                            quantity: 1,
+                            price: fullPrice,
+                            imageUrl: product.imageUrl,
+                            stripeSellerId: sellerInfo.stripeId
+                          });
+                          window.location.href = req.data.url;
+                        }}
+                      >
+                        <Text style={{ color: "#FFFFFF" }}>Plata card</Text>
+                      </Button>
+                      <Text style={{ color: "#666", marginTop: "0.5rem" }}>
+                        or
+                      </Text>
+
+                      <Pressable
+                        onPress={() => this.setState({ isModalOpen: true })}
+                      >
+                        <Text
+                          style={{
+                            marginTop: "0.5rem",
+                            color: "#666"
+                            // textDecorationLine: "underline"
+                          }}
+                        >
+                          Plata ramburs
+                        </Text>
+                      </Pressable>
+                    </Stack>
+                  )}
                 </div>
               )}
             </Stack>

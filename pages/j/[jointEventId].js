@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { Pressable } from "react-native";
 import { MdArrowBack } from "react-icons/md";
-import { AiFillInstagram } from "react-icons/ai";
+import { FiInstagram } from "react-icons/fi";
 import { getJointEvent } from "../../actions/fetch";
 import firebase from "../../firebase/clientApp";
 import EventPage from "../e/[id]";
@@ -54,7 +54,9 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
         borderRadius={isOnMobile ? 10 : 30}
       >
         <ModalHeader px="0px">
-          <Text>Rezerva un loc & primeste o notificare inainte de eveniment</Text>
+          <Text>
+            Rezerva un loc & primeste o notificare inainte de eveniment
+          </Text>
         </ModalHeader>
         <ModalCloseButton />
         <Stack
@@ -185,7 +187,7 @@ export default class JoinEvent extends Component {
     }
 
     const that = this;
-    window.onpopstate = function (e) {
+    window.onpopstate = function(e) {
       if (e.state) {
         that.setState({
           displayEvent: false,
@@ -305,7 +307,7 @@ export default class JoinEvent extends Component {
                       id={eventData.event.id}
                       url={
                         eventData.event.status === "live" &&
-                          eventData.event.liveURL
+                        eventData.event.liveURL
                           ? eventData.event.info.liveURL
                           : eventData.sellerInfo.videoURL
                       }
@@ -358,7 +360,7 @@ export default class JoinEvent extends Component {
                       }}
                       position="absolute"
                       bottom="0"
-                      p='10px'
+                      p="10px"
                       w="100%"
                       borderBottomLeftRadius="15px"
                       borderBottomRightRadius="15px"
@@ -366,7 +368,7 @@ export default class JoinEvent extends Component {
                       alignItems="center"
                     >
                       <Flex
-                        align='center'
+                        align="center"
                         style={{
                           flex: 1,
                           overflow: "hidden"
@@ -401,7 +403,7 @@ export default class JoinEvent extends Component {
                             )
                           }
                         >
-                          <AiFillInstagram color="#FFF" size={28} />
+                          <FiInstagram color="#FFF" size={28} />
                         </Pressable>
                       )}
                     </Flex>
@@ -412,22 +414,28 @@ export default class JoinEvent extends Component {
           </SimpleGrid>
           <Flex position="absolute" bottom="2rem" justify="center" flex={1}>
             {jointEvent.info.timestamp &&
-              jointEvent.info.timestamp > new Date().getTime() ? (
-              <Button
-                style={{
-                  backgroundColor: "#121212",
-                  flex: 1,
-                  minWidth: isOnMobile ? 250 : 350
-                }}
-                maxW="500px"
-                boxShadow="0px 0px 38px -2px rgba(0,0,0,0.62)"
-                className="seekr-gradient-on-hover"
-                onClick={() => {
-                  this.setState({ showRegistrationModal: true });
-                }}
-              >
-                <Text style={{ color: "#FFFFFF" }}>Rezerva loc</Text>
-              </Button>
+            jointEvent.info.timestamp > new Date().getTime() ? (
+              <Stack style={{ justifyContent: "center", alignItems: "center" }}>
+                <Button
+                  style={{
+                    backgroundColor: "#121212",
+                    padding: 10,
+                    flex: 1,
+                    minWidth: isOnMobile ? 250 : 350
+                  }}
+                  maxW="500px"
+                  boxShadow="0px 0px 38px -2px rgba(0,0,0,0.62)"
+                  className="seekr-gradient-on-hover"
+                  onClick={() => {
+                    this.setState({ showRegistrationModal: true });
+                  }}
+                >
+                  <Text style={{ color: "#FFFFFF" }}>Rezerva un loc</Text>
+                </Button>
+                <Text style={{ fontWeight: "bold" }}>
+                  *primesti livrarea gratis
+                </Text>
+              </Stack>
             ) : (
               <Button
                 style={{

@@ -109,7 +109,7 @@ const StripeCardCheckout = ({ handleSubmitOrder, returnUrl }) => {
   }
 
   return (
-    <Stack>
+    <Stack classname='stripe-payment-form'>
       <PaymentElement id='payment-element' />
       <button
         disabled={isLoading || !stripe || !elements}
@@ -126,14 +126,14 @@ const StripeCardCheckout = ({ handleSubmitOrder, returnUrl }) => {
                 borderRadius: 5,
                 justifyContent: 'center',
                 flex: 1,
-                backgroundColor: '#28A445',
+                backgroundColor: '#121212',
                 width: '100%',
                 padding: 8
               }}
-              // onClick={handleSubmit}
+            // onClick={handleSubmit}
             >
               <Text pr='10px' color='#FFFFFF'>
-                                Buy Now
+                Buy Now
               </Text>
             </div>
           )}
@@ -177,17 +177,17 @@ const CheckoutForm = ({
 
     if (
       name === null ||
-            phoneNumber === null ||
-            country === null ||
-            city === null ||
-            postalCode === null ||
-            addressLine1 === null ||
-            name === '' ||
-            phoneNumber === '' ||
-            country === '' ||
-            city === '' ||
-            postalCode === '' ||
-            addressLine1 === ''
+      phoneNumber === null ||
+      country === null ||
+      city === null ||
+      postalCode === null ||
+      addressLine1 === null ||
+      name === '' ||
+      phoneNumber === '' ||
+      country === '' ||
+      city === '' ||
+      postalCode === '' ||
+      addressLine1 === ''
     ) {
       alert('Please fill in all required fields')
       return false
@@ -228,9 +228,9 @@ const CheckoutForm = ({
       addComment(
         {
           text:
-                        orderQuantity === 1
-                          ? 'I just ordered this!'
-                          : `I just ordered ${orderQuantity} of these`,
+            orderQuantity === 1
+              ? 'I just ordered this!'
+              : `I just ordered ${orderQuantity} of these`,
           username: name
         },
         eventInfo.id
@@ -287,7 +287,7 @@ const CheckoutForm = ({
         >
           <FormControl id='name' isRequired style={{ marginBottom: 10 }}>
             <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>
-                            Full Name
+              Full Name
             </Text>
             <Input
               value={name}
@@ -298,7 +298,7 @@ const CheckoutForm = ({
           <Stack style={{ marginBottom: 10 }}>
             <FormControl style={styles.formRow} id='country'>
               <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>
-                                Shipping Details
+                Shipping Details
               </Text>
               <Input
                 placeholder='Country'
@@ -339,7 +339,7 @@ const CheckoutForm = ({
           </Stack>
           <FormControl id='phone' isRequired style={{ marginBottom: 10 }}>
             <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>
-                            Phone Number
+              Phone Number
             </Text>
             <Input
               placeholder='Phone Number'
@@ -347,7 +347,7 @@ const CheckoutForm = ({
               onChange={e => setPhoneNumber(e.target.value)}
             />
             <FormHelperText>
-                            The seller may contact you about your order
+              The seller may contact you about your order
             </FormHelperText>
           </FormControl>
           <Button

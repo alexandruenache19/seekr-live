@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import {
   Stack,
   Avatar,
@@ -14,6 +14,11 @@ import {
   ModalOverlay,
   ModalCloseButton,
   ModalContent,
+  ModalHeader,
+  FormControl,
+  Input,
+  FormHelperText,
+  useToast,
   useClipboard
 } from "@chakra-ui/react";
 import { Pressable } from "react-native";
@@ -29,6 +34,93 @@ import {
 } from "../../fetchData/getData";
 import AmazonIVSPreview from "../../components/molecules/seller/AmazonIVSPreview";
 
+const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
+  const [name, setName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const toast = useToast()
+  return (
+    <Modal
+      motionPreset='scale'
+      isCentered
+      isOpen={isOpen}
+      onClose={onClose}
+      size='2xl'
+    >
+      <ModalOverlay />
+      <ModalContent
+        p={isOnMobile ? 0 : 10}
+        py={isOnMobile ? 5 : 10}
+        borderRadius={isOnMobile ? 10 : 30}
+      >
+        <ModalHeader px='0px'>
+          <Text>Register for event</Text>
+        </ModalHeader>
+        <ModalCloseButton />
+        <Stack
+          style={{
+            overflow: 'scroll',
+            maxHeight: '60vh',
+            paddingBottom: '1rem'
+          }}
+        >
+          <FormControl id='name' isRequired style={{ marginBottom: 10 }}>
+            <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>
+              Full Name
+            </Text>
+            <Input
+              value={name}
+              placeholder='Name'
+              onChange={e => setName(e.target.value)}
+            />
+          </FormControl>
+          <FormControl id='phone' isRequired style={{ marginBottom: 10 }}>
+            <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>
+              Phone Number
+            </Text>
+            <Input
+              placeholder='Phone Number'
+              value={phoneNumber}
+              onChange={e => setPhoneNumber(e.target.value)}
+            />
+            <FormHelperText>
+              You'll get notified when the event starts
+            </FormHelperText>
+          </FormControl>
+          <Button
+            style={{ backgroundColor: '#121212', flex: 1, padding: 10 }}
+            onClick={async () => {
+              if (name !== '' && phoneNumber !== '') {
+                await firebase
+                  .database()
+                  .ref(`joint-events/${jointEventId}/waitlist`)
+                  .push({
+                    name: name,
+                    phoneNumber: phoneNumber
+                  })
+                toast({
+                  title: 'Registered Successfully',
+                  status: 'success',
+                  duration: 3000,
+                  isClosable: false
+                })
+                onClose()
+              } else {
+                alert('Please complete all fields.')
+              }
+              // await props.completeRegistration({
+              //   name: name,
+              //   phoneNumber: phoneNumber
+              // })
+            }}
+          >
+            <Text style={{ color: '#FFFFFF' }}>Register</Text>
+          </Button>
+        </Stack>
+      </ModalContent>
+    </Modal>
+  )
+}
+
 export default class JoinEvent extends Component {
   constructor(props) {
     super(props);
@@ -36,7 +128,8 @@ export default class JoinEvent extends Component {
       loading: true,
       events: [],
       displayEvent: false,
-      eventId: null
+      eventId: null,
+      showRegistrationModal: false
     };
 
     this.handleGetSetEvent = this.handleGetSetEvent.bind(this);
@@ -78,14 +171,38 @@ export default class JoinEvent extends Component {
   }
 
   handleGetSetEvent(eventId) {
+    const nextURL = `/e/${eventId}`
+    const nextTitle = 'My new page title'
+    const nextState = { additionalInformation: 'Updated the URL with JS' }
+
+    if (window && window.history) {
+      // This will create a new entry in the browser's history, without reloading
+      window.history.pushState(nextState, nextTitle, nextURL)
+
+      // This will replace the current entry in the browser's history, without reloading
+      window.history.replaceState(nextState, nextTitle, nextURL)
+    }
+
+    const that = this
+    window.onpopstate = function (e) {
+      if (e.state) {
+        that.setState({
+          displayEvent: false,
+          eventId: null
+        });
+        // document.getElementById("content").innerHTML = e.state.html;
+        // document.title = e.state.pageTitle;
+      }
+    };
+
     this.setState({
       displayEvent: true,
       eventId: eventId
-    });
+    })
   }
 
   render() {
-    const { loading, events, displayEvent, eventId } = this.state
+    const { loading, events, displayEvent, eventId, showRegistrationModal } = this.state
     const { isOnMobile, jointEvent } = this.props
 
     if (loading) {
@@ -125,6 +242,17 @@ export default class JoinEvent extends Component {
         justifyContent="center"
         alignItems="center"
       >
+        {showRegistrationModal ? (
+          <RegistrationModal
+            isOpen={showRegistrationModal}
+            onClose={() => this.setState({ showRegistrationModal: false })}
+            isOnMobile={isOnMobile}
+            jointEventId={jointEvent.info.id}
+          />
+        ) : (
+          null
+        )}
+
         <Stack
           maxW='1000px'
           height='100vh'
@@ -156,7 +284,6 @@ export default class JoinEvent extends Component {
             spacing="20px"
           >
             {events.map(eventData => {
-              console.log(eventData);
               return (
                 <Pressable
                   onPress={() => this.handleGetSetEvent(eventData.event.id)}
@@ -233,23 +360,40 @@ export default class JoinEvent extends Component {
             })}
           </SimpleGrid>
           <Flex position='absolute' bottom='2rem' justify='center' flex={1}>
-            <Button
-              style={{ backgroundColor: '#121212', flex: 1, minWidth: isOnMobile ? 250 : 350 }}
-              maxW='500px'
-              boxShadow='0px 0px 38px -2px rgba(0,0,0,0.62)'
-              className='seekr-gradient-on-hover'
-              // borderRadius='15px'
-              onClick={async () => {
-                this.handleGetSetEvent(events[Math.floor(Math.random() * events.length)].event.id)
-              }}
-            >
-              <Text style={{ color: '#FFFFFF' }}>Join random event</Text>
-            </Button>
+            {jointEvent.info.timestamp && jointEvent.info.timestamp > new Date().getTime() ? (
+              <Button
+                style={{ backgroundColor: '#121212', flex: 1, minWidth: isOnMobile ? 250 : 350 }}
+                maxW='500px'
+                boxShadow='0px 0px 38px -2px rgba(0,0,0,0.62)'
+                className='seekr-gradient-on-hover'
+                onClick={() => {
+                  this.setState({ showRegistrationModal: true })
+                }}
+              >
+                <Text style={{ color: '#FFFFFF' }}>Register for event</Text>
+              </Button>
+            ) : (
+              <Button
+                style={{ backgroundColor: '#121212', flex: 1, minWidth: isOnMobile ? 250 : 350 }}
+                maxW='500px'
+                boxShadow='0px 0px 38px -2px rgba(0,0,0,0.62)'
+                className='seekr-gradient-on-hover'
+                onClick={async () => {
+                  this.handleGetSetEvent(events[Math.floor(Math.random() * events.length)].event.id)
+                }}
+              >
+                <Text style={{ color: '#FFFFFF' }}>Join random event</Text>
+              </Button>
+            )}
           </Flex>
         </Stack>
       </Stack>
     );
   }
+}
+
+const styles = {
+  formRow: {}
 }
 
 export const getServerSideProps = async context => {

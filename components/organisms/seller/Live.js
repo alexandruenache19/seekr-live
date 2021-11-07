@@ -188,6 +188,16 @@ class LiveScreen extends Component {
     if (isOnMobile) {
       return (
         <Stack w='100vw' bg='#FFF' p='10px' className='perfect-height-wrapper'>
+          {this.props.handleGoBack ? (
+            <Pressable onPress={this.props.handleGoBack}>
+              <Flex align='center' pr={isOnMobile ? '10px' : '20px'}>
+                <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
+                <Text fontWeight='bold'>Back to all events</Text>
+              </Flex>
+            </Pressable>
+          ) : (
+            null
+          )}
           <Stack
             h='100%'
             bg='rgba(0,0,0,0.9)'
@@ -294,7 +304,7 @@ class LiveScreen extends Component {
               align='center'
               style={{ marginTop: 0, justifyContent: 'flex-start' }}
             >
-              {this.props.handleGoBack ? (
+              {/* {this.props.handleGoBack ? (
                 <Pressable onPress={this.props.handleGoBack}>
                   <Flex align='center'>
                     <MdArrowBack style={{ fontSize: 22, marginRight: 8, color: '#FFF' }} />
@@ -302,7 +312,7 @@ class LiveScreen extends Component {
                 </Pressable>
               ) : (
                 null
-              )}
+              )} */}
               <Flex
                 justify='flex-start'
                 alignItems='center'
@@ -391,8 +401,18 @@ class LiveScreen extends Component {
 
     return (
       <Flex bg='#FFF' className='perfect-height-wrapper' w='100vw' justify='space-between'>
-        <Stack w='70vw'>
-          <Center p='20px' h='100%' w='100%'>
+        <Stack w='70vw' p='20px'>
+          {this.props.handleGoBack ? (
+            <Pressable onPress={this.props.handleGoBack}>
+              <Flex align='center' pb='10px'>
+                <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
+                <Text fontWeight='bold'>Back to all events</Text>
+              </Flex>
+            </Pressable>
+          ) : (
+            null
+          )}
+          <Center h='100%' w='100%'>
             <Stack
               h='100%'
               w='100%'
@@ -434,16 +454,6 @@ class LiveScreen extends Component {
                 align='center'
                 style={{ marginTop: 0, justifyContent: 'flex-start' }}
               >
-                {this.props.handleGoBack ? (
-                  <Pressable onPress={this.props.handleGoBack}>
-                    <Flex align='center' pr={isOnMobile ? '10px' : '20px'}>
-                      <MdArrowBack style={{ fontSize: 20, marginRight: 8, color: '#FFF' }} />
-                      <Text fontWeight='bold' color='#FFF'>Back</Text>
-                    </Flex>
-                  </Pressable>
-                ) : (
-                  null
-                )}
                 <Flex
                   borderRadius='xl'
                   p='5px'

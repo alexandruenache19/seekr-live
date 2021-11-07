@@ -309,7 +309,7 @@ export default class JoinEvent extends Component {
                         eventData.event.status === "live" &&
                         eventData.event.liveURL
                           ? eventData.event.info.liveURL
-                          : eventData.sellerInfo.videoURL
+                          : eventData.event.info.videoURL
                       }
                     />
                     {/* {eventData.event.liveURL || eventData.sellerInfo.videoURL ? (

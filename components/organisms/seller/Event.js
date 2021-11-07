@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import { withRouter } from 'next/router'
 import { Flex, Stack, Text, Avatar, Center, Button } from '@chakra-ui/react'
 import ReactPlayer from 'react-player'
+import { Pressable } from 'react-native'
 import AddToCalendarHOC from 'react-add-to-calendar-hoc'
 import {
   FaShareSquare,
@@ -20,7 +21,7 @@ import {
 import moment from 'moment'
 
 class EventScreen extends PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -33,25 +34,25 @@ class EventScreen extends PureComponent {
     this.handleShare = this.handleShare.bind(this)
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', { username: sellerInfo.username })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  handleReminderText () {
+  handleReminderText() {
     const { eventInfo } = this.props
     this.props.onOpenModal('text', { eventId: eventInfo.id })
   }
 
-  handleReminderEmail () {
+  handleReminderEmail() {
     this.props.onOpenModal('email', {})
   }
 
-  render () {
+  render() {
     const { muted } = this.state
     const {
       isOnMobile,
@@ -96,23 +97,38 @@ class EventScreen extends PureComponent {
     )
 
     const WebButton = args => (
-      <Button
-        onClick={args.onClick}
-        h='3em'
-        shadow='md'
-        borderRadius='15px'
-        bg='#FFF'
-      >
+      <Pressable onPress={args.click}>
+        <Flex
+          style={{ backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 10 }}
+          py='5px'
+          px='8px'
+          borderRadius='xl'
+          cursor='pointer'
+          align='center'
+        // className='quantity-label'
+        >
+          <BiTimeFive size={22} color='#FFF' />
+          <Text color='#FFFFFF' fontSize={14} marginLeft='4px'>
+            {`${time} - ${date}`}
+          </Text>
+        </Flex>
+      </Pressable>
+      // <Button
+      //   onClick={args.onClick}
+      //   shadow='md'
+      //   borderRadius='15px'
+      //   bg='rgba(0,0,0,0.8)'
+      // >
 
-        <BiTimeFive size={30} />
-        <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>
-          {`${time} - ${date}`}
-        </Text>
-        {/* <a>{args.children}</a>
-        <Center pl='5px'>
-          <BiCalendarPlus size={26} />
-        </Center> */}
-      </Button>
+      //   <BiTimeFive size={30} />
+      //   <Text color='#FFFFFF' fontSize={14}>
+      //     {`${time} - ${date}`}
+      //   </Text>
+      //   {/* <a>{args.children}</a>
+      //   <Center pl='5px'>
+      //     <BiCalendarPlus size={26} />
+      //   </Center> */}
+      // </Button>
     )
 
     const AddToCalendarComp = AddToCalendarHOC(
@@ -128,20 +144,6 @@ class EventScreen extends PureComponent {
         justify='center'
         className='perfect-height-wrapper'
       >
-        {false ? (
-          <Stack
-            w='100%'
-            h='100%'
-            position='absolute'
-            top={0}
-            zIndex={5}
-            justifyContent='center'
-            alignItems='center'
-            bg='rgba(255,255,255,0.3)'
-          >
-            <Spinner color='#121212' size='md' />
-          </Stack>
-        ) : null}
         <Stack align='center' maxW='500px' w='100%' px='1.5rem'>
           <Stack alignItems='center'>
             {sellerInfo.imageURL ? (
@@ -169,12 +171,13 @@ class EventScreen extends PureComponent {
 
           <div style={{
             position: 'relative',
-            maxWidth: '95%',
+            maxWidth: '100%',
             marginTop: '1.2rem',
-            marginBottom: '1.2rem',
-            backgroundColor: 'red',
+            marginBottom: '0.8rem',
+            backgroundColor: '#999',
+            borderRadius: 15,
             width: '100%',
-            height: 250
+            height: '60vh'
           }}
           >
             <ReactPlayer
@@ -196,6 +199,7 @@ class EventScreen extends PureComponent {
                   width: '100%',
                   height: '100%',
                   position: 'absolute',
+                  borderRadius: 15,
                   zIndex: 3,
                   top: 0,
                   left: 0,
@@ -210,34 +214,27 @@ class EventScreen extends PureComponent {
               </Center>
             ) : null}
             <Stack
-              style={{ backgroundColor: 'rgba(0,0,0,0.8)', position: 'absolute', top: 7, left: 7, zIndex: 3 }}
-              py='5px'
-              px='8px'
+              style={{ position: 'absolute', top: 7, left: 7, zIndex: 3 }}
               borderRadius='xl'
             // className='quantity-label'
             >
-              <Text color='#FFFFFF' fontSize={14}>
+              <AddToCalendarComp />
+              {/* <Text color='#FFFFFF' fontSize={14}>
                 {`${time} - ${date}`}
-              </Text>
+              </Text> */}
+            </Stack>
+            <Stack
+              style={{ position: 'absolute', top: 7, right: 7, zIndex: 3 }}
+              h='2em'
+              w='2em'
+              align='center'
+              justify='center'
+              onClick={this.handleShare}
+              cursor='pointer'
+            >
+              <FiShare size={20} color='#FFFFFF' />
             </Stack>
           </div>
-          <Stack>
-            <Text textAlign='center' fontSize='18px' fontWeight='bold'>
-              {`Pret: ${'product.price'} RON`}
-            </Text>
-            <Text
-              textAlign='center'
-              style={{ marginTop: 0, fontSize: 12, color: '#666' }}
-            >
-              {'+20 RON transport'}
-            </Text>
-            {/* {!outOfStock ? (
-                    <Text
-                      fontSize={"18px"}
-                      textAlign="center"
-                    >{`${product.quantity} in stock`}</Text>
-                  ) : null} */}
-          </Stack>
           <div
             style={{
               width: '100%',
@@ -250,12 +247,10 @@ class EventScreen extends PureComponent {
             <Button
               style={{
                 backgroundColor: '#000',
-                width: '100%',
-                marginTop: '0.5rem'
+                width: '100%'
               }}
-              onClick={async () => {
-
-              }}
+              borderRadius={10}
+              onClick={this.handleReminderText}
             >
               <Text style={{ color: '#FFFFFF' }}>Anunta-ma cu 5 min inainte</Text>
             </Button>
@@ -307,101 +302,101 @@ class EventScreen extends PureComponent {
       //           </Stack>
       //         </Flex>
 
-    //         <Center>
-    //           <Button
-    //             h='3em'
-    //             shadow='md'
-    //             ml='1em'
-    //             borderRadius='1.5em'
-    //             bg='#FFF'
-    //             onClick={this.handleShare}
-    //           >
-    //             <FiShare size={20} />
-    //           </Button>
-    //         </Center>
-    //       </Flex>
-    //     </Flex>
-    //     <Center
-    //       style={{ marginTop: '1rem', maxHeight: 'calc(94vh - 16vh)' }}
-    //       h='100%'
-    //       w='100%'
-    //     >
-    //       <Stack
-    //         h='100%'
-    //         w='100%'
-    //         bg='rgba(0,0,0,0.9)'
-    //         borderRadius='15px'
-    //         overflow='hidden'
-    //         position='relative'
-    //       >
+      //         <Center>
+      //           <Button
+      //             h='3em'
+      //             shadow='md'
+      //             ml='1em'
+      //             borderRadius='1.5em'
+      //             bg='#FFF'
+      //             onClick={this.handleShare}
+      //           >
+      //             <FiShare size={20} />
+      //           </Button>
+      //         </Center>
+      //       </Flex>
+      //     </Flex>
+      //     <Center
+      //       style={{ marginTop: '1rem', maxHeight: 'calc(94vh - 16vh)' }}
+      //       h='100%'
+      //       w='100%'
+      //     >
+      //       <Stack
+      //         h='100%'
+      //         w='100%'
+      //         bg='rgba(0,0,0,0.9)'
+      //         borderRadius='15px'
+      //         overflow='hidden'
+      //         position='relative'
+      //       >
 
-    //         <ReactPlayer
-    //           className='react-player'
-    //           url={eventInfo.videoURL}
-    //           width='100%'
-    //           height='120%'
-    //           playing
-    //           muted={muted}
-    //           playsinline
-    //           style={{ marginTop: -20 }}
-    //           loop
-    //         />
+      //         <ReactPlayer
+      //           className='react-player'
+      //           url={eventInfo.videoURL}
+      //           width='100%'
+      //           height='120%'
+      //           playing
+      //           muted={muted}
+      //           playsinline
+      //           style={{ marginTop: -20 }}
+      //           loop
+      //         />
 
-    //         {muted ? (
-    //           <Center
-    //             onClick={() => this.setState({ muted: false })}
-    //             style={{
-    //               width: '100%',
-    //               height: '100%',
-    //               position: 'absolute',
-    //               zIndex: 3,
-    //               top: 0,
-    //               left: 0,
-    //               marginTop: 0,
-    //               cursor: 'pointer',
-    //               backgroundColor: 'rgba(0,0,0,0.3)'
-    //             }}
-    //           >
-    //             <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
-    //               <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
-    //             </Center>
-    //           </Center>
-    //         ) : null}
+      //         {muted ? (
+      //           <Center
+      //             onClick={() => this.setState({ muted: false })}
+      //             style={{
+      //               width: '100%',
+      //               height: '100%',
+      //               position: 'absolute',
+      //               zIndex: 3,
+      //               top: 0,
+      //               left: 0,
+      //               marginTop: 0,
+      //               cursor: 'pointer',
+      //               backgroundColor: 'rgba(0,0,0,0.3)'
+      //             }}
+      //           >
+      //             <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
+      //               <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
+      //             </Center>
+      //           </Center>
+      //         ) : null}
 
-    //         <Center
-    //           position='absolute'
-    //           bottom='5px'
-    //           width={isOnMobile ? '100%' : 'auto'}
-    //           left={isOnMobile ? 'auto' : '10px'}
-    //           zIndex={10}
-    //         >
-    //           <AddToCalendarComp event={event} />
-    //         </Center>
+      //         <Center
+      //           position='absolute'
+      //           bottom='5px'
+      //           width={isOnMobile ? '100%' : 'auto'}
+      //           left={isOnMobile ? 'auto' : '10px'}
+      //           zIndex={10}
+      //         >
+      //           <AddToCalendarComp event={event} />
+      //         </Center>
 
-    //         <Center
-    //           position='absolute'
-    //           bottom={isOnMobile ? 'auto' : '5px'}
-    //           right={isOnMobile ? 'auto' : '10px'}
-    //           left={isOnMobile ? '0px' : 'auto'}
-    //           zIndex={10}
-    //           width={isOnMobile ? '100%' : 'auto'}
-    //           top={isOnMobile ? 0 : 'auto'}
-    //         >
-    //           <Button
-    //             h='3em'
-    //             shadow='md'
-    //             borderRadius='15px'
-    //             bg='#FFF'
-    //             onClick={this.handleReminderText}
-    //           >
-    //             <BiMessageSquareDots size={26} />
-    //             <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Anunta-ma cu 5 min inainte</Text>
-    //           </Button>
-    //         </Center>
-    //       </Stack>
-    //     </Center>
-    //   </Stack>
-    // </Flex>
+      //         <Center
+      //           position='absolute'
+      //           bottom={isOnMobile ? 'auto' : '5px'}
+      //           right={isOnMobile ? 'auto' : '10px'}
+      //           left={isOnMobile ? '0px' : 'auto'}
+      //           zIndex={10}
+      //           width={isOnMobile ? '100%' : 'auto'}
+      //           top={isOnMobile ? 0 : 'auto'}
+      //         >
+      //           <Button
+      //             h='3em'
+      //             shadow='md'
+      //             borderRadius='15px'
+      //             bg='#FFF'
+      //             onClick={this.handleReminderText}
+      //           >
+      //             <BiMessageSquareDots size={26} />
+      //             <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Anunta-ma cu 5 min inainte</Text>
+      //           </Button>
+      //         </Center>
+      //       </Stack>
+      //     </Center>
+      //   </Stack>
+      // </Flex>
     )
   }
 }

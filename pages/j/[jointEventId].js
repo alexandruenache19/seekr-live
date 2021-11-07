@@ -54,7 +54,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
         borderRadius={isOnMobile ? 10 : 30}
       >
         <ModalHeader px='0px'>
-          <Text>Register for event</Text>
+          <Text>Primeste o notificare cand incepe evenimentul</Text>
         </ModalHeader>
         <ModalCloseButton />
         <Stack
@@ -64,7 +64,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
             paddingBottom: '1rem'
           }}
         >
-          <FormControl id='name' isRequired style={{ marginBottom: 10 }}>
+          {/* <FormControl id='name' isRequired style={{ marginBottom: 10 }}>
             <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>
               Full Name
             </Text>
@@ -73,18 +73,18 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
               placeholder='Name'
               onChange={e => setName(e.target.value)}
             />
-          </FormControl>
+          </FormControl> */}
           <FormControl id='phone' isRequired style={{ marginBottom: 10 }}>
             <Text fontSize={15} color='#30313D' style={{ marginBottom: 4 }}>
-              Phone Number
+              Numar de telefon
             </Text>
             <Input
-              placeholder='Phone Number'
+              placeholder='Numar de telefon'
               value={phoneNumber}
               onChange={e => setPhoneNumber(e.target.value)}
             />
             <FormHelperText>
-              You'll get notified when the event starts
+              Vei primi un mesaj cu 5 minute inainte de inceperea evenimentului
             </FormHelperText>
           </FormControl>
           <Button
@@ -95,11 +95,11 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
                   .database()
                   .ref(`joint-events/${jointEventId}/waitlist`)
                   .push({
-                    name: name,
+                    // name: name,
                     phoneNumber: phoneNumber
                   })
                 toast({
-                  title: 'Registered Successfully',
+                  title: 'Succes',
                   status: 'success',
                   duration: 3000,
                   isClosable: false
@@ -114,7 +114,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
               // })
             }}
           >
-            <Text style={{ color: '#FFFFFF' }}>Register</Text>
+            <Text style={{ color: '#FFFFFF' }}>Aminteste-mi</Text>
           </Button>
         </Stack>
       </ModalContent>
@@ -422,7 +422,7 @@ export default class JoinEvent extends Component {
                   this.setState({ showRegistrationModal: true })
                 }}
               >
-                <Text style={{ color: '#FFFFFF' }}>Register for event</Text>
+                <Text style={{ color: '#FFFFFF' }}>Aminteste-mi de eveniment</Text>
               </Button>
             ) : (
               <Button

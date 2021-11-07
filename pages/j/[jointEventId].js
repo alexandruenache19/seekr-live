@@ -56,8 +56,12 @@ export default class JoinEvent extends Component {
         if (currentEventSn.exists()) {
           const eventId = currentEventSn.val();
           const eventData = await getEvent(eventId);
+          const sellerInfo = await getSellerInfo(eventData.info.sellerId);
           this.setState({
-            events: this.state.events.concat(eventData),
+            events: this.state.events.concat({
+              event: eventData,
+              sellerInfo: sellerInfo
+            }),
             loading: false
           });
         }
@@ -140,26 +144,78 @@ export default class JoinEvent extends Component {
         >
           {this.re}
           {events.map(eventData => {
-            // const eventInfo = await getEvent(eventId);
+            console.log(eventData);
             return (
-              <Pressable onPress={() => this.handleGetSetEvent(eventData.id)}>
-                <Flex
+              <Pressable
+                onPress={() => this.handleGetSetEvent(eventData.event.id)}
+              >
+                <Stack
                   h="250px"
                   w="100%"
-                  flex={1}
                   bg="#999"
                   borderRadius="15px"
                   position="relative"
-                  key={eventData.id}
+                  key={eventData.event.id}
                   style={{ boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)" }}
                 >
                   <AmazonIVSPreview
-                    id={eventData.id}
+                    id={eventData.event.id}
                     url={
                       "https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
                     }
                   />
-                </Flex>
+                  <Flex
+                    style={{
+                      flex: 1,
+                      marginTop: 0,
+                      background:
+                        "linear-gradient(180deg, rgba(0,0,0,0.47522759103641454) 10%, rgba(255,255,255,0) 100%)"
+                    }}
+                    position="absolute"
+                    top="0"
+                    p="15px"
+                    w="100%"
+                    borderTopLeftRadius="15px"
+                    borderTopRightRadius="15px"
+                  >
+                    <Text
+                      fontSize="12px"
+                      fontWeight="bold"
+                      color="#FFF"
+                      pl="5px"
+                    >
+                      {eventData.event.info.title}
+                    </Text>
+                  </Flex>
+                  <Flex
+                    style={{
+                      flex: 1,
+                      background:
+                        "linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 44%, rgba(255,255,255,0) 100%)"
+                    }}
+                    position="absolute"
+                    bottom="0"
+                    p="15px"
+                    w="100%"
+                    borderBottomLeftRadius="15px"
+                    borderBottomRightRadius="15px"
+                  >
+                    <Avatar
+                      size="sm"
+                      name={eventData.sellerInfo.username}
+                      src={eventData.sellerInfo.imageURL}
+                    />
+
+                    <Text
+                      fontSize="12px"
+                      fontWeight="bold"
+                      color="#FFF"
+                      pl="5px"
+                    >
+                      @{eventData.sellerInfo.username}
+                    </Text>
+                  </Flex>
+                </Stack>
               </Pressable>
             );
           })}

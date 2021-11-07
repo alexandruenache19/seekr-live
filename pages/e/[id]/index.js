@@ -94,7 +94,6 @@ class EventPage extends PureComponent {
       sellerInfo,
       currentProductId
     } = this.state;
-    console.log(eventInfo.status);
     switch (eventInfo.status) {
       case "scheduled":
         return (
@@ -105,6 +104,7 @@ class EventPage extends PureComponent {
             eventInfo={eventInfo}
             comments={comments}
             username={username}
+            handleGoBack={this.props.handleGoBack}
           />
         );
       case "live":
@@ -116,6 +116,7 @@ class EventPage extends PureComponent {
             eventInfo={eventInfo}
             comments={comments}
             username={username}
+            handleGoBack={this.props.handleGoBack}
           />
         );
       case "ended":
@@ -127,6 +128,7 @@ class EventPage extends PureComponent {
             eventInfo={eventInfo}
             comments={comments}
             username={username}
+            handleGoBack={this.props.handleGoBack}
           />
         );
       default:
@@ -138,6 +140,7 @@ class EventPage extends PureComponent {
             eventInfo={eventInfo}
             comments={comments}
             username={username}
+            handleGoBack={this.props.handleGoBack}
           />
         );
     }

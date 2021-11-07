@@ -15,14 +15,18 @@ import {
   ModalCloseButton,
   ModalContent,
   useClipboard
-} from '@chakra-ui/react'
-import { Pressable } from 'react-native'
-import { MdArrowBack } from 'react-icons/md'
-import {
-  getJointEvent
-} from '../../actions/fetch'
-import firebase from '../../firebase/clientApp'
+} from "@chakra-ui/react";
+import { Pressable } from "react-native";
+import { MdArrowBack } from "react-icons/md";
+import { getJointEvent } from "../../actions/fetch";
+import firebase from "../../firebase/clientApp";
 import EventPage from "../e/[id]";
+import {
+  getSeller,
+  getEvent,
+  getEventInfo,
+  getSellerInfo
+} from "../../fetchData/getData";
 import AmazonIVSPreview from "../../components/molecules/seller/AmazonIVSPreview";
 
 export default class JoinEvent extends Component {
@@ -33,35 +37,39 @@ export default class JoinEvent extends Component {
       events: [],
       displayEvent: false,
       eventId: null
-    }
+    };
 
-    this.handleGetSetEvent = this.handleGetSetEvent.bind(this)
+    this.handleGetSetEvent = this.handleGetSetEvent.bind(this);
   }
 
   async componentDidMount() {
     const { jointEvent } = this.props;
-    console.log("join", jointEvent.info);
     if (jointEvent && jointEvent.participants) {
-      const events = []
+      const events = [];
       for (const uid in jointEvent.participants) {
         /** get current event */
         const currentEventSn = await firebase
           .database()
           .ref(`users/${uid}/events/current`)
-          .once('value')
+          .once("value");
         if (currentEventSn.exists()) {
-          events.push(currentEventSn.val())
+          const eventId = currentEventSn.val();
+          const eventData = await getEvent(eventId);
+          this.setState({
+            events: this.state.events.concat(eventData),
+            loading: false
+          });
         }
       }
 
-      this.setState({
-        events: events,
-        loading: false
-      })
+      // this.setState({
+      //   // events: events,
+      //   loading: false
+      // });
     } else {
       this.setState({
         loading: false
-      })
+      });
     }
   }
 
@@ -69,7 +77,7 @@ export default class JoinEvent extends Component {
     this.setState({
       displayEvent: true,
       eventId: eventId
-    })
+    });
   }
 
   render() {
@@ -94,72 +102,95 @@ export default class JoinEvent extends Component {
 
     if (displayEvent) {
       return (
-        <div style={{ width: '100%', height: '100%' }}>
-          <Pressable onPress={() => this.setState({ displayEvent: false, eventId: null })}>
-            <Flex align='center' pt='10px' px={isOnMobile ? '10px' : '20px'}>
-              <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-              <Text fontWeight='bold'>Back to all events</Text>
-            </Flex>
-          </Pressable>
-          <EventPage eventId={eventId} isOnMobile={isOnMobile} />
+        <div style={{ width: "100%", height: "100%" }}>
+          <EventPage
+            eventId={eventId}
+            isOnMobile={isOnMobile}
+            handleGoBack={() =>
+              this.setState({ displayEvent: false, eventId: null })
+            }
+          />
         </div>
-      )
+      );
     }
 
     return (
       <Stack
         w="100vw"
-        px="1rem"
-        pt='2rem'
         h="100%"
         justifyContent="center"
         alignItems="center"
       >
-        {jointEvent.info ? (
-          <div className='header'>
-            <Text fontWeight='bold' fontSize='36px' lineHeight='1.3'>
-              {jointEvent.info.title}
-            </Text>
-            <Text fontWeight='normal' fontSize='18px' style={{ marginTop: 10 }}>
-              {jointEvent.info.description}
-            </Text>
-          </div>
-        ) : null}
-        <SimpleGrid
-          style={{
-            marginTop: "2rem",
-            marginBottom: "2rem",
-            justifyContent: "center"
-          }}
-          columns={[2, null, 3]}
-          // columns={{ xs: 2, sm: 2, md: 3, lg: 3 }}
-          maxWidth="1000px"
-          spacing="20px"
+        <Stack
+          maxW='1000px'
+          height='100vh'
+          overflow='scroll'
+          px="1rem"
+          pt='2rem'
+          position='relative'
+          alignItems='center'
         >
-          {events.map(eventId => {
-            console.log(eventId);
-            return (
-              <Pressable onPress={() => this.handleGetSetEvent(eventId)}>
-                <Flex
-                  h="250px"
-                  w="100%"
-                  bg="#999"
-                  borderRadius="15px"
-                  position="relative"
-                  key={eventId}
-                // style={{ boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)" }}
-                >
-                  <AmazonIVSPreview
-                    id={eventId}
-                    url={
-                      "https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
-                    }
-                  />
-                </Flex>
-              </Pressable>
-            );
-          })}
-        </SimpleGrid>
+          {jointEvent.info ? (
+            <div className='header'>
+              <Text fontWeight='bold' fontSize='36px' lineHeight='1.3'>
+                {jointEvent.info.title}
+              </Text>
+              <Text fontWeight='normal' fontSize='18px' style={{ marginTop: 10 }}>
+                {jointEvent.info.description}
+              </Text>
+            </div>
+          ) : null}
+          <SimpleGrid
+            style={{
+              marginTop: "2rem",
+              marginBottom: "2rem",
+              justifyContent: "center"
+            }}
+            columns={[2, null, 3]}
+            // columns={{ xs: 2, sm: 2, md: 3, lg: 3 }}
+            maxWidth="1000px"
+            spacing="20px"
+          >
+            {this.re}
+            {events.map(eventData => {
+              // const eventInfo = await getEvent(eventId);
+              return (
+                <Pressable onPress={() => this.handleGetSetEvent(eventData.id)}>
+                  <Flex
+                    h="250px"
+                    w="100%"
+                    bg="#999"
+                    borderRadius="15px"
+                    position="relative"
+                    key={eventData.id}
+                    style={{ boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)" }}
+                  >
+                    <AmazonIVSPreview
+                      id={eventData.id}
+                      url={
+                        "https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
+                      }
+                    />
+                  </Flex>
+                </Pressable>
+              );
+            })}
+          </SimpleGrid>
+          <Flex position='absolute' bottom='2rem' w='100%' justify='center' flex={1}>
+            <Button
+              style={{ backgroundColor: '#121212', flex: 1, padding: 10 }}
+              maxW='500px'
+              boxShadow='0px 0px 38px -2px rgba(0,0,0,0.62)'
+              className='seekr-gradient-on-hover'
+              // borderRadius='15px'
+              onClick={async () => {
+                this.handleGetSetEvent(events[Math.floor(Math.random() * events.length)].id)
+              }}
+            >
+              <Text style={{ color: '#FFFFFF' }}>Join random event</Text>
+            </Button>
+          </Flex>
+        </Stack>
       </Stack>
     );
   }
@@ -169,8 +200,6 @@ export const getServerSideProps = async context => {
   const { jointEventId } = context.params;
 
   const jointEvent = await getJointEvent(jointEventId);
-
-  console.log("join", jointEvent);
 
   let userAgent;
   if (context.req) {
@@ -192,4 +221,4 @@ export const getServerSideProps = async context => {
       isOnMobile: isOnMobile
     }
   };
-}
+};

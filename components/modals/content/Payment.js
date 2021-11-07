@@ -171,9 +171,9 @@ const CheckoutForm = ({
   const handleSubmitOrder = async e => {
     e && e.preventDefault()
     /**
-             * add order in events/eventId/orders/orderId
-             * decrease stock in events/eventId/products/productId
-             */
+                 * add order in events/eventId/orders/orderId
+                 * decrease stock in events/eventId/products/productId
+                 */
 
     if (
       name === null ||
@@ -351,7 +351,7 @@ const CheckoutForm = ({
             </FormHelperText>
           </FormControl>
           <Button
-            style={{ backgroundColor: '#28A445', flex: 1, padding: 10 }}
+            style={{ backgroundColor: '#121212', flex: 1, padding: 10 }}
             onClick={async () => {
               setCompleteShipping(true)
               await props.createPaymentIntent()

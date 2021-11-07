@@ -72,3 +72,12 @@ a.left {
 .product-layer:hover > .product-order-button {
 	display: flex !important;
 }
+
+.seekr-gradient-on-hover {
+	transition: all 0.2s ease-in !important;
+}
+
+.seekr-gradient-on-hover:hover {
+	background: rgb(63,60,145) !important;
+	background: linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%) !important;
+}

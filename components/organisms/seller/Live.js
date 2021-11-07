@@ -14,8 +14,10 @@ import {
   ModalBody
 } from '@chakra-ui/react'
 import Lottie from 'react-lottie'
+import { Pressable } from 'react-native'
 import { FaPlus, FaMinus } from 'react-icons/fa'
 import { FiEye, FiShare } from 'react-icons/fi'
+import { MdArrowBack } from 'react-icons/md'
 import * as animationData from './live.json'
 import { MessageInput, CommentsList } from '../../../components'
 import firebase from '../../../firebase/clientApp'
@@ -284,17 +286,30 @@ class LiveScreen extends Component {
                 )}
               </Stack>
             ) : null}
-            <Stack
+            <Flex
               position='absolute'
               left='10px'
               top='10px'
-              borderRadius='xl'
-              p='5px'
-              bg='rgba(0,0,0,0.3)'
               zIndex={10}
+              align='center'
               style={{ marginTop: 0, justifyContent: 'flex-start' }}
             >
-              <Flex justify='flex-start' alignItems='center'>
+              {this.props.handleGoBack ? (
+                <Pressable onPress={this.props.handleGoBack}>
+                  <Flex align='center'>
+                    <MdArrowBack style={{ fontSize: 22, marginRight: 8, color: '#FFF' }} />
+                  </Flex>
+                </Pressable>
+              ) : (
+                null
+              )}
+              <Flex
+                justify='flex-start'
+                alignItems='center'
+                borderRadius='xl'
+                p='5px'
+                bg='rgba(0,0,0,0.3)'
+              >
                 <Avatar
                   size='sm'
                   name={sellerInfo.username}
@@ -344,7 +359,7 @@ class LiveScreen extends Component {
                   </Center>
                 </Stack>
               </Flex>
-            </Stack>
+            </Flex>
           </Stack>
 
           <Stack
@@ -411,17 +426,31 @@ class LiveScreen extends Component {
                 <FiShare style={{ fontSize: 18, color: '#FFF' }} />
               </Button>
 
-              <Stack
+              <Flex
                 position='absolute'
                 left='15px'
                 top='15px'
-                borderRadius='xl'
-                p='5px'
-                bg='rgba(0,0,0,0.3)'
                 zIndex={10}
+                align='center'
                 style={{ marginTop: 0, justifyContent: 'flex-start' }}
               >
-                <Flex justify='flex-start' alignItems='center'>
+                {this.props.handleGoBack ? (
+                  <Pressable onPress={this.props.handleGoBack}>
+                    <Flex align='center' pr={isOnMobile ? '10px' : '20px'}>
+                      <MdArrowBack style={{ fontSize: 20, marginRight: 8, color: '#FFF' }} />
+                      <Text fontWeight='bold' color='#FFF'>Back</Text>
+                    </Flex>
+                  </Pressable>
+                ) : (
+                  null
+                )}
+                <Flex
+                  borderRadius='xl'
+                  p='5px'
+                  bg='rgba(0,0,0,0.3)'
+                  justify='flex-start'
+                  alignItems='center'
+                >
                   <Avatar
                     // size='sm'
                     style={{ width: 40, height: 40 }}
@@ -472,7 +501,7 @@ class LiveScreen extends Component {
                     </Center>
                   </Stack>
                 </Flex>
-              </Stack>
+              </Flex>
 
               {productInfo ? (
                 <Stack

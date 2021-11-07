@@ -180,14 +180,14 @@ const OrderModalContent = ({
 
       addComment(
         {
-          text: orderQuantity === 1 ? 'I just ordered this!' : `I just ordered ${orderQuantity} of these`,
+          text: orderQuantity === 1 ? 'Tocmai am comandat asta!' : `Tocmai am comandat ${orderQuantity} din acestea`,
           username: name
         },
         eventInfo.id
       )
 
       toast({
-        title: 'Order Places Successfully!',
+        title: 'Comanda plasata cu succes!',
         status: 'success',
         duration: 3000,
         isClosable: false

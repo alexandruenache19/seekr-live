@@ -229,8 +229,8 @@ const CheckoutForm = ({
         {
           text:
             orderQuantity === 1
-              ? 'I just ordered this!'
-              : `I just ordered ${orderQuantity} of these`,
+              ? 'Tocmai am comandat asta!'
+              : `Tocmai am comandat ${orderQuantity} din acestea`,
           username: name
         },
         eventInfo.id

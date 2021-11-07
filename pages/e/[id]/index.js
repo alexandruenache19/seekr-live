@@ -121,7 +121,7 @@ class EventPage extends PureComponent {
           username={username}
           handleGoBack={this.props.handleGoBack}
         />
-      );
+      )
     } else if (
       eventInfo.status === "live" &&
       !eventInfo.hasOwnProperty("liveURL")
@@ -136,7 +136,7 @@ class EventPage extends PureComponent {
           username={username}
           handleGoBack={this.props.handleGoBack}
         />
-      );
+      )
     } else {
       return (
         <EndedScreen
@@ -148,7 +148,7 @@ class EventPage extends PureComponent {
           username={username}
           handleGoBack={this.props.handleGoBack}
         />
-      );
+      )
     }
   }
 

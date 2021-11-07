@@ -24,7 +24,7 @@ import firebase from '../../../firebase/clientApp'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
 
 class LiveScreen extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -41,7 +41,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -82,7 +82,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate (prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -103,7 +103,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -112,7 +112,7 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder () {
+  handleOrder() {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -158,7 +158,7 @@ class LiveScreen extends Component {
     })
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -166,11 +166,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -235,67 +235,88 @@ class LiveScreen extends Component {
                 w='100%'
                 flex={1}
               >
-                <Flex
-                  borderRadius='xl'
-                  bg='rgba(0,0,0,0.3)'
-                  p='6px'
-                  align='center'
-                  w='auto'
-                  minW={0}
-                  alignSelf='start'
-                >
-                  {productInfo.imageURL ? (
-                    <img
-                      src={productInfo.imageURL}
-                      style={{
-                        height: 50,
-                        width: 50,
-                        objectFit: 'cover',
-                        borderRadius: 10,
-                        marginRight: 8
-                      }}
-                    />
-                  ) : null}
-                  <Stack
-                    justifyContent='center'
-                    style={{ marginTop: 0, paddingRight: 4 }}
+                <Center style={{ overflow: 'scroll', height: 90 }}>
+                  <Center pt='120px'>
+                    <CommentsList comments={comments} />
+                  </Center>
+                </Center>
+                <Flex w='100%' justify='space-between' align='center' style={{ marginBottom: 10 }}>
+                  <Flex
+                    borderRadius='xl'
+                    bg='rgba(0,0,0,0.3)'
+                    p='6px'
+                    align='center'
+                    w='100%'
+                    minW={0}
+                    alignSelf='start'
                   >
-                    <Text color='#FFF' fontSize='14' fontWeight='normal'>
-                      {`${productInfo.currentStock} remaining`}
-                    </Text>
-                    <Text color='#FFF' fontWeight='bold' fontSize='14' style={{ marginTop: '0.1rem' }}>
-                      {`${productInfo.price} ${productInfo.currency}`}
-                    </Text>
-                  </Stack>
+                    {productInfo.imageURL ? (
+                      <img
+                        src={productInfo.imageURL}
+                        style={{
+                          height: 50,
+                          width: 50,
+                          objectFit: 'cover',
+                          borderRadius: 10,
+                          marginRight: 8
+                        }}
+                      />
+                    ) : null}
+                    <Stack
+                      justifyContent='center'
+                      style={{ marginTop: 0, paddingRight: 4 }}
+                    >
+                      <Text color='#FFF' fontSize='14' fontWeight='normal'>
+                        {`${productInfo.currentStock} remaining`}
+                      </Text>
+                      <Text color='#FFF' fontWeight='bold' fontSize='14' style={{ marginTop: '0.1rem' }}>
+                        {`${productInfo.price} ${productInfo.currency}`}
+                      </Text>
+                    </Stack>
+                    {productInfo.currentStock > 0 ? (
+                      <Button
+                        borderRadius='xl'
+                        // px='10px'
+                        style={{
+                          justifyContent: 'center',
+                          background: 'rgb(63,60,145)',
+                          background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
+                          minHeight: '100%',
+                          height: '100%',
+                          flex: 1,
+                          height: 50,
+                          // width: 'auto',
+                          minWidth: 120,
+                          marginLeft: 20
+                        }}
+                        className='seekr-gradient-on-hover'
+                        onClick={this.handleOrder}
+                      >
+                        <Text color='#FFFFFF' fontWeight='600'>
+                          Place Order
+                        </Text>
+                      </Button>
+                    ) : (
+                      <Button
+                        borderRadius='xl'
+                        onClick={() => null}
+                        style={{
+                          justifyContent: 'center',
+                          backgroundColor: '#999'
+                        }}
+                      >
+                        <Text color='#FFFFFF'>
+                          Waiting for the next item
+                        </Text>
+                      </Button>
+                    )}
+                  </Flex>
                 </Flex>
-                {productInfo.currentStock > 0 ? (
-                  <Button
-                    borderRadius='xl'
-                    style={{
-                      justifyContent: 'center',
-                      backgroundColor: '#000'
-                    }}
-                    className='seekr-gradient-on-hover'
-                    onClick={this.handleOrder}
-                  >
-                    <Text pr='10px' color='#FFFFFF'>
-                      Place Order
-                    </Text>
-                  </Button>
-                ) : (
-                  <Button
-                    borderRadius='xl'
-                    onClick={() => null}
-                    style={{
-                      justifyContent: 'center',
-                      backgroundColor: '#999'
-                    }}
-                  >
-                    <Text pr='10px' color='#FFFFFF'>
-                      Waiting for the next item
-                    </Text>
-                  </Button>
-                )}
+                <MessageInput
+                  onOpenModal={this.props.onOpenModal}
+                  username={username}
+                  eventId={eventInfo.id}
+                />
               </Stack>
             ) : null}
             <Flex
@@ -373,30 +394,6 @@ class LiveScreen extends Component {
               </Flex>
             </Flex>
           </Stack>
-
-          <Stack
-            p='10px'
-            h='25vh'
-            bg='#EEF2F8'
-            borderRadius='xl'
-            style={{ justifyContent: 'space-between' }}
-          >
-            <Center
-              style={{
-                flex: 1,
-                marginBottom: 5,
-                overflow: 'scroll',
-                alignItems: 'flex-start'
-              }}
-            >
-              <CommentsList comments={comments} />
-            </Center>
-            <MessageInput
-              onOpenModal={this.props.onOpenModal}
-              username={username}
-              eventId={eventInfo.id}
-            />
-          </Stack>
         </Stack>
       )
     }
@@ -422,6 +419,7 @@ class LiveScreen extends Component {
               borderRadius='20px'
               overflow='hidden'
               position='relative'
+              style={{ marginTop: 0 }}
             >
               <Flex
                 h='100%'

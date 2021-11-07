@@ -124,7 +124,7 @@ const ShopItems = ({ isOnMobile, products, initialProduct, sellerInfo, showOrder
     <Stack
       maxWidth='850'
       style={{
-        padding: '3rem 1rem',
+        padding: '1rem 1rem 3rem 1rem',
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative'

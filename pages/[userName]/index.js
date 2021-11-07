@@ -43,7 +43,7 @@ class UserPage extends PureComponent {
       return <EventPage eventId={currentEventId} isOnMobile={isOnMobile} />;
     } else {
       return (
-        <Stack style={{ marginTop: "2rem" }}>
+        <Stack style={{ marginTop: "3rem" }}>
           <Stack justifyContent="center" alignItems="center">
             <Avatar src={userProfile.info.imageURL} size="xl" />
             <Text style={{ fontWeight: "bold", fontSize: 20 }}>

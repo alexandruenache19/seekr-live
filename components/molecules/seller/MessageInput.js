@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react'
 import {
   Flex,
   Input,
@@ -6,19 +6,19 @@ import {
   InputGroup,
   InputRightElement,
   useDisclosure
-} from '@chakra-ui/react';
-import { FaRegPaperPlane } from 'react-icons/fa';
-import { EventActions } from '../../../actions';
+} from '@chakra-ui/react'
+import { FaRegPaperPlane } from 'react-icons/fa'
+import { EventActions } from '../../../actions'
 const { addComment } = EventActions
 
 const MessageInput = ({ eventId, onOpenModal, username }) => {
   const [message, setMessage] = useState('')
 
-  function handleChange(event) {
+  function handleChange (event) {
     setMessage(event.target.value)
   }
 
-  function handleSendMessage() {
+  function handleSendMessage () {
     if (message !== '' && username !== '') {
       addComment(
         {
@@ -47,21 +47,21 @@ const MessageInput = ({ eventId, onOpenModal, username }) => {
   const handleSubmit = e => {
     e.preventDefault()
     handleSendMessage()
-  };
+  }
 
   return (
     <Flex
       borderRadius='20px'
       // p='10px'
-      bg='#FFF'
+      bg='rgba(255,255,255,0.1)'
       style={{ justifyContent: 'space-between', marginTop: 0 }}
     >
-      <InputGroup as='form' style={{ borderRadius: 20 }}>
+      <InputGroup as='form' style={{ borderRadius: 20, borderWidth: 0 }}>
         <Input
           value={message}
           onChange={handleChange}
           onSubmit={handleSubmit}
-          style={{ borderRadius: 20 }}
+          style={{ borderRadius: 20, borderWidth: 0, color: '#FFF' }}
           placeholder='Intreaba ceva...'
         />
         <InputRightElement
@@ -69,16 +69,16 @@ const MessageInput = ({ eventId, onOpenModal, username }) => {
             <Button
               type='submit'
               onClick={handleSubmit}
-              style={{ padding: 0, borderRadius: 20 }}
+              style={{ padding: 0, borderRadius: 20, backgroundColor: 'transparent', marginRight: 5 }}
             >
-              <FaRegPaperPlane style={{ fontSize: 16 }} />
+              <FaRegPaperPlane style={{ fontSize: 16, color: '#FFF' }} />
             </Button>
           }
         />
       </InputGroup>
     </Flex>
   )
-};
+}
 
 const styles = {}
 

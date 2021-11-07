@@ -192,7 +192,7 @@ class LiveScreen extends Component {
             <Pressable onPress={this.props.handleGoBack}>
               <Flex align='center' pr={isOnMobile ? '10px' : '20px'}>
                 <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                <Text fontWeight='bold'>Back to all events</Text>
+                <Text fontWeight='bold'>Inapoi la evenimente</Text>
               </Flex>
             </Pressable>
           ) : (
@@ -406,7 +406,7 @@ class LiveScreen extends Component {
             <Pressable onPress={this.props.handleGoBack}>
               <Flex align='center' pb='10px'>
                 <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                <Text fontWeight='bold'>Back to all events</Text>
+                <Text fontWeight='bold'>Inapoi la evenimente</Text>
               </Flex>
             </Pressable>
           ) : (
@@ -710,7 +710,7 @@ class LiveScreen extends Component {
             style={{ justifyContent: 'space-between' }}
           >
             <Text color='#000' fontWeight='bold'>
-              Chat with {sellerInfo.username}
+              Vorbeste cu {sellerInfo.username}
             </Text>
 
             <Center

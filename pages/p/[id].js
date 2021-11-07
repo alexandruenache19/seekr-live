@@ -167,8 +167,7 @@ export default class PaymentScreen extends PureComponent {
               const productRef = firebase
                 .database()
                 .ref(
-                  `users/${
-                    productSn.val().uid
+                  `users/${productSn.val().uid
                   }/shop/orders/${phoneNumber}/products`
                 )
                 .push();
@@ -176,8 +175,7 @@ export default class PaymentScreen extends PureComponent {
               await firebase
                 .database()
                 .ref(
-                  `users/${
-                    productSn.val().uid
+                  `users/${productSn.val().uid
                   }/shop/orders/${phoneNumber}/products/${productRef.key}`
                 )
                 .update({
@@ -284,9 +282,7 @@ export default class PaymentScreen extends PureComponent {
 
       await firebase
         .database()
-        .ref(
-          `users/${product.uid}/shop/orders/${phoneNumber}/products/${productRef.key}`
-        )
+        .ref(`users/${product.uid}/shop/orders/${phoneNumber}/products/${productRef.key}`)
         .update({
           id: productRef.key,
           productId: id,
@@ -296,7 +292,7 @@ export default class PaymentScreen extends PureComponent {
           price: product.price,
           quantity: 1,
           paymentType: "cash-on-delivery"
-        });
+        })
 
       await firebase
         .database()

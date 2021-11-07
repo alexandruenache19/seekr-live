@@ -58,6 +58,7 @@ class UserPage extends PureComponent {
                 : []
             }
             sellerInfo={userProfile.info}
+            showOrderButton
           />
           ;
         </Stack>

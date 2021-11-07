@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 import {
   Stack,
   Avatar,
@@ -21,21 +21,16 @@ import { MdArrowBack } from 'react-icons/md'
 import {
   getJointEvent
 } from '../../actions/fetch'
-import {
-  getSellerInfo
-} from "../../fetchData/getData";
 import firebase from '../../firebase/clientApp'
 import EventPage from "../e/[id]";
+import AmazonIVSPreview from "../../components/molecules/seller/AmazonIVSPreview";
 
 export default class JoinEvent extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       loading: true,
       events: [],
-      sellerInfo: null,
-      eventInfo: null,
-      comments: [],
       displayEvent: false,
       eventId: null
     }
@@ -44,8 +39,8 @@ export default class JoinEvent extends Component {
   }
 
   async componentDidMount() {
-    const { jointEvent } = this.props
-    console.log('join', jointEvent)
+    const { jointEvent } = this.props;
+    console.log("join", jointEvent);
     if (jointEvent && jointEvent.participants) {
       const events = []
       for (const uid in jointEvent.participants) {
@@ -85,17 +80,17 @@ export default class JoinEvent extends Component {
     if (loading) {
       return (
         <Stack
-          w='100vw'
-          h='100vh'
+          w="100vw"
+          h="100vh"
           top={0}
           zIndex={5}
-          justifyContent='center'
-          alignItems='center'
-          bg='rgba(255,255,255,0.3)'
+          justifyContent="center"
+          alignItems="center"
+          bg="rgba(255,255,255,0.3)"
         >
-          <Spinner color='#121212' size='md' />
+          <Spinner color="#121212" size="md" />
         </Stack>
-      )
+      );
     }
 
     if (displayEvent) {
@@ -114,41 +109,59 @@ export default class JoinEvent extends Component {
 
     return (
       <Stack
-        w='100vw'
-        px='1rem'
-        h='100%'
+        w="100vw"
+        px="1rem"
+        h="100%"
+        justifyContent="center"
+        alignItems="center"
       >
         <SimpleGrid
-          style={{ marginTop: '2rem', marginBottom: '2rem' }}
-          // templateColumns='repeat(3, 1fr)'
-          // gap={6}
-          columns={2}
-          spacing='20px'
+          style={{
+            marginTop: "2rem",
+            marginBottom: "2rem",
+            justifyContent: "center"
+          }}
+          columns={[2, null, 3]}
+          // columns={{ xs: 2, sm: 2, md: 3, lg: 3 }}
+          maxWidth="1000px"
+          spacing="20px"
         >
-          {events.map(eventId => (
-            <Pressable onPress={() => this.handleGetSetEvent(eventId)}>
-              <Box
-                w='100%'
-                h='250px'
-                bg='#999'
-                borderRadius='15px'
-                position='relative'
-                key={eventId}
-              />
-            </Pressable>
-          ))}
+          {events.map(eventId => {
+            console.log(eventId);
+            return (
+              <Pressable onPress={() => this.handleGetSetEvent(eventId)}>
+                <Flex
+                  h="250px"
+                  w="100%"
+                  flex={1}
+                  bg="#999"
+                  borderRadius="15px"
+                  position="relative"
+                  key={eventId}
+                // style={{ boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)" }}
+                >
+                  <AmazonIVSPreview
+                    id={eventId}
+                    url={
+                      "https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
+                    }
+                  />
+                </Flex>
+              </Pressable>
+            );
+          })}
         </SimpleGrid>
       </Stack>
-    )
+    );
   }
 }
 
 export const getServerSideProps = async context => {
   const { jointEventId } = context.params;
 
-  console.log('join', jointEventId)
+  const jointEvent = await getJointEvent(jointEventId);
 
-  const jointEvent = await getJointEvent(jointEventId)
+  console.log("join", jointEvent);
 
   let userAgent;
   if (context.req) {

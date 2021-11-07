@@ -54,7 +54,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
         borderRadius={isOnMobile ? 10 : 30}
       >
         <ModalHeader px="0px">
-          <Text>Register for event</Text>
+          <Text>Rezerva un loc & primeste o notificare inainte de eveniment</Text>
         </ModalHeader>
         <ModalCloseButton />
         <Stack
@@ -66,17 +66,17 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
         >
           <FormControl id="name" isRequired style={{ marginBottom: 10 }}>
             <Text fontSize={15} color="#30313D" style={{ marginBottom: 4 }}>
-              Full Name
+              Nume si prenume
             </Text>
             <Input
               value={name}
-              placeholder="Name"
+              placeholder="Nume si prenume"
               onChange={e => setName(e.target.value)}
             />
           </FormControl>
           <FormControl id="phone" isRequired style={{ marginBottom: 10 }}>
             <Text fontSize={15} color="#30313D" style={{ marginBottom: 4 }}>
-              Phone Number
+              Numar de telefon
             </Text>
             <Input
               placeholder="Phone Number"
@@ -84,7 +84,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
               onChange={e => setPhoneNumber(e.target.value)}
             />
             <FormHelperText>
-              You'll get notified when the event starts
+              Vei primi un SMS cu 5 minute inainte de eveniment
             </FormHelperText>
           </FormControl>
           <Button
@@ -99,14 +99,14 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
                     phoneNumber: phoneNumber
                   });
                 toast({
-                  title: "Registered Successfully",
+                  title: "Loc rezervat cu succes",
                   status: "success",
                   duration: 3000,
                   isClosable: false
                 });
                 onClose();
               } else {
-                alert("Please complete all fields.");
+                alert("Te rugam completeaza formularul");
               }
               // await props.completeRegistration({
               //   name: name,
@@ -114,7 +114,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
               // })
             }}
           >
-            <Text style={{ color: "#FFFFFF" }}>Register</Text>
+            <Text style={{ color: "#FFFFFF" }}>Rezerva-mi locul</Text>
           </Button>
         </Stack>
       </ModalContent>
@@ -185,7 +185,7 @@ export default class JoinEvent extends Component {
     }
 
     const that = this;
-    window.onpopstate = function(e) {
+    window.onpopstate = function (e) {
       if (e.state) {
         that.setState({
           displayEvent: false,
@@ -305,7 +305,7 @@ export default class JoinEvent extends Component {
                       id={eventData.event.id}
                       url={
                         eventData.event.status === "live" &&
-                        eventData.event.liveURL
+                          eventData.event.liveURL
                           ? eventData.event.info.liveURL
                           : eventData.sellerInfo.videoURL
                       }
@@ -412,7 +412,7 @@ export default class JoinEvent extends Component {
           </SimpleGrid>
           <Flex position="absolute" bottom="2rem" justify="center" flex={1}>
             {jointEvent.info.timestamp &&
-            jointEvent.info.timestamp > new Date().getTime() ? (
+              jointEvent.info.timestamp > new Date().getTime() ? (
               <Button
                 style={{
                   backgroundColor: "#121212",
@@ -426,7 +426,7 @@ export default class JoinEvent extends Component {
                   this.setState({ showRegistrationModal: true });
                 }}
               >
-                <Text style={{ color: "#FFFFFF" }}>Register for event</Text>
+                <Text style={{ color: "#FFFFFF" }}>Rezerva loc</Text>
               </Button>
             ) : (
               <Button

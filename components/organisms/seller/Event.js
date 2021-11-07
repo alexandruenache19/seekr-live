@@ -21,7 +21,7 @@ import {
 import moment from 'moment'
 
 class EventScreen extends PureComponent {
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = {
@@ -34,25 +34,25 @@ class EventScreen extends PureComponent {
     this.handleShare = this.handleShare.bind(this)
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', { username: sellerInfo.username })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  handleReminderText() {
+  handleReminderText () {
     const { eventInfo } = this.props
     this.props.onOpenModal('text', { eventId: eventInfo.id })
   }
 
-  handleReminderEmail() {
+  handleReminderEmail () {
     this.props.onOpenModal('email', {})
   }
 
-  render() {
+  render () {
     const { muted } = this.state
     const {
       isOnMobile,
@@ -174,7 +174,7 @@ class EventScreen extends PureComponent {
             maxWidth: '100%',
             marginTop: '1.2rem',
             marginBottom: '0.8rem',
-            backgroundColor: '#999',
+            backgroundColor: '#000',
             borderRadius: 15,
             width: '100%',
             height: '60vh'
@@ -182,13 +182,14 @@ class EventScreen extends PureComponent {
           >
             <ReactPlayer
               className='react-player'
-              url={eventInfo.videoURL}
+              // url={eventInfo.videoURL}
+              url='https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4'
               width='100%'
               height='120%'
               playing
               muted={muted}
               playsinline
-              style={{ marginTop: -20 }}
+              style={{ marginTop: -32 }}
               loop
             />
 
@@ -302,101 +303,101 @@ class EventScreen extends PureComponent {
       //           </Stack>
       //         </Flex>
 
-      //         <Center>
-      //           <Button
-      //             h='3em'
-      //             shadow='md'
-      //             ml='1em'
-      //             borderRadius='1.5em'
-      //             bg='#FFF'
-      //             onClick={this.handleShare}
-      //           >
-      //             <FiShare size={20} />
-      //           </Button>
-      //         </Center>
-      //       </Flex>
-      //     </Flex>
-      //     <Center
-      //       style={{ marginTop: '1rem', maxHeight: 'calc(94vh - 16vh)' }}
-      //       h='100%'
-      //       w='100%'
-      //     >
-      //       <Stack
-      //         h='100%'
-      //         w='100%'
-      //         bg='rgba(0,0,0,0.9)'
-      //         borderRadius='15px'
-      //         overflow='hidden'
-      //         position='relative'
-      //       >
+    //         <Center>
+    //           <Button
+    //             h='3em'
+    //             shadow='md'
+    //             ml='1em'
+    //             borderRadius='1.5em'
+    //             bg='#FFF'
+    //             onClick={this.handleShare}
+    //           >
+    //             <FiShare size={20} />
+    //           </Button>
+    //         </Center>
+    //       </Flex>
+    //     </Flex>
+    //     <Center
+    //       style={{ marginTop: '1rem', maxHeight: 'calc(94vh - 16vh)' }}
+    //       h='100%'
+    //       w='100%'
+    //     >
+    //       <Stack
+    //         h='100%'
+    //         w='100%'
+    //         bg='rgba(0,0,0,0.9)'
+    //         borderRadius='15px'
+    //         overflow='hidden'
+    //         position='relative'
+    //       >
 
-      //         <ReactPlayer
-      //           className='react-player'
-      //           url={eventInfo.videoURL}
-      //           width='100%'
-      //           height='120%'
-      //           playing
-      //           muted={muted}
-      //           playsinline
-      //           style={{ marginTop: -20 }}
-      //           loop
-      //         />
+    //         <ReactPlayer
+    //           className='react-player'
+    //           url={eventInfo.videoURL}
+    //           width='100%'
+    //           height='120%'
+    //           playing
+    //           muted={muted}
+    //           playsinline
+    //           style={{ marginTop: -20 }}
+    //           loop
+    //         />
 
-      //         {muted ? (
-      //           <Center
-      //             onClick={() => this.setState({ muted: false })}
-      //             style={{
-      //               width: '100%',
-      //               height: '100%',
-      //               position: 'absolute',
-      //               zIndex: 3,
-      //               top: 0,
-      //               left: 0,
-      //               marginTop: 0,
-      //               cursor: 'pointer',
-      //               backgroundColor: 'rgba(0,0,0,0.3)'
-      //             }}
-      //           >
-      //             <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
-      //               <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
-      //             </Center>
-      //           </Center>
-      //         ) : null}
+    //         {muted ? (
+    //           <Center
+    //             onClick={() => this.setState({ muted: false })}
+    //             style={{
+    //               width: '100%',
+    //               height: '100%',
+    //               position: 'absolute',
+    //               zIndex: 3,
+    //               top: 0,
+    //               left: 0,
+    //               marginTop: 0,
+    //               cursor: 'pointer',
+    //               backgroundColor: 'rgba(0,0,0,0.3)'
+    //             }}
+    //           >
+    //             <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
+    //               <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
+    //             </Center>
+    //           </Center>
+    //         ) : null}
 
-      //         <Center
-      //           position='absolute'
-      //           bottom='5px'
-      //           width={isOnMobile ? '100%' : 'auto'}
-      //           left={isOnMobile ? 'auto' : '10px'}
-      //           zIndex={10}
-      //         >
-      //           <AddToCalendarComp event={event} />
-      //         </Center>
+    //         <Center
+    //           position='absolute'
+    //           bottom='5px'
+    //           width={isOnMobile ? '100%' : 'auto'}
+    //           left={isOnMobile ? 'auto' : '10px'}
+    //           zIndex={10}
+    //         >
+    //           <AddToCalendarComp event={event} />
+    //         </Center>
 
-      //         <Center
-      //           position='absolute'
-      //           bottom={isOnMobile ? 'auto' : '5px'}
-      //           right={isOnMobile ? 'auto' : '10px'}
-      //           left={isOnMobile ? '0px' : 'auto'}
-      //           zIndex={10}
-      //           width={isOnMobile ? '100%' : 'auto'}
-      //           top={isOnMobile ? 0 : 'auto'}
-      //         >
-      //           <Button
-      //             h='3em'
-      //             shadow='md'
-      //             borderRadius='15px'
-      //             bg='#FFF'
-      //             onClick={this.handleReminderText}
-      //           >
-      //             <BiMessageSquareDots size={26} />
-      //             <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Anunta-ma cu 5 min inainte</Text>
-      //           </Button>
-      //         </Center>
-      //       </Stack>
-      //     </Center>
-      //   </Stack>
-      // </Flex>
+    //         <Center
+    //           position='absolute'
+    //           bottom={isOnMobile ? 'auto' : '5px'}
+    //           right={isOnMobile ? 'auto' : '10px'}
+    //           left={isOnMobile ? '0px' : 'auto'}
+    //           zIndex={10}
+    //           width={isOnMobile ? '100%' : 'auto'}
+    //           top={isOnMobile ? 0 : 'auto'}
+    //         >
+    //           <Button
+    //             h='3em'
+    //             shadow='md'
+    //             borderRadius='15px'
+    //             bg='#FFF'
+    //             onClick={this.handleReminderText}
+    //           >
+    //             <BiMessageSquareDots size={26} />
+    //             <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Anunta-ma cu 5 min inainte</Text>
+    //           </Button>
+    //         </Center>
+    //       </Stack>
+    //     </Center>
+    //   </Stack>
+    // </Flex>
     )
   }
 }

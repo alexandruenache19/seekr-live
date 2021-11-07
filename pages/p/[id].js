@@ -622,9 +622,8 @@ export default class PaymentScreen extends PureComponent {
                       >
                         <Text
                           style={{
-                            marginTop: "0.5rem",
                             color: "#666",
-                            textDecorationLine: "underline"
+                            // textDecorationLine: "underline"
                           }}
                         >
                           Plata ramburs

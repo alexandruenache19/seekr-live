@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { withRouter } from 'next/router'
+import React, { Component } from 'react';
+import { withRouter } from 'next/router';
 import {
   Flex,
   Stack,
@@ -12,19 +12,19 @@ import {
   ModalContent,
   ModalCloseButton,
   ModalBody
-} from '@chakra-ui/react'
-import Lottie from 'react-lottie'
-import { Pressable } from 'react-native'
-import { FaPlus, FaMinus } from 'react-icons/fa'
-import { FiEye, FiShare } from 'react-icons/fi'
-import { MdArrowBack } from 'react-icons/md'
-import * as animationData from './live.json'
-import { MessageInput, CommentsList } from '../../../components'
-import firebase from '../../../firebase/clientApp'
-import AmazonIVS from '../../molecules/seller/AmazonIVS'
-
+} from '@chakra-ui/react';
+import Lottie from 'react-lottie';
+import { Pressable } from 'react-native';
+import { FaPlus, FaMinus } from 'react-icons/fa';
+import { FiEye, FiShare } from 'react-icons/fi';
+import { MdArrowBack } from 'react-icons/md';
+import * as animationData from './live.json';
+import { MessageInput, CommentsList } from '../../../components';
+import firebase from '../../../firebase/clientApp';
+import AmazonIVS from '../../molecules/seller/AmazonIVS';
+import Stories from '../../molecules/seller/Stories';
 class LiveScreen extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -41,7 +41,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -79,10 +79,10 @@ class LiveScreen extends Component {
         .database()
         .ref(`events/${eventInfo.id}/info/viewers`)
         .set(firebase.database.ServerValue.increment(-1))
-    }
+    };
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate (prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -103,7 +103,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -112,7 +112,7 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder() {
+  handleOrder () {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -158,7 +158,7 @@ class LiveScreen extends Component {
     })
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -166,17 +166,18 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  render() {
+  render () {
     const {
       isOnMobile,
       sellerInfo,
       eventInfo,
       comments,
-      username
+      username,
+      events
     } = this.props
     const {
       productInfo,
@@ -195,9 +196,9 @@ class LiveScreen extends Component {
                 <Text fontWeight='bold'>Inapoi la evenimente</Text>
               </Flex>
             </Pressable>
-          ) : (
-            null
-          )}
+          ) : null}
+          {events && <Stories events={events} />}
+
           <Stack
             h='100%'
             bg='rgba(0,0,0,0.9)'
@@ -385,7 +386,12 @@ class LiveScreen extends Component {
                     </Center>
                     <Center ml='5px' textAlign='center'>
                       <FiEye size={14} color='#FFF' />
-                      <Text fontSize={10} color='#FFF' textAlign='center' ml='3px'>
+                      <Text
+                        fontSize={10}
+                        color='#FFF'
+                        textAlign='center'
+                        ml='3px'
+                      >
                         {viewers}
                       </Text>
                     </Center>
@@ -399,19 +405,22 @@ class LiveScreen extends Component {
     }
 
     return (
-      <Flex bg='#FFF' className='perfect-height-wrapper' w='100vw' justify='space-between'>
+      <Flex
+        bg='#FFF'
+        className='perfect-height-wrapper'
+        w='100vw'
+        justify='space-between'
+      >
         <Stack w='70vw' p='20px'>
-          <Stack w='100%' h='100%'>
-            {this.props.handleGoBack ? (
-              <Pressable onPress={this.props.handleGoBack}>
-                <Flex align='center' pb='10px'>
-                  <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                  <Text fontWeight='bold'>Inapoi la evenimente</Text>
-                </Flex>
-              </Pressable>
-            ) : (
-              null
-            )}
+          {this.props.handleGoBack ? (
+            <Pressable onPress={this.props.handleGoBack}>
+              <Flex align='center' pb='10px'>
+                <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
+                <Text fontWeight='bold'>Inapoi la evenimente</Text>
+              </Flex>
+            </Pressable>
+          ) : null}
+          <Center h='100%' w='100%'>
             <Stack
               h='100%'
               w='100%'
@@ -504,7 +513,12 @@ class LiveScreen extends Component {
                       </Center>
                       <Center ml='5px' textAlign='center'>
                         <FiEye size={14} color='#FFF' />
-                        <Text fontSize={12} color='#FFF' textAlign='center' ml='3px'>
+                        <Text
+                          fontSize={12}
+                          color='#FFF'
+                          textAlign='center'
+                          ml='3px'
+                        >
                           {viewers}
                         </Text>
                       </Center>
@@ -550,7 +564,12 @@ class LiveScreen extends Component {
                       <Text color='#FFF' fontSize='14' fontWeight='normal'>
                         {`${productInfo.currentStock} remaining`}
                       </Text>
-                      <Text color='#FFF' fontWeight='bold' fontSize='14' style={{ marginTop: '0.1rem' }}>
+                      <Text
+                        color='#FFF'
+                        fontWeight='bold'
+                        fontSize='14'
+                        style={{ marginTop: '0.1rem' }}
+                      >
                         {`${productInfo.price} ${productInfo.currency}`}
                       </Text>
                     </Stack>
@@ -586,8 +605,7 @@ class LiveScreen extends Component {
                 </Stack>
               ) : null}
             </Stack>
-          </Stack>
-
+          </Center>
           {/* {eventInfo.currentProductId && productInfo ? (
             <Center px='20px' h='15vh' w='100%' style={{ marginTop: 0 }}>
               <Flex
@@ -709,9 +727,7 @@ class LiveScreen extends Component {
                 <Text fontWeight='bold'>Inapoi la evenimente</Text>
               </Flex>
             </Pressable>
-          ) : (
-            null
-          )}
+          ) : null}
           <Stack
             h='100%'
             p='20px'

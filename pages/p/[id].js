@@ -25,6 +25,8 @@ import firebase from "../../firebase/clientApp";
 import router from "next/router";
 import axios from "axios";
 import { OrderModalContent } from "../../components/modals/content";
+import ShopItems from "../../components/molecules/profile/ShopItems";
+
 import moment from "moment";
 const format = val => "RON " + val;
 const parse = val => val.replace(/RON /, "");
@@ -32,8 +34,6 @@ const parse = val => val.replace(/RON /, "");
 const CashOrderModal = ({ isOnMobile, ...props }) => {
   return (
     <Modal
-      // initialFocusRef={initialRef}
-      // finalFocusRef={finalRef}
       motionPreset="scale"
       isCentered
       isOpen={props.isOpen}
@@ -47,21 +47,9 @@ const CashOrderModal = ({ isOnMobile, ...props }) => {
         borderRadius={isOnMobile ? 10 : 30}
         {...styles}
       >
-        {/* <ModalHeader>
-          <Text>{info[type].title}</Text>
-          <Text fontSize={14} fontWeight='normal'>
-            {info[type].subtitle}
-          </Text>
-        </ModalHeader> */}
         <ModalCloseButton />
         <ModalBody>
           <OrderModalContent {...props} />
-          {/* {renderContent(type, {
-            ...props,
-            isOnMobile,
-            onClose,
-            callback
-          })} */}
         </ModalBody>
       </ModalContent>
     </Modal>
@@ -118,7 +106,7 @@ export default class PaymentScreen extends PureComponent {
       outOfStock: false,
       isModalOpen: false,
       sellerInfo: {},
-
+      sellerProducts: {},
       newPrice: null
     };
 
@@ -138,6 +126,10 @@ export default class PaymentScreen extends PureComponent {
       .database()
       .ref(`users/${productSn.val().uid}/info`)
       .once("value");
+    const sellerProductsSn = await firebase
+      .database()
+      .ref(`users/${productSn.val().uid}/shop/products`)
+      .once("value");
 
     if (productSn.val()) {
       if (router.query && router.query.success) {
@@ -146,7 +138,8 @@ export default class PaymentScreen extends PureComponent {
             product: productSn.val(),
             paidProduct: true,
             loading: false,
-            sellerInfo: sellerInfoSn.val()
+            sellerInfo: sellerInfoSn.val(),
+            sellerProducts: sellerProductsSn.val()
           },
           async () => {
             const req = await axios.post("/api/retrive-session", {
@@ -215,14 +208,17 @@ export default class PaymentScreen extends PureComponent {
           product: productSn.val(),
           paidProduct: false,
           loading: false,
-          sellerInfo: sellerInfoSn.val()
+          sellerInfo: sellerInfoSn.val(),
+          sellerProducts: sellerProductsSn.val()
         });
       } else {
         this.setState(
           {
             product: productSn.val(),
             paidProduct: false,
-            sellerInfo: sellerInfoSn.val()
+            loading: false,
+            sellerInfo: sellerInfoSn.val(),
+            sellerProducts: sellerProductsSn.val()
           },
           () => {
             if (productSn.val().quantity >= 1) {
@@ -328,39 +324,34 @@ export default class PaymentScreen extends PureComponent {
       outOfStock,
       isModalOpen,
       sellerInfo,
+      sellerProducts,
       newPrice
     } = this.state;
 
     const { isOnMobile } = this.props;
+    if (loading) {
+      return (
+        <Stack
+          w="100vw"
+          h="100vh"
+          justifyContent="center"
+          alignItems="center"
+          bg="rgba(255,255,255,0.3)"
+        >
+          <Spinner color="#121212" size="md" />
+        </Stack>
+      );
+    }
 
     return (
-      <Stack
-        align="center"
-        w="100vw"
-        h="100vh"
-        justify="center"
-        className="perfect-height-wrapper"
-      >
+      <Stack align="center" justify="center">
         <CashOrderModal
           isOpen={isModalOpen}
           onClose={() => this.setState({ isModalOpen: false })}
           isOnMobile={isOnMobile}
           handlePlaceOrder={this.handlePlaceOrder}
         />
-        {loading ? (
-          <Stack
-            w="100%"
-            h="100%"
-            position="absolute"
-            top={0}
-            zIndex={5}
-            justifyContent="center"
-            alignItems="center"
-            bg="rgba(255,255,255,0.3)"
-          >
-            <Spinner color="#121212" size="md" />
-          </Stack>
-        ) : null}
+
         {product ? (
           paidProduct ? (
             <Stack align="center" maxW="500px" width="100%" px="1rem">
@@ -396,7 +387,7 @@ export default class PaymentScreen extends PureComponent {
               </Text>
             </Stack>
           ) : (
-            <Stack align="center" maxW="500px" w="100%" px="1.5rem">
+            <Stack align="center" maxW="500px" w="100%" px="1.5rem" mt="4rem">
               <Stack alignItems="center">
                 {sellerInfo.imageURL && (
                   <img
@@ -444,18 +435,19 @@ export default class PaymentScreen extends PureComponent {
                 />
                 <Stack
                   style={{
-                    backgroundColor: "rgba(0,0,0,0.8)",
+                    background:
+                      "linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 0%, rgba(0,0,0,0.623686974789916) 0%, rgba(0,0,0,0) 100%)",
                     position: "absolute",
-                    top: 7,
-                    left: 7,
-                    zIndex: 3
+                    bottom: 0,
+                    left: 0,
+                    zIndex: 3,
+                    width: "100%",
+                    padding: 10,
+                    borderBottomLeftRadius: 15,
+                    borderBottomRightRadius: 15
                   }}
-                  py="5px"
-                  px="8px"
-                  borderRadius="xl"
-                  // className='quantity-label'
                 >
-                  <Text color="#FFFFFF" fontSize={14}>
+                  <Text color="#FFFFFF" fontSize={16} fontWeight="bold">
                     {`${product.quantity} in stock`}
                   </Text>
                 </Stack>
@@ -488,7 +480,7 @@ export default class PaymentScreen extends PureComponent {
                   <CountDownTimer endTime={product.auctionEndDate} />
                 </Stack>
               ) : (
-                <Stack>
+                <Stack style={{ position: "relative" }}>
                   <Text textAlign="center" fontSize={"18px"} fontWeight="bold">
                     {`Pret: ${product.price} RON`}
                   </Text>
@@ -635,8 +627,8 @@ export default class PaymentScreen extends PureComponent {
                         <Text
                           style={{
                             marginTop: "0.5rem",
-                            color: "#666"
-                            // textDecorationLine: "underline"
+                            color: "#666",
+                            textDecorationLine: "underline"
                           }}
                         >
                           Plata ramburs
@@ -649,6 +641,12 @@ export default class PaymentScreen extends PureComponent {
             </Stack>
           )
         ) : null}
+        <ShopItems
+          isOnMobile={isOnMobile}
+          products={Object.values(sellerProducts)}
+          initialProduct={product}
+          sellerInfo={sellerInfo}
+        />
       </Stack>
     );
   }

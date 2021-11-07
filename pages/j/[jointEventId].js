@@ -234,7 +234,7 @@ export default class JoinEvent extends Component {
           </SimpleGrid>
           <Flex position='absolute' bottom='2rem' justify='center' flex={1}>
             <Button
-              style={{ backgroundColor: '#121212', flex: 1 }}
+              style={{ backgroundColor: '#121212', flex: 1, minWidth: isOnMobile ? 250 : 350 }}
               maxW='500px'
               boxShadow='0px 0px 38px -2px rgba(0,0,0,0.62)'
               className='seekr-gradient-on-hover'

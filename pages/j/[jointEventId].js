@@ -173,7 +173,10 @@ export default class JoinEvent extends Component {
                     <AmazonIVSPreview
                       id={eventData.event.id}
                       url={
-                        "https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
+                        eventData.event.status === "live" &&
+                        eventData.event.liveURL
+                          ? eventData.event.info.liveURL
+                          : eventData.sellerInfo.videoURL
                       }
                     />
                     <Flex

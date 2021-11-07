@@ -94,55 +94,60 @@ class EventPage extends PureComponent {
       sellerInfo,
       currentProductId
     } = this.state;
-    switch (eventInfo.status) {
-      case "scheduled":
-        return (
-          <EventScreen
-            isOnMobile={isOnMobile}
-            onOpenModal={this.handleOpenModal}
-            sellerInfo={sellerInfo}
-            eventInfo={eventInfo}
-            comments={comments}
-            username={username}
-            handleGoBack={this.props.handleGoBack}
-          />
-        );
-      case "live":
-        return (
-          <LiveScreen
-            isOnMobile={isOnMobile}
-            onOpenModal={this.handleOpenModal}
-            sellerInfo={sellerInfo}
-            eventInfo={eventInfo}
-            comments={comments}
-            username={username}
-            handleGoBack={this.props.handleGoBack}
-          />
-        );
-      case "ended":
-        return (
-          <EndedScreen
-            isOnMobile={isOnMobile}
-            onOpenModal={this.handleOpenModal}
-            sellerInfo={sellerInfo}
-            eventInfo={eventInfo}
-            comments={comments}
-            username={username}
-            handleGoBack={this.props.handleGoBack}
-          />
-        );
-      default:
-        return (
-          <EventScreen
-            isOnMobile={isOnMobile}
-            onOpenModal={this.handleOpenModal}
-            sellerInfo={sellerInfo}
-            eventInfo={eventInfo}
-            comments={comments}
-            username={username}
-            handleGoBack={this.props.handleGoBack}
-          />
-        );
+    if (eventInfo.status === "scheduled") {
+      return (
+        <EventScreen
+          isOnMobile={isOnMobile}
+          onOpenModal={this.handleOpenModal}
+          sellerInfo={sellerInfo}
+          eventInfo={eventInfo}
+          comments={comments}
+          username={username}
+          handleGoBack={this.props.handleGoBack}
+        />
+      );
+    } else if (
+      eventInfo.status === "live" &&
+      eventInfo.hasOwnProperty("liveURL")
+    ) {
+      return (
+        <LiveScreen
+          isOnMobile={isOnMobile}
+          onOpenModal={this.handleOpenModal}
+          sellerInfo={sellerInfo}
+          eventInfo={eventInfo}
+          comments={comments}
+          username={username}
+          handleGoBack={this.props.handleGoBack}
+        />
+      );
+    } else if (
+      eventInfo.status === "live" &&
+      !eventInfo.hasOwnProperty("liveURL")
+    ) {
+      return (
+        <EventScreen
+          isOnMobile={isOnMobile}
+          onOpenModal={this.handleOpenModal}
+          sellerInfo={sellerInfo}
+          eventInfo={eventInfo}
+          comments={comments}
+          username={username}
+          handleGoBack={this.props.handleGoBack}
+        />
+      );
+    } else {
+      return (
+        <EndedScreen
+          isOnMobile={isOnMobile}
+          onOpenModal={this.handleOpenModal}
+          sellerInfo={sellerInfo}
+          eventInfo={eventInfo}
+          comments={comments}
+          username={username}
+          handleGoBack={this.props.handleGoBack}
+        />
+      );
     }
   }
 

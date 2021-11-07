@@ -182,8 +182,8 @@ class EventScreen extends PureComponent {
           >
             <ReactPlayer
               className='react-player'
-              // url={eventInfo.videoURL}
-              url='https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4'
+              url={eventInfo.videoURL}
+              // url='https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4'
               width='100%'
               height='120%'
               playing

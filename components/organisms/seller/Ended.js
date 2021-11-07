@@ -123,15 +123,9 @@ class EndedScreen extends PureComponent {
     }
 
     return (
-      <Flex bg="#FFF" h="100vh" w="100vw" justify="space-between">
-        <Stack w="70vw">
-          <Flex
-            justify="space-between"
-            alignItems="center"
-            p="20px"
-            h="15vh"
-            w="100%"
-          >
+      <Flex bg="#FFF" h="100vh" w="100vw" justify="space-between" p={5}>
+        <Stack flex={1}>
+          <Flex justify="space-between" alignItems="center" p="20px" w="100%">
             <Text fontWeight="bold" fontSize="2xl">
               seekr.
             </Text>
@@ -156,28 +150,13 @@ class EndedScreen extends PureComponent {
                   </Text>
                 </Stack>
               </Center>
-
-              <Center>
-                <Button
-                  h="3em"
-                  shadow="md"
-                  borderRadius="1.5em"
-                  bg="#FFF"
-                  onClick={this.handleFollow}
-                >
-                  <a style={{ paddingRight: "5px" }}>Follow</a>
-                  <FaPlus size={26} />
-                </Button>
-              </Center>
             </Flex>
           </Flex>
           <Center
             style={{ marginTop: 0 }}
             p="20px"
-            pt="0px"
-            pb="0px"
-            h="70vh"
-            w="100%"
+            // h="70vh"
+            flex={1}
           >
             <Stack
               h="100%"
@@ -194,52 +173,7 @@ class EndedScreen extends PureComponent {
               </Text>
             </Stack>
           </Center>
-
-          <Center p="20px" h="15vh" w="100%">
-            <Flex
-              h="100%"
-              w="100%"
-              p="10px"
-              bg="#F2F4F9"
-              borderRadius="xl"
-              overflow="hidden"
-              style={{
-                justifyContent: "center",
-                marginTop: 0,
-                alignItems: "center"
-              }}
-            >
-              <Button
-                h="3em"
-                ml="10px"
-                shadow="md"
-                borderRadius="1em"
-                bg="#FFF"
-                onClick={this.handleFollow}
-              >
-                <a>{`Follow @${sellerInfo.username} for more events`} </a>
-                <Center pl="5px">
-                  <FaPlus size={26} />
-                </Center>
-              </Button>
-            </Flex>
-          </Center>
         </Stack>
-        <Center p="20px" pl="0px" h="100vh" w="30vw">
-          <Stack
-            h="100%"
-            p="20px"
-            w="100%"
-            bg="#EEF2F8"
-            borderRadius="xl"
-            style={{ justifyContent: "space-between" }}
-          >
-            <Text color="#000" fontWeight="bold">
-              What people asked
-            </Text>
-            <CommentsList comments={comments} />
-          </Stack>
-        </Center>
       </Flex>
     );
   }

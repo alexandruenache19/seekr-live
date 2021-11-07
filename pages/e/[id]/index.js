@@ -94,6 +94,7 @@ class EventPage extends PureComponent {
       sellerInfo,
       currentProductId
     } = this.state;
+
     if (eventInfo.status === "scheduled") {
       return (
         <EventScreen

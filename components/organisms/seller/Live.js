@@ -22,7 +22,7 @@ import firebase from '../../../firebase/clientApp'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
 
 class LiveScreen extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -39,7 +39,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -80,7 +80,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate (prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -101,7 +101,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -110,7 +110,7 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder() {
+  handleOrder () {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -156,7 +156,7 @@ class LiveScreen extends Component {
     })
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -164,11 +164,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  render() {
+  render () {
     const {
       isOnMobile,
       sellerInfo,
@@ -375,7 +375,7 @@ class LiveScreen extends Component {
     }
 
     return (
-      <Flex bg='#FFF' h='100vh' w='100vw' justify='space-between'>
+      <Flex bg='#FFF' className='perfect-height-wrapper' w='100vw' justify='space-between'>
         <Stack w='70vw'>
           <Center p='20px' h='100%' w='100%'>
             <Stack

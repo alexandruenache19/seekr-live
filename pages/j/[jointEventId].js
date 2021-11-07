@@ -40,7 +40,7 @@ export default class JoinEvent extends Component {
 
   async componentDidMount() {
     const { jointEvent } = this.props;
-    console.log("join", jointEvent);
+    console.log("join", jointEvent.info);
     if (jointEvent && jointEvent.participants) {
       const events = []
       for (const uid in jointEvent.participants) {
@@ -74,9 +74,8 @@ export default class JoinEvent extends Component {
 
   render() {
     const { loading, events, displayEvent, eventId } = this.state
-    const { isOnMobile } = this.props
+    const { isOnMobile, jointEvent } = this.props
 
-    console.log('events', events)
     if (loading) {
       return (
         <Stack
@@ -111,10 +110,21 @@ export default class JoinEvent extends Component {
       <Stack
         w="100vw"
         px="1rem"
+        pt='2rem'
         h="100%"
         justifyContent="center"
         alignItems="center"
       >
+        {jointEvent.info ? (
+          <div className='header'>
+            <Text fontWeight='bold' fontSize='36px' lineHeight='1.3'>
+              {jointEvent.info.title}
+            </Text>
+            <Text fontWeight='normal' fontSize='18px' style={{ marginTop: 10 }}>
+              {jointEvent.info.description}
+            </Text>
+          </div>
+        ) : null}
         <SimpleGrid
           style={{
             marginTop: "2rem",
@@ -133,7 +143,6 @@ export default class JoinEvent extends Component {
                 <Flex
                   h="250px"
                   w="100%"
-                  flex={1}
                   bg="#999"
                   borderRadius="15px"
                   position="relative"

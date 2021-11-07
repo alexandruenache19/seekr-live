@@ -306,8 +306,8 @@ export default class JoinEvent extends Component {
                     <AmazonIVSPreview
                       id={eventData.event.id}
                       url={
-                        eventData.event.status === "live" &&
-                        eventData.event.liveURL
+                        eventData.event.info.status === "live" &&
+                        eventData.event.info.liveURL
                           ? eventData.event.info.liveURL
                           : eventData.event.info.videoURL
                       }
@@ -415,12 +415,20 @@ export default class JoinEvent extends Component {
           <Flex position="absolute" bottom="2rem" justify="center" flex={1}>
             {jointEvent.info.timestamp &&
             jointEvent.info.timestamp > new Date().getTime() ? (
-              <Stack style={{ justifyContent: "center", alignItems: "center" }}>
+              <Stack
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "fixed",
+                  bottom: "2rem"
+                }}
+              >
                 <Button
                   style={{
                     backgroundColor: "#121212",
                     padding: 10,
                     flex: 1,
+                    flexDirection: "column",
                     minWidth: isOnMobile ? 250 : 350
                   }}
                   maxW="500px"
@@ -430,11 +438,19 @@ export default class JoinEvent extends Component {
                     this.setState({ showRegistrationModal: true });
                   }}
                 >
-                  <Text style={{ color: "#FFFFFF" }}>Rezerva un loc</Text>
+                  <Text
+                    style={{
+                      color: "#FFFFFF",
+                      fontWeight: "bold",
+                      fontSize: 18
+                    }}
+                  >
+                    Rezerva un loc
+                  </Text>
+                  <Text style={{ color: "#FFF", fontSize: 12, paddingTop: 10 }}>
+                    *primesti livrarea gratis
+                  </Text>
                 </Button>
-                <Text style={{ fontWeight: "bold" }}>
-                  *primesti livrarea gratis
-                </Text>
               </Stack>
             ) : (
               <Button

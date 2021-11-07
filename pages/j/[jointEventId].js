@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { Pressable } from "react-native";
 import { MdArrowBack } from "react-icons/md";
+import { AiFillInstagram } from "react-icons/ai";
 import { getJointEvent } from "../../actions/fetch";
 import firebase from "../../firebase/clientApp";
 import EventPage from "../e/[id]";
@@ -85,8 +86,8 @@ export default class JoinEvent extends Component {
   }
 
   render() {
-    const { loading, events, displayEvent, eventId } = this.state
-    const { isOnMobile, jointEvent } = this.props
+    const { loading, events, displayEvent, eventId } = this.state;
+    const { isOnMobile, jointEvent } = this.props;
 
     if (loading) {
       return (
@@ -119,27 +120,26 @@ export default class JoinEvent extends Component {
     }
 
     return (
-      <Stack
-        w="100vw"
-        h="100%"
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Stack w="100vw" h="100%" justifyContent="center" alignItems="center">
         <Stack
-          maxW='1000px'
-          height='100vh'
-          overflow='scroll'
+          maxW="1000px"
+          height="100vh"
+          overflow="scroll"
           px="1rem"
-          pt='2rem'
-          position='relative'
-          alignItems='center'
+          pt="2rem"
+          position="relative"
+          alignItems="center"
         >
           {jointEvent.info ? (
-            <div className='header'>
-              <Text fontWeight='bold' fontSize='36px' lineHeight='1.3'>
+            <div className="header">
+              <Text fontWeight="bold" fontSize="36px" lineHeight="1.3">
                 {jointEvent.info.title}
               </Text>
-              <Text fontWeight='normal' fontSize='18px' style={{ marginTop: 10 }}>
+              <Text
+                fontWeight="normal"
+                fontSize="18px"
+                style={{ marginTop: 10 }}
+              >
                 {jointEvent.info.description}
               </Text>
             </div>
@@ -185,16 +185,20 @@ export default class JoinEvent extends Component {
                       }}
                       position="absolute"
                       top="0"
-                      p="15px"
+                      p={2}
                       w="100%"
                       borderTopLeftRadius="15px"
                       borderTopRightRadius="15px"
                     >
                       <Text
-                        fontSize="12px"
-                        fontWeight="bold"
-                        color="#FFF"
-                        pl="5px"
+                        style={{
+                          flex: 1,
+                          paddingLeft: 4,
+                          color: "#FFF",
+                          fontWeight: "bold",
+                          fontSize: 14,
+                          position: "relative"
+                        }}
                       >
                         {eventData.event.info.title}
                       </Text>
@@ -207,43 +211,76 @@ export default class JoinEvent extends Component {
                       }}
                       position="absolute"
                       bottom="0"
-                      p="15px"
+                      p={2}
                       w="100%"
                       borderBottomLeftRadius="15px"
                       borderBottomRightRadius="15px"
+                      justifyContent="space-between"
+                      alignItems="center"
                     >
-                      <Avatar
-                        size="sm"
-                        name={eventData.sellerInfo.username}
-                        src={eventData.sellerInfo.imageURL}
-                      />
-
-                      <Text
-                        fontSize="12px"
-                        fontWeight="bold"
-                        color="#FFF"
-                        pl="5px"
+                      <Flex
+                        style={{
+                          flex: 1,
+                          overflow: "hidden"
+                        }}
                       >
-                        @{eventData.sellerInfo.username}
-                      </Text>
+                        <Avatar
+                          size="xs"
+                          name={eventData.sellerInfo.username}
+                          src={eventData.sellerInfo.imageURL}
+                        />
+
+                        <Text
+                          noOfLines={1}
+                          textOverflow="ellipsis"
+                          style={{
+                            flex: 1,
+                            paddingLeft: 4,
+                            color: "#FFF",
+                            fontWeight: "bold",
+                            fontSize: 12,
+                            position: "relative"
+                          }}
+                        >
+                          @{eventData.sellerInfo.username}
+                        </Text>
+                      </Flex>
+                      {eventData.sellerInfo.instagramUrl && (
+                        <Pressable
+                          onPress={() =>
+                            window.open(
+                              eventData.sellerInfo.instagramUrl,
+                              "_blank"
+                            )
+                          }
+                        >
+                          <AiFillInstagram color="#FFF" size={30} />
+                        </Pressable>
+                      )}
                     </Flex>
                   </Stack>
                 </Pressable>
               );
             })}
           </SimpleGrid>
-          <Flex position='absolute' bottom='2rem' justify='center' flex={1}>
+          <Flex position="absolute" bottom="2rem" justify="center" flex={1}>
             <Button
-              style={{ backgroundColor: '#121212', flex: 1, minWidth: isOnMobile ? 250 : 350 }}
-              maxW='500px'
-              boxShadow='0px 0px 38px -2px rgba(0,0,0,0.62)'
-              className='seekr-gradient-on-hover'
+              style={{
+                backgroundColor: "#121212",
+                flex: 1,
+                minWidth: isOnMobile ? 250 : 350
+              }}
+              maxW="500px"
+              boxShadow="0px 0px 38px -2px rgba(0,0,0,0.62)"
+              className="seekr-gradient-on-hover"
               // borderRadius='15px'
               onClick={async () => {
-                this.handleGetSetEvent(events[Math.floor(Math.random() * events.length)].event.id)
+                this.handleGetSetEvent(
+                  events[Math.floor(Math.random() * events.length)].event.id
+                );
               }}
             >
-              <Text style={{ color: '#FFFFFF' }}>Join random event</Text>
+              <Text style={{ color: "#FFFFFF" }}>Join random event</Text>
             </Button>
           </Flex>
         </Stack>

@@ -114,6 +114,7 @@ class EventPage extends PureComponent {
       return (
         <LiveScreen
           isOnMobile={isOnMobile}
+          events={this.props.events}
           onOpenModal={this.handleOpenModal}
           sellerInfo={sellerInfo}
           eventInfo={eventInfo}

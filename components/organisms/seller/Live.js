@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { withRouter } from 'next/router';
+import React, { Component } from "react";
+import { withRouter } from "next/router";
 import {
   Flex,
   Stack,
@@ -12,20 +12,20 @@ import {
   ModalContent,
   ModalCloseButton,
   ModalBody
-} from '@chakra-ui/react';
-import Lottie from 'react-lottie';
-import { Pressable } from 'react-native';
-import { FaPlus, FaMinus } from 'react-icons/fa';
-import { FiEye, FiShare } from 'react-icons/fi';
-import { MdArrowBack } from 'react-icons/md';
-import * as animationData from './live.json';
-import { MessageInput, CommentsList } from '../../../components';
-import firebase from '../../../firebase/clientApp';
-import AmazonIVS from '../../molecules/seller/AmazonIVS';
-import Stories from '../../molecules/seller/Stories';
+} from "@chakra-ui/react";
+import Lottie from "react-lottie";
+import { Pressable } from "react-native";
+import { FaPlus, FaMinus } from "react-icons/fa";
+import { FiEye, FiShare } from "react-icons/fi";
+import { MdArrowBack } from "react-icons/md";
+import * as animationData from "./live.json";
+import { MessageInput, CommentsList } from "../../../components";
+import firebase from "../../../firebase/clientApp";
+import AmazonIVS from "../../molecules/seller/AmazonIVS";
+import Stories from "../../molecules/seller/Stories";
 class LiveScreen extends Component {
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       productInfo: null,
       orderQuantity: 1,
@@ -35,85 +35,85 @@ class LiveScreen extends Component {
       name: null,
       phoneNumber: null,
       isCheckoutModalOpen: false
-    }
-    this.handleOrder = this.handleOrder.bind(this)
-    this.handleShare = this.handleShare.bind(this)
-    this.handleFollow = this.handleFollow.bind(this)
+    };
+    this.handleOrder = this.handleOrder.bind(this);
+    this.handleShare = this.handleShare.bind(this);
+    this.handleFollow = this.handleFollow.bind(this);
   }
 
-  componentDidMount () {
-    const { eventInfo } = this.props
+  componentDidMount() {
+    const { eventInfo } = this.props;
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
-    const vh = window.innerHeight * 0.01
+    const vh = window.innerHeight * 0.01;
     // Then we set the value in the --vh custom property to the root of the document
-    document.documentElement.style.setProperty('--vh', `${vh}px`)
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
 
     firebase
       .database()
       .ref(`events/${eventInfo.id}/info/viewers`)
-      .set(firebase.database.ServerValue.increment(1))
+      .set(firebase.database.ServerValue.increment(1));
 
     this.productInfoListener = firebase
       .database()
       .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
-      .on('value', async snapshot => {
+      .on("value", async snapshot => {
         this.setState({
           productInfo: snapshot.val()
-        })
-      })
+        });
+      });
 
     this.viewsInfoListener = firebase
       .database()
       .ref(`events/${eventInfo.id}/info/viewers`)
-      .on('value', snapshot => {
+      .on("value", snapshot => {
         if (snapshot.exists()) {
           this.setState({
             viewers: snapshot.val()
-          })
+          });
         }
-      })
+      });
 
-    window.onbeforeunload = function () {
+    window.onbeforeunload = function() {
       firebase
         .database()
         .ref(`events/${eventInfo.id}/info/viewers`)
-        .set(firebase.database.ServerValue.increment(-1))
+        .set(firebase.database.ServerValue.increment(-1));
     };
   }
 
-  async componentDidUpdate (prevProps, prevState) {
-    const { eventInfo } = this.props
+  async componentDidUpdate(prevProps, prevState) {
+    const { eventInfo } = this.props;
     if (
       (prevProps.eventInfo.currentProductId &&
         this.props.eventInfo.currentProductId &&
         prevProps.eventInfo.currentProductId !==
-        this.props.eventInfo.currentProductId) ||
+          this.props.eventInfo.currentProductId) ||
       (!prevProps.eventInfo.currentProductId &&
         this.props.eventInfo.currentProductId)
     ) {
       this.productInfoListener = firebase
         .database()
         .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
-        .on('value', snapshot => {
+        .on("value", snapshot => {
           this.setState({
             productInfo: snapshot.val()
-          })
-        })
+          });
+        });
     }
   }
 
-  componentWillUnmount () {
-    const { eventInfo } = this.props
+  componentWillUnmount() {
+    const { eventInfo } = this.props;
     this.productInfoListener &&
       firebase
         .database()
         .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
-        .off('value', this.productInfoListener)
+        .off("value", this.productInfoListener);
   }
 
-  handleOrder () {
-    const { eventInfo, sellerInfo } = this.props
+  handleOrder() {
+    const { eventInfo, sellerInfo } = this.props;
 
     const {
       productInfo,
@@ -126,9 +126,9 @@ class LiveScreen extends Component {
       addressLine2,
       name,
       phoneNumber
-    } = this.state
+    } = this.state;
     // this.props.onOpenModal('order', {
-    this.props.onOpenModal('payment', {
+    this.props.onOpenModal("payment", {
       sellerUsername: sellerInfo.username,
       productInfo: productInfo,
       eventInfo: eventInfo,
@@ -153,24 +153,24 @@ class LiveScreen extends Component {
           addressLine2: details.addressLine2 || null,
           name: details.name,
           phoneNumber: details.phoneNumber
-        })
+        });
       }
-    })
+    });
   }
 
-  handleShare () {
-    const { sellerInfo } = this.props
-    this.props.onOpenModal('share', {
+  handleShare() {
+    const { sellerInfo } = this.props;
+    this.props.onOpenModal("share", {
       username: sellerInfo.username,
       shareUrl: window.location.href
-    })
+    });
   }
 
-  handleFollow () {
-    this.props.onOpenModal('follow', {})
+  handleFollow() {
+    this.props.onOpenModal("follow", {});
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -178,78 +178,87 @@ class LiveScreen extends Component {
       comments,
       username,
       events
-    } = this.props
+    } = this.props;
     const {
       productInfo,
       orderQuantity,
       viewers,
       isCheckoutModalOpen
-    } = this.state
+    } = this.state;
 
     if (isOnMobile) {
       return (
-        <Stack w='100vw' bg='#FFF' p='10px' className='perfect-height-wrapper'>
+        <Stack w="100vw" bg="#FFF" p="10px" className="perfect-height-wrapper">
           {this.props.handleGoBack ? (
             <Pressable onPress={this.props.handleGoBack}>
-              <Flex align='center' pr={isOnMobile ? '10px' : '20px'}>
+              <Flex align="center" pr={isOnMobile ? "10px" : "20px"}>
                 <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                <Text fontWeight='bold'>Inapoi la evenimente</Text>
+                <Text fontWeight="bold">Inapoi la evenimente</Text>
               </Flex>
             </Pressable>
           ) : null}
           {events && <Stories events={events} />}
 
           <Stack
-            h='100%'
-            bg='rgba(0,0,0,0.9)'
-            borderRadius='xl'
-            overflow='hidden'
-            position='relative'
-            justifyContent='center'
-            alignItems='center'
+            h="100%"
+            bg="rgba(0,0,0,0.9)"
+            borderRadius="xl"
+            overflow="hidden"
+            position="relative"
+            justifyContent="center"
+            alignItems="center"
           >
             <AmazonIVS isOnMobile={isOnMobile} url={eventInfo.liveURL} />
 
             <Button
-              position='absolute'
-              top='8px'
-              right='12px'
-              h='2em'
-              w='2em'
-              minW='0'
-              p='5px'
-              borderRadius='50%'
-              align='center'
-              justify='center'
-              bg='transparent'
+              position="absolute"
+              top="8px"
+              right="12px"
+              h="2em"
+              w="2em"
+              minW="0"
+              p="5px"
+              borderRadius="50%"
+              align="center"
+              justify="center"
+              bg="transparent"
               onClick={this.handleShare}
             >
-              <FiShare style={{ fontSize: 18, color: '#FFF' }} />
+              <FiShare style={{ fontSize: 18, color: "#FFF" }} />
             </Button>
 
             {productInfo ? (
               <Stack
-                position='absolute'
-                left='0px'
-                bottom='0px'
-                p='10px'
-                w='100%'
+                position="absolute"
+                left="0px"
+                bottom="0px"
+                p="10px"
+                w="100%"
                 flex={1}
+                style={{
+                  background:
+                    "linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 0%, rgba(0,0,0,0.6685049019607843) 0%, rgba(0,0,0,0) 100%)"
+                }}
               >
-                <Center style={{ overflow: 'scroll', height: 90 }}>
-                  <Center pt='120px'>
+                <Center style={{ overflow: "scroll", height: 90 }}>
+                  <Center pt="120px">
                     <CommentsList comments={comments} />
                   </Center>
                 </Center>
-                <Flex w='100%' justify='space-between' align='center' style={{ marginBottom: 10 }}>
+                <Flex
+                  w="100%"
+                  justify="space-between"
+                  align="center"
+                  style={{ marginBottom: 10 }}
+                >
                   <Flex
-                    borderRadius='xl'
-                    bg='rgba(0,0,0,0.3)'
-                    p='6px'
-                    align='center'
-                    w='100%'
+                    borderRadius="xl"
+                    bg="rgba(0,0,0,0.3)"
+                    p="6px"
+                    align="center"
+                    w="100%"
                     minW={0}
-                    alignSelf='start'
+                    alignSelf="start"
                   >
                     {productInfo.imageURL ? (
                       <img
@@ -257,58 +266,62 @@ class LiveScreen extends Component {
                         style={{
                           height: 50,
                           width: 50,
-                          objectFit: 'cover',
+                          objectFit: "cover",
                           borderRadius: 10,
                           marginRight: 8
                         }}
                       />
                     ) : null}
                     <Stack
-                      justifyContent='center'
+                      justifyContent="center"
                       style={{ marginTop: 0, paddingRight: 4 }}
                     >
-                      <Text color='#FFF' fontSize='14' fontWeight='normal'>
+                      <Text color="#FFF" fontSize="14" fontWeight="normal">
                         {`${productInfo.currentStock} remaining`}
                       </Text>
-                      <Text color='#FFF' fontWeight='bold' fontSize='14' style={{ marginTop: '0.1rem' }}>
+                      <Text
+                        color="#FFF"
+                        fontWeight="bold"
+                        fontSize="14"
+                        style={{ marginTop: "0.1rem" }}
+                      >
                         {`${productInfo.price} ${productInfo.currency}`}
                       </Text>
                     </Stack>
                     {productInfo.currentStock > 0 ? (
                       <Button
-                        borderRadius='xl'
+                        borderRadius="xl"
                         // px='10px'
                         style={{
-                          justifyContent: 'center',
-                          background: 'rgb(63,60,145)',
-                          background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
-                          minHeight: '100%',
-                          height: '100%',
+                          justifyContent: "center",
+                          background: "rgb(63,60,145)",
+                          background:
+                            "linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)",
+                          minHeight: "100%",
+                          height: "100%",
                           flex: 1,
                           height: 50,
                           // width: 'auto',
                           minWidth: 120,
                           marginLeft: 20
                         }}
-                        className='seekr-gradient-on-hover'
+                        className="seekr-gradient-on-hover"
                         onClick={this.handleOrder}
                       >
-                        <Text color='#FFFFFF' fontWeight='600'>
+                        <Text color="#FFFFFF" fontWeight="600">
                           Place Order
                         </Text>
                       </Button>
                     ) : (
                       <Button
-                        borderRadius='xl'
+                        borderRadius="xl"
                         onClick={() => null}
                         style={{
-                          justifyContent: 'center',
-                          backgroundColor: '#999'
+                          justifyContent: "center",
+                          backgroundColor: "#999"
                         }}
                       >
-                        <Text color='#FFFFFF'>
-                          Waiting for the next item
-                        </Text>
+                        <Text color="#FFFFFF">Waiting for the next item</Text>
                       </Button>
                     )}
                   </Flex>
@@ -321,12 +334,12 @@ class LiveScreen extends Component {
               </Stack>
             ) : null}
             <Flex
-              position='absolute'
-              left='10px'
-              top='10px'
+              position="absolute"
+              left="10px"
+              top="10px"
               zIndex={10}
-              align='center'
-              style={{ marginTop: 0, justifyContent: 'flex-start' }}
+              align="center"
+              style={{ marginTop: 0, justifyContent: "flex-start" }}
             >
               {/* {this.props.handleGoBack ? (
                 <Pressable onPress={this.props.handleGoBack}>
@@ -338,14 +351,14 @@ class LiveScreen extends Component {
                 null
               )} */}
               <Flex
-                justify='flex-start'
-                alignItems='center'
-                borderRadius='xl'
-                p='5px'
-                bg='rgba(0,0,0,0.3)'
+                justify="flex-start"
+                alignItems="center"
+                borderRadius="xl"
+                p="5px"
+                bg="rgba(0,0,0,0.3)"
               >
                 <Avatar
-                  size='sm'
+                  size="sm"
                   name={sellerInfo.username}
                   src={sellerInfo.imageURL}
                 />
@@ -353,22 +366,22 @@ class LiveScreen extends Component {
                   style={{
                     marginTop: 0,
                     marginLeft: 5,
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start'
+                    alignItems: "flex-start",
+                    justifyContent: "flex-start"
                   }}
                 >
                   <Text
                     noOfLines={1}
-                    textOverflow='ellipsis'
-                    maxW='100px'
-                    fontWeight='bold'
-                    color='#FFF'
+                    textOverflow="ellipsis"
+                    maxW="100px"
+                    fontWeight="bold"
+                    color="#FFF"
                     fontSize={12}
                   >
                     @{sellerInfo.username}
                   </Text>
                   <Center
-                    style={{ marginTop: 0, justifyContent: 'flex-start' }}
+                    style={{ marginTop: 0, justifyContent: "flex-start" }}
                   >
                     <Center style={{ marginLeft: -3 }}>
                       <Lottie
@@ -380,17 +393,17 @@ class LiveScreen extends Component {
                         height={20}
                         width={20}
                       />
-                      <Text pl='2px' color='#FFF' fontSize={10}>
+                      <Text pl="2px" color="#FFF" fontSize={10}>
                         Live
                       </Text>
                     </Center>
-                    <Center ml='5px' textAlign='center'>
-                      <FiEye size={14} color='#FFF' />
+                    <Center ml="5px" textAlign="center">
+                      <FiEye size={14} color="#FFF" />
                       <Text
                         fontSize={10}
-                        color='#FFF'
-                        textAlign='center'
-                        ml='3px'
+                        color="#FFF"
+                        textAlign="center"
+                        ml="3px"
                       >
                         {viewers}
                       </Text>
@@ -401,74 +414,74 @@ class LiveScreen extends Component {
             </Flex>
           </Stack>
         </Stack>
-      )
+      );
     }
 
     return (
       <Flex
-        bg='#FFF'
-        className='perfect-height-wrapper'
-        w='100vw'
-        justify='space-between'
+        bg="#FFF"
+        className="perfect-height-wrapper"
+        w="100vw"
+        justify="space-between"
       >
-        <Stack w='70vw' p='20px'>
+        <Stack w="70vw" p="20px">
           {this.props.handleGoBack ? (
             <Pressable onPress={this.props.handleGoBack}>
-              <Flex align='center' pb='10px'>
+              <Flex align="center" pb="10px">
                 <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                <Text fontWeight='bold'>Inapoi la evenimente</Text>
+                <Text fontWeight="bold">Inapoi la evenimente</Text>
               </Flex>
             </Pressable>
           ) : null}
-          <Center h='100%' w='100%'>
+          <Center h="100%" w="100%">
             <Stack
-              h='100%'
-              w='100%'
-              bg='rgba(0,0,0,0.9)'
-              borderRadius='20px'
-              overflow='hidden'
-              position='relative'
+              h="100%"
+              w="100%"
+              bg="rgba(0,0,0,0.9)"
+              borderRadius="20px"
+              overflow="hidden"
+              position="relative"
               style={{ marginTop: 0 }}
             >
               <Flex
-                h='100%'
+                h="100%"
                 flex={1}
-                style={{ boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)' }}
+                style={{ boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)" }}
               >
                 <AmazonIVS url={eventInfo.liveURL} />
               </Flex>
 
               <Button
-                position='absolute'
-                top='8px'
-                right='14px'
-                h='2em'
-                w='2em'
-                minW='0'
-                p='5px'
-                borderRadius='50%'
-                align='center'
-                justify='center'
-                bg='transparent'
+                position="absolute"
+                top="8px"
+                right="14px"
+                h="2em"
+                w="2em"
+                minW="0"
+                p="5px"
+                borderRadius="50%"
+                align="center"
+                justify="center"
+                bg="transparent"
                 onClick={this.handleShare}
               >
-                <FiShare style={{ fontSize: 18, color: '#FFF' }} />
+                <FiShare style={{ fontSize: 18, color: "#FFF" }} />
               </Button>
 
               <Flex
-                position='absolute'
-                left='15px'
-                top='15px'
+                position="absolute"
+                left="15px"
+                top="15px"
                 zIndex={10}
-                align='center'
-                style={{ marginTop: 0, justifyContent: 'flex-start' }}
+                align="center"
+                style={{ marginTop: 0, justifyContent: "flex-start" }}
               >
                 <Flex
-                  borderRadius='xl'
-                  p='5px'
-                  bg='rgba(0,0,0,0.3)'
-                  justify='flex-start'
-                  alignItems='center'
+                  borderRadius="xl"
+                  p="5px"
+                  bg="rgba(0,0,0,0.3)"
+                  justify="flex-start"
+                  alignItems="center"
                 >
                   <Avatar
                     // size='sm'
@@ -480,22 +493,22 @@ class LiveScreen extends Component {
                     style={{
                       marginTop: 0,
                       marginLeft: 8,
-                      alignItems: 'flex-start',
-                      justifyContent: 'flex-start'
+                      alignItems: "flex-start",
+                      justifyContent: "flex-start"
                     }}
                   >
                     <Text
                       noOfLines={1}
-                      textOverflow='ellipsis'
-                      maxW='100px'
-                      fontWeight='bold'
-                      color='#FFF'
+                      textOverflow="ellipsis"
+                      maxW="100px"
+                      fontWeight="bold"
+                      color="#FFF"
                       fontSize={14}
                     >
                       @{sellerInfo.username}
                     </Text>
                     <Center
-                      style={{ marginTop: 0, justifyContent: 'flex-start' }}
+                      style={{ marginTop: 0, justifyContent: "flex-start" }}
                     >
                       <Center style={{ marginLeft: -3 }}>
                         <Lottie
@@ -507,17 +520,17 @@ class LiveScreen extends Component {
                           height={20}
                           width={20}
                         />
-                        <Text pl='2px' color='#FFF' fontSize={12}>
+                        <Text pl="2px" color="#FFF" fontSize={12}>
                           Live
                         </Text>
                       </Center>
-                      <Center ml='5px' textAlign='center'>
-                        <FiEye size={14} color='#FFF' />
+                      <Center ml="5px" textAlign="center">
+                        <FiEye size={14} color="#FFF" />
                         <Text
                           fontSize={12}
-                          color='#FFF'
-                          textAlign='center'
-                          ml='3px'
+                          color="#FFF"
+                          textAlign="center"
+                          ml="3px"
                         >
                           {viewers}
                         </Text>
@@ -529,21 +542,21 @@ class LiveScreen extends Component {
 
               {productInfo ? (
                 <Stack
-                  position='absolute'
-                  left='0px'
-                  bottom='0px'
-                  p='15px'
-                  w='100%'
+                  position="absolute"
+                  left="0px"
+                  bottom="0px"
+                  p="15px"
+                  w="100%"
                   flex={1}
                 >
                   <Flex
-                    borderRadius='xl'
-                    bg='rgba(0,0,0,0.3)'
-                    p='8px'
-                    align='center'
-                    w='auto'
+                    borderRadius="xl"
+                    bg="rgba(0,0,0,0.3)"
+                    p="8px"
+                    align="center"
+                    w="auto"
                     minW={0}
-                    alignSelf='start'
+                    alignSelf="start"
                   >
                     {productInfo.imageURL ? (
                       <img
@@ -551,24 +564,24 @@ class LiveScreen extends Component {
                         style={{
                           height: 50,
                           width: 50,
-                          objectFit: 'cover',
+                          objectFit: "cover",
                           borderRadius: 10,
                           marginRight: 8
                         }}
                       />
                     ) : null}
                     <Stack
-                      justifyContent='center'
+                      justifyContent="center"
                       style={{ marginTop: 0, paddingRight: 4 }}
                     >
-                      <Text color='#FFF' fontSize='14' fontWeight='normal'>
+                      <Text color="#FFF" fontSize="14" fontWeight="normal">
                         {`${productInfo.currentStock} remaining`}
                       </Text>
                       <Text
-                        color='#FFF'
-                        fontWeight='bold'
-                        fontSize='14'
-                        style={{ marginTop: '0.1rem' }}
+                        color="#FFF"
+                        fontWeight="bold"
+                        fontSize="14"
+                        style={{ marginTop: "0.1rem" }}
                       >
                         {`${productInfo.price} ${productInfo.currency}`}
                       </Text>
@@ -576,28 +589,28 @@ class LiveScreen extends Component {
                   </Flex>
                   {productInfo.currentStock > 0 ? (
                     <Button
-                      borderRadius='xl'
+                      borderRadius="xl"
                       style={{
-                        justifyContent: 'center',
-                        backgroundColor: '#000'
+                        justifyContent: "center",
+                        backgroundColor: "#000"
                       }}
-                      className='seekr-gradient-on-hover'
+                      className="seekr-gradient-on-hover"
                       onClick={this.handleOrder}
                     >
-                      <Text pr='10px' color='#FFFFFF'>
+                      <Text pr="10px" color="#FFFFFF">
                         Place Order
                       </Text>
                     </Button>
                   ) : (
                     <Button
-                      borderRadius='xl'
+                      borderRadius="xl"
                       onClick={() => null}
                       style={{
-                        justifyContent: 'center',
-                        backgroundColor: '#999'
+                        justifyContent: "center",
+                        backgroundColor: "#999"
                       }}
                     >
-                      <Text pr='10px' color='#FFFFFF'>
+                      <Text pr="10px" color="#FFFFFF">
                         Waiting for the next item
                       </Text>
                     </Button>
@@ -719,25 +732,25 @@ class LiveScreen extends Component {
           )} */}
         </Stack>
 
-        <Stack p='20px' pl='10px' h='100vh' w='30vw'>
+        <Stack p="20px" pl="10px" h="100vh" w="30vw">
           {this.props.handleGoBack ? (
             <Pressable onPress={this.props.handleGoBack} style={{ opacity: 0 }}>
-              <Flex align='center' pb='10px'>
+              <Flex align="center" pb="10px">
                 <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                <Text fontWeight='bold'>Inapoi la evenimente</Text>
+                <Text fontWeight="bold">Inapoi la evenimente</Text>
               </Flex>
             </Pressable>
           ) : null}
           <Stack
-            h='100%'
-            p='20px'
-            w='100%'
-            bg='#FFFFFF'
-            borderRadius='25px'
-            boxShadow='0px 0px 36px 2px rgba(0,0,0,0.12);'
-            style={{ justifyContent: 'space-between' }}
+            h="100%"
+            p="20px"
+            w="100%"
+            bg="#FFFFFF"
+            borderRadius="25px"
+            boxShadow="0px 0px 36px 2px rgba(0,0,0,0.12);"
+            style={{ justifyContent: "space-between" }}
           >
-            <Text color='#000' fontWeight='bold'>
+            <Text color="#000" fontWeight="bold">
               Vorbeste cu {sellerInfo.username}
             </Text>
 
@@ -746,8 +759,8 @@ class LiveScreen extends Component {
                 flex: 1,
                 marginBottom: 10,
                 marginTop: 10,
-                overflow: 'scroll',
-                alignItems: 'flex-start'
+                overflow: "scroll",
+                alignItems: "flex-start"
               }}
             >
               <CommentsList comments={comments} />
@@ -761,10 +774,10 @@ class LiveScreen extends Component {
           </Stack>
         </Stack>
       </Flex>
-    )
+    );
   }
 }
 
-const styles = {}
+const styles = {};
 
-export default withRouter(LiveScreen)
+export default withRouter(LiveScreen);

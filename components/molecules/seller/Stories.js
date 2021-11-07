@@ -9,8 +9,7 @@ const Stories = ({ events }) => {
       borderRadius="20px"
       overflowX="scroll"
       style={{
-        justifyContent: "flex-start",
-        marginTop: 0
+        justifyContent: "flex-start"
       }}
     >
       {events.map(eventData => {
@@ -20,7 +19,7 @@ const Stories = ({ events }) => {
             onPress={() => console.log("here")}
           >
             <Stack
-              h="130px"
+              h="160px"
               width="90px"
               bg="#999"
               borderRadius="15px"

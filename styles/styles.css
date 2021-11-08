@@ -81,3 +81,8 @@ a.left {
 	background: rgb(63,60,145) !important;
 	background: linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%) !important;
 }
+
+.react-player-preview video {
+	border-radius: 15px;
+	object-fit: cover;
+}

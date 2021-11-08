@@ -21,6 +21,7 @@ import {
   useToast,
   useClipboard
 } from "@chakra-ui/react";
+import ReactPlayer from "react-player";
 import { Pressable, ScrollView } from "react-native";
 import { MdArrowBack } from "react-icons/md";
 import { FiInstagram, FiPlus } from "react-icons/fi";
@@ -404,7 +405,7 @@ export default class JoinEvent extends Component {
                   </Text>
                 </div>
               ) : null}
-              <Stack w='100%' pt='2rem' pb='1rem'>
+              <Stack w='100%' pt='2rem' pb='0rem'>
                 {/* <Text fontWeight='bold' fontSize='24px'>Participants</Text> */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {events.map(eventData => {
@@ -454,6 +455,7 @@ export default class JoinEvent extends Component {
                       >
                         <AmazonIVSPreview
                           id={eventData.event.id}
+                          isLive={eventData.event.info.status === "live" && eventData.event.info.liveURL}
                           url={
                             eventData.event.info.status === "live" &&
                               eventData.event.info.liveURL
@@ -552,7 +554,7 @@ export default class JoinEvent extends Component {
                                 )
                               }
                             >
-                              <FiInstagram color="#FFF" size={28} />
+                              <FiInstagram color="#FFF" size={26} />
                             </Pressable>
                           )}
                         </Flex>

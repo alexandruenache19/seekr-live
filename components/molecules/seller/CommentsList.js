@@ -15,7 +15,7 @@ import {
   useDisclosure
 } from '@chakra-ui/react'
 
-const CommentsList = ({ comments }) => {
+const CommentsList = ({ comments, isOnMobile }) => {
   const divRef = useRef()
 
   useEffect(() => {
@@ -36,12 +36,11 @@ const CommentsList = ({ comments }) => {
             {/* <Avatar size='sm' style={{ width: 24, height: 24 }} name={comment.username} /> */}
             <Stack
               justify='center'
-              ml='5px'
               borderRadius='xl'
               style={{ marginTop: 0 }}
             >
-              <Text color='#FFFFFF' fontSize={13}>
-                <span style={{ color: 'rgba(255,255,255,0.6)' }}>{`@${comment.username}  `}</span>
+              <Text color={isOnMobile ? '#FFFFFF' : '#000'} fontSize={13}>
+                <span style={{ color: isOnMobile ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>{`@${comment.username}  `}</span>
                 {comment.text}
               </Text>
             </Stack>

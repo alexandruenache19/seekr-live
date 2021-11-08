@@ -24,7 +24,7 @@ import firebase from '../../../firebase/clientApp'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
 import Stories from '../../molecules/seller/Stories'
 class LiveScreen extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -41,7 +41,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -82,7 +82,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate (prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -103,7 +103,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -112,7 +112,7 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder() {
+  handleOrder () {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -158,7 +158,7 @@ class LiveScreen extends Component {
     })
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -166,11 +166,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  render() {
+  render () {
     const {
       isOnMobile,
       sellerInfo,
@@ -341,6 +341,7 @@ class LiveScreen extends Component {
                 onOpenModal={this.props.onOpenModal}
                 username={username}
                 eventId={eventInfo.id}
+                isOnMobile={isOnMobile}
               />
             </Stack>
             <Flex
@@ -435,14 +436,22 @@ class LiveScreen extends Component {
         justify='space-between'
       >
         <Stack w='70vw' p='20px'>
-          {this.props.handleGoBack ? (
-            <Pressable onPress={this.props.handleGoBack}>
-              <Flex align='center' pb='10px'>
-                <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                <Text fontWeight='bold'>Inapoi la evenimente</Text>
-              </Flex>
-            </Pressable>
-          ) : null}
+          {events && events.length > 1 ? (
+            <Stories
+              events={events}
+              onGoBack={this.props.handleGoBack}
+              onGetSetEvent={this.props.handleGetSetEvent}
+            />
+          ) : (
+            this.props.handleGoBack ? (
+              <Pressable onPress={this.props.handleGoBack}>
+                <Flex align='center' pb='10px'>
+                  <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
+                  <Text fontWeight='bold'>Inapoi la evenimente</Text>
+                </Flex>
+              </Pressable>
+            ) : null
+          )}
           <Center h='100%' w='100%'>
             <Stack
               h='100%'
@@ -632,14 +641,14 @@ class LiveScreen extends Component {
         </Stack>
 
         <Stack p='20px' pl='10px' h='100vh' w='30vw'>
-          {this.props.handleGoBack ? (
+          {/* {this.props.handleGoBack ? (
             <Pressable onPress={this.props.handleGoBack} style={{ opacity: 0 }}>
               <Flex align='center' pb='10px'>
                 <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
                 <Text fontWeight='bold'>Inapoi la evenimente</Text>
               </Flex>
             </Pressable>
-          ) : null}
+          ) : null} */}
           <Stack
             h='100%'
             p='20px'
@@ -662,13 +671,17 @@ class LiveScreen extends Component {
                 alignItems: 'flex-start'
               }}
             >
-              <CommentsList comments={comments} />
+              <CommentsList
+                comments={comments}
+                isOnMobile={isOnMobile}
+              />
             </Center>
 
             <MessageInput
               onOpenModal={this.props.onOpenModal}
               username={username}
               eventId={eventInfo.id}
+              isOnMobile={isOnMobile}
             />
           </Stack>
         </Stack>

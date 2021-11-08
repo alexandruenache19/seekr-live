@@ -2,7 +2,8 @@ import React, { useState, forwardRef, useImperativeHandle } from 'react'
 import { Pressable, ScrollView } from 'react-native'
 import { Flex, Button, Stack, Text } from '@chakra-ui/react'
 import { FaRegPaperPlane } from 'react-icons/fa'
-import { MdArrowBack } from 'react-icons/md'
+// import { MdArrowBack } from 'react-icons/md'
+import { ImExit } from 'react-icons/im'
 import AmazonIVSPreview from './AmazonIVSPreview'
 
 const Stories = ({ events, onGoBack, onGetSetEvent }) => {
@@ -22,10 +23,10 @@ const Stories = ({ events, onGoBack, onGetSetEvent }) => {
             width='90px'
             bg='#000'
             borderRadius='15px'
-            p='10px'
+            p='12px'
           >
-            <MdArrowBack size='20' style={{ color: '#FFF', marginLeft: -2 }} />
-            <Text fontWeight='bold' fontSize='14px' style={{ color: '#FFFFFF', width: 70, marginTop: 0, lineHeight: 1.3 }}>
+            <ImExit size='20' style={{ color: '#FFF' }} />
+            <Text fontWeight='bold' fontSize='14px' style={{ color: '#FFFFFF', width: 70, marginTop: 5, lineHeight: 1.3 }}>
               Inapoi la evenimente
             </Text>
           </Stack>

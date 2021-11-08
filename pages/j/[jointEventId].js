@@ -62,6 +62,7 @@ const ExploreProducts = ({ events, isOnMobile }) => {
           return (
             <Box
               // w='180px'
+              maxW={isOnMobile ? '150px' : '180px'}
               h={isOnMobile ? '200px' : '250px'}
               bg='#999'
               borderRadius='15px'
@@ -168,7 +169,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
     >
       <ModalOverlay />
       <ModalContent
-        p={isOnMobile ? 0 : 10}
+        p={isOnMobile ? 10 : 10}
         py={isOnMobile ? 5 : 10}
         borderRadius={isOnMobile ? 10 : 30}
       >
@@ -443,7 +444,7 @@ export default class JoinEvent extends Component {
                 columns={[2, null, 3]}
                 // columns={{ xs: 2, sm: 2, md: 3, lg: 3 }}
                 maxWidth="1000px"
-                spacing="20px"
+                spacing="15px"
               >
                 {events.map(eventData => {
                   return (

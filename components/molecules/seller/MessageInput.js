@@ -11,7 +11,7 @@ import { FaRegPaperPlane } from 'react-icons/fa'
 import { EventActions } from '../../../actions'
 const { addComment } = EventActions
 
-const MessageInput = ({ eventId, onOpenModal, username }) => {
+const MessageInput = ({ eventId, onOpenModal, username, isOnMobile }) => {
   const [message, setMessage] = useState('')
 
   function handleChange(event) {
@@ -53,7 +53,7 @@ const MessageInput = ({ eventId, onOpenModal, username }) => {
     <Flex
       borderRadius='20px'
       // p='10px'
-      bg='rgba(0,0,0,0.3)'
+      bg={isOnMobile ? 'rgba(0,0,0,0.3)' : '#EBEBEB'}
       style={{ justifyContent: 'space-between', marginTop: 0 }}
     >
       <InputGroup as='form' style={{ borderRadius: 20, borderWidth: 0 }}>
@@ -61,7 +61,7 @@ const MessageInput = ({ eventId, onOpenModal, username }) => {
           value={message}
           onChange={handleChange}
           onSubmit={handleSubmit}
-          style={{ borderRadius: 20, borderWidth: 0, color: '#FFF' }}
+          style={{ borderRadius: 20, borderWidth: 0, color: isOnMobile ? '#FFF' : '#000' }}
           placeholder='Intreaba ceva...'
         />
         <InputRightElement
@@ -71,7 +71,7 @@ const MessageInput = ({ eventId, onOpenModal, username }) => {
               onClick={handleSubmit}
               style={{ padding: 0, borderRadius: 20, backgroundColor: 'transparent', marginRight: 5 }}
             >
-              <FaRegPaperPlane style={{ fontSize: 16, color: '#FFF' }} />
+              <FaRegPaperPlane style={{ fontSize: 16, color: isOnMobile ? '#FFF' : '#000' }} />
             </Button>
           }
         />

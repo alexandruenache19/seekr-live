@@ -24,7 +24,7 @@ import firebase from '../../../firebase/clientApp'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
 import Stories from '../../molecules/seller/Stories'
 class LiveScreen extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -41,7 +41,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -82,7 +82,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate (prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -103,7 +103,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -112,7 +112,7 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder () {
+  handleOrder() {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -158,7 +158,7 @@ class LiveScreen extends Component {
     })
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -166,11 +166,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -189,15 +189,21 @@ class LiveScreen extends Component {
     if (isOnMobile) {
       return (
         <Stack w='100vw' bg='#FFF' p='10px' className='perfect-height-wrapper'>
-          {this.props.handleGoBack ? (
-            <Pressable onPress={this.props.handleGoBack}>
-              <Flex align='center' pr={isOnMobile ? '10px' : '20px'}>
-                <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                <Text fontWeight='bold'>Inapoi la evenimente</Text>
-              </Flex>
-            </Pressable>
-          ) : null}
-          {events && <Stories events={events} />}
+          {events && events.length > 1 ? (
+            <Stories
+              events={events}
+              onGoBack={this.props.handleGoBack}
+            />
+          ) : (
+            this.props.handleGoBack ? (
+              <Pressable onPress={this.props.handleGoBack}>
+                <Flex align='center' pr={isOnMobile ? '10px' : '20px'}>
+                  <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
+                  <Text fontWeight='bold'>Inapoi la evenimente</Text>
+                </Flex>
+              </Pressable>
+            ) : null
+          )}
 
           <Stack
             h='100%'
@@ -234,6 +240,12 @@ class LiveScreen extends Component {
               p='10px'
               w='100%'
               flex={1}
+              style={{
+                borderBottomLeftRadius: 13,
+                borderBottomRightRadius: 13,
+                background:
+                  'linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 0%, rgba(0,0,0,0.6685049019607843) 0%, rgba(0,0,0,0) 100%)'
+              }}
             >
               <Center w='100%' style={{ overflow: 'scroll', height: 90 }}>
                 <Center w='100%' pt='120px'>
@@ -270,7 +282,12 @@ class LiveScreen extends Component {
                       <Text color='#FFF' fontSize='14' fontWeight='normal'>
                         {`${productInfo.currentStock} remaining`}
                       </Text>
-                      <Text color='#FFF' fontWeight='bold' fontSize='14' style={{ marginTop: '0.1rem' }}>
+                      <Text
+                        color='#FFF'
+                        fontWeight='bold'
+                        fontSize='14'
+                        style={{ marginTop: '0.1rem' }}
+                      >
                         {`${productInfo.price} ${productInfo.currency}`}
                       </Text>
                     </Stack>

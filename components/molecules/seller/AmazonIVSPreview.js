@@ -32,7 +32,7 @@ function AmazonIVSPreview({ url, id }) {
 
     return () => {
       document.body.removeChild(script)
-    };
+    }
   }, [])
 
   return (
@@ -46,6 +46,7 @@ function AmazonIVSPreview({ url, id }) {
           borderRadius: 15
         }}
         ref={videoEl}
+        loop
         autoplay
         autoPlay
         playsInline

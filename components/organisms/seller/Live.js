@@ -193,6 +193,7 @@ class LiveScreen extends Component {
             <Stories
               events={events}
               onGoBack={this.props.handleGoBack}
+              onGetSetEvent={this.props.handleGetSetEvent}
             />
           ) : (
             this.props.handleGoBack ? (
@@ -244,7 +245,7 @@ class LiveScreen extends Component {
                 borderBottomLeftRadius: 13,
                 borderBottomRightRadius: 13,
                 background:
-                  'linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 0%, rgba(0,0,0,0.6685049019607843) 0%, rgba(0,0,0,0) 100%)'
+                  'linear-gradient(0deg, rgba(0,0,0,0.49) 0%, rgba(0,0,0,0.6685049019607843) 0%, rgba(0,0,0,0) 100%)'
               }}
             >
               <Center w='100%' style={{ overflow: 'scroll', height: 90 }}>

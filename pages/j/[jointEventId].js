@@ -293,34 +293,39 @@ export default class JoinEvent extends Component {
   }
 
   handleGetSetEvent(eventId) {
-    const nextURL = `/e/${eventId}`;
-    const nextTitle = "My new page title";
-    const nextState = { additionalInformation: "Updated the URL with JS" };
-
-    if (window && window.history) {
-      // This will create a new entry in the browser's history, without reloading
-      window.history.pushState(nextState, nextTitle, nextURL);
-
-      // This will replace the current entry in the browser's history, without reloading
-      window.history.replaceState(nextState, nextTitle, nextURL);
-    }
-
-    const that = this;
-    window.onpopstate = function (e) {
-      if (e.state) {
-        that.setState({
-          displayEvent: false,
-          eventId: null
-        });
-        // document.getElementById("content").innerHTML = e.state.html;
-        // document.title = e.state.pageTitle;
-      }
-    };
-
     this.setState({
-      displayEvent: true,
-      eventId: eventId
-    });
+      displayEvent: false,
+      eventId: null
+    }, () => {
+      const nextURL = `/e/${eventId}`;
+      const nextTitle = "My new page title";
+      const nextState = { additionalInformation: "Updated the URL with JS" };
+
+      if (window && window.history) {
+        // This will create a new entry in the browser's history, without reloading
+        window.history.pushState(nextState, nextTitle, nextURL);
+
+        // This will replace the current entry in the browser's history, without reloading
+        window.history.replaceState(nextState, nextTitle, nextURL);
+      }
+
+      const that = this;
+      window.onpopstate = function (e) {
+        if (e.state) {
+          that.setState({
+            displayEvent: false,
+            eventId: null
+          });
+          // document.getElementById("content").innerHTML = e.state.html;
+          // document.title = e.state.pageTitle;
+        }
+      };
+
+      this.setState({
+        displayEvent: true,
+        eventId: eventId
+      });
+    })
   }
 
   render() {
@@ -356,6 +361,7 @@ export default class JoinEvent extends Component {
             events={events}
             eventId={eventId}
             isOnMobile={isOnMobile}
+            handleGetSetEvent={this.handleGetSetEvent}
             handleGoBack={() =>
               this.setState({ displayEvent: false, eventId: null })
             }

@@ -5,7 +5,7 @@ import { FaRegPaperPlane } from 'react-icons/fa'
 import { MdArrowBack } from 'react-icons/md'
 import AmazonIVSPreview from './AmazonIVSPreview'
 
-const Stories = ({ events, onGoBack }) => {
+const Stories = ({ events, onGoBack, onGetSetEvent }) => {
   return (
     <ScrollView
       horizontal
@@ -36,7 +36,7 @@ const Stories = ({ events, onGoBack }) => {
           <Pressable
             key={eventData.event.info.id}
             style={{ marginRight: 10 }}
-            onPress={() => console.log('here')}
+            onPress={() => onGetSetEvent(eventData.event.info.id)}
           >
             <Stack
               h='100%'
@@ -67,7 +67,7 @@ const Stories = ({ events, onGoBack }) => {
     //   }}
     // >
 
-  // </Flex>
+    // </Flex>
   )
 }
 

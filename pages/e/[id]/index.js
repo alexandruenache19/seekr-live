@@ -120,7 +120,7 @@ class EventPage extends PureComponent {
           eventInfo={eventInfo}
           comments={comments}
           username={username}
-          handleGoBack={this.props.handleGoBack}
+          {...this.props}
         />
       )
     } else if (

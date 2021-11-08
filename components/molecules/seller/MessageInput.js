@@ -14,11 +14,11 @@ const { addComment } = EventActions
 const MessageInput = ({ eventId, onOpenModal, username }) => {
   const [message, setMessage] = useState('')
 
-  function handleChange (event) {
+  function handleChange(event) {
     setMessage(event.target.value)
   }
 
-  function handleSendMessage () {
+  function handleSendMessage() {
     if (message !== '' && username !== '') {
       addComment(
         {
@@ -53,7 +53,7 @@ const MessageInput = ({ eventId, onOpenModal, username }) => {
     <Flex
       borderRadius='20px'
       // p='10px'
-      bg='rgba(255,255,255,0.1)'
+      bg='rgba(0,0,0,0.3)'
       style={{ justifyContent: 'space-between', marginTop: 0 }}
     >
       <InputGroup as='form' style={{ borderRadius: 20, borderWidth: 0 }}>

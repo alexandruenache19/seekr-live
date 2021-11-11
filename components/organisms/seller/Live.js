@@ -16,7 +16,7 @@ import {
 import Lottie from 'react-lottie'
 import { Pressable } from 'react-native'
 import { FaPlus, FaMinus } from 'react-icons/fa'
-import { FiEye, FiShare } from 'react-icons/fi'
+import { FiEye, FiRefreshCw, FiShare } from 'react-icons/fi'
 import { MdArrowBack } from 'react-icons/md'
 import * as animationData from './live.json'
 import { MessageInput, CommentsList } from '../../../components'
@@ -25,7 +25,7 @@ import AmazonIVS from '../../molecules/seller/AmazonIVS'
 import Stories from '../../molecules/seller/Stories'
 import Countdown from '../../molecules/seller/Countdown'
 class LiveScreen extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -42,7 +42,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -83,7 +83,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate (prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -104,7 +104,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -113,7 +113,7 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder () {
+  handleOrder() {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -159,7 +159,7 @@ class LiveScreen extends Component {
     })
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -167,11 +167,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -216,7 +216,22 @@ class LiveScreen extends Component {
             justifyContent='center'
             alignItems='center'
           >
-            <Button
+            <Pressable
+              style={{
+                position: 'absolute',
+                top: 8,
+                right: 12,
+                padding: 7,
+                zIndex: 10
+              }}
+              onPress={this.handleShare}
+            >
+              <Center flexDir='column'>
+                <FiShare style={{ fontSize: 18, color: '#FFF' }} />
+                <Text color='#FFF' fontSize='13'>Distribuie</Text>
+              </Center>
+            </Pressable>
+            {/* <Button
               position='absolute'
               top='8px'
               right='12px'
@@ -231,8 +246,8 @@ class LiveScreen extends Component {
               bg='transparent'
               onClick={this.handleShare}
             >
-              <FiShare style={{ fontSize: 18, color: '#FFF' }} />
-            </Button>
+
+            </Button> */}
 
             <Flex
               position='absolute'
@@ -483,23 +498,36 @@ class LiveScreen extends Component {
               globalMuted={this.props.globalMuted}
             />
 
-            <Button
-              position='absolute'
+            <Flex
+              pos='absolute'
               top='8px'
-              right='14px'
-              h='2em'
-              w='2em'
-              minW='0'
-              p='5px'
-              borderRadius='50%'
+              right='12px'
               align='center'
-              zIndex={5}
-              justify='center'
-              bg='transparent'
-              onClick={this.handleShare}
+              zIndex={10}
             >
-              <FiShare style={{ fontSize: 18, color: '#FFF' }} />
-            </Button>
+              <Pressable
+                style={{
+                  padding: 7
+                }}
+                onPress={() => window.location.reload()}
+              >
+                <Center flexDir='column'>
+                  <FiRefreshCw style={{ fontSize: 18, color: '#FFF' }} />
+                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Refresh</Text>
+                </Center>
+              </Pressable>
+              <Pressable
+                style={{
+                  padding: 7
+                }}
+                onPress={this.handleShare}
+              >
+                <Center flexDir='column'>
+                  <FiShare style={{ fontSize: 18, color: '#FFF' }} />
+                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Distribuie</Text>
+                </Center>
+              </Pressable>
+            </Flex>
 
             <Flex
               position='absolute'

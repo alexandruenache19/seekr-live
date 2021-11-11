@@ -6,16 +6,17 @@ import { FaRegPaperPlane } from 'react-icons/fa'
 import { ImExit } from 'react-icons/im'
 import AmazonIVSPreview from './AmazonIVSPreview'
 
-const Stories = ({ events, onGoBack, onGetSetEvent }) => {
+const Stories = ({ events, onGoBack, onGetSetEvent, currentEventId }) => {
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       style={{ height: '17vh', minHeight: 110 }}
+      contentContainerStyle={{ display: 'flex', alignItems: 'center' }}
     >
-      {onGoBack ? (
+      {/* {onGoBack ? (
         <Pressable
-          style={{ marginRight: 10 }}
+          style={{ marginRight: 10, height: '100%' }}
           onPress={onGoBack}
         >
           <Stack
@@ -31,22 +32,26 @@ const Stories = ({ events, onGoBack, onGetSetEvent }) => {
             </Text>
           </Stack>
         </Pressable>
-      ) : null}
+      ) : null} */}
       {events.map(eventData => {
         return (
           <Pressable
             key={eventData.event.info.id}
-            style={{ marginRight: 10 }}
-            onPress={() => onGetSetEvent(eventData.event.info.id)}
+            style={{ marginRight: 10, height: '100%', display: 'flex', justifyContent: 'center' }}
+          // onPress={() => onGetSetEvent(eventData.event.info.id)}
           >
             <Stack
-              h='100%'
+              h={currentEventId === eventData.event.info.id ? '100%' : '100%'}
               width='90px'
               bg='#999'
+              className='full-height-on-hover'
               borderRadius='15px'
               key={eventData.event.id}
+              borderColor='#FF0000'
+              borderWidth={currentEventId === eventData.event.info.id ? 2 : 0}
+              filter={currentEventId === eventData.event.info.id ? 'none' : 'blur(2px)'}
             >
-              <AmazonIVSPreview
+              {/* <AmazonIVSPreview
                 id={eventData.event.id}
                 url={
                   eventData.event.info.status === 'live' &&
@@ -54,6 +59,15 @@ const Stories = ({ events, onGoBack, onGetSetEvent }) => {
                     ? eventData.event.info.liveURL
                     : eventData.event.info.videoURL
                 }
+              /> */}
+              <img
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '15px'
+                }}
+                src={eventData.sellerInfo.imageURL}
               />
             </Stack>
           </Pressable>

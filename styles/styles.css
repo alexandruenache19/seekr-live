@@ -37,11 +37,11 @@ a.left {
 	font-family: "Poppins";
 }
 
-#video-player {
+/* #video-player {
   max-width: inherit;
   max-height: inherit;
   height: inherit;
-}
+} */
 
 .perfect-height-wrapper {
 	height: 100vh; /* Fallback for browsers that do not support Custom Properties */
@@ -85,4 +85,13 @@ a.left {
 .react-player-preview video {
 	border-radius: 15px;
 	object-fit: cover;
+}
+
+.full-height-on-hover {
+	transition: all 0.2s ease-in;
+}
+
+.full-height-on-hover:hover {
+	height: 100%;
+	filter: none;
 }

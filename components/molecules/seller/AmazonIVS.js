@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Pressable, View } from 'react-native'
-import { Center } from '@chakra-ui/react'
+import { Center, Stack } from '@chakra-ui/react'
 import { FaVolumeMute } from 'react-icons/fa'
 
-function AmazonIVSWorkaround({ url }) {
+function AmazonIVS({ url, setGlobalMuted, globalMuted }) {
   const videoEl = useRef(null)
   const [player, setPlayer] = useState(null)
-  const [muted, setMuted] = useState(true)
+  const [muted, setMuted] = useState(!(globalMuted !== null && globalMuted === false))
 
   useEffect(() => {
     const script = document.createElement('script')
@@ -24,7 +24,7 @@ function AmazonIVSWorkaround({ url }) {
         player.attachHTMLVideoElement(document.getElementById('video-player'))
         player.load(url)
         player.play()
-        player.setMuted(true)
+        player.setMuted(muted)
 
         setPlayer(player)
       }
@@ -36,11 +36,12 @@ function AmazonIVSWorkaround({ url }) {
   }, [])
 
   return (
-    <View style={{ width: '100%', height: '100%', borderRadius: 10 }}>
+    <Center style={{ width: '100%', height: '100%' }}>
       {player ? (
         <Pressable
           onPress={() => {
             player && player.setMuted(!muted)
+            setGlobalMuted && setGlobalMuted(!muted)
             setMuted(!muted)
           }}
           style={{
@@ -79,14 +80,14 @@ function AmazonIVSWorkaround({ url }) {
       ) : null}
       <video
         id='video-player'
-        style={{ height: '100%', objectFit: 'cover', borderRadius: '13px' }}
+        style={{ height: '100%', objectFit: 'cover' }}
         ref={videoEl}
         // autoplay
         autoPlay
         playsInline
       />
-    </View>
+    </Center>
   )
 }
 
-export default AmazonIVSWorkaround
+export default AmazonIVS

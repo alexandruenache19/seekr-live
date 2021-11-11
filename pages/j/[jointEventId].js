@@ -64,7 +64,6 @@ const ExploreProducts = ({ events, isOnMobile }) => {
         showsHorizontalScrollIndicator={false}
       >
         {allProducts.map(product => {
-          console.log("prod", product);
           return (
             <Box
               // w='180px'
@@ -75,7 +74,7 @@ const ExploreProducts = ({ events, isOnMobile }) => {
               mr="15px"
               position="relative"
               key={product.id}
-              // style={{ width: '180px' }}
+            // style={{ width: '180px' }}
             >
               {product.quantity <= 0 ? (
                 <div
@@ -263,7 +262,9 @@ export default class JoinEvent extends Component {
       events: [],
       displayEvent: false,
       eventId: null,
-      showRegistrationModal: false
+      showRegistrationModal: false,
+      globalMuted: true,
+      secondsRemaining: null
     };
 
     this.handleGetSetEvent = this.handleGetSetEvent.bind(this);
@@ -295,12 +296,31 @@ export default class JoinEvent extends Component {
               });
             }
           );
+        } else {
+          this.setState({
+            displayEvent: false,
+            eventId: null
+          })
         }
-      });
+      })
+
+    await firebase
+      .database()
+      .ref(`joint-events/${jointEventId}/info/secondsRemaining`)
+      .on("value", async snapshot => {
+        if (snapshot.exists()) {
+          this.setState({
+            secondsRemaining: snapshot.val()
+          })
+          console.log('seconds remaining', snapshot.val())
+        }
+      })
+
     this.setState({ loading: false });
     if (jointEvent && jointEvent.participants) {
       const events = [];
       for (const uid in jointEvent.participants) {
+        console.log(uid, 'uid')
         /** get current event */
         const currentEventSn = await firebase
           .database()
@@ -346,7 +366,7 @@ export default class JoinEvent extends Component {
         }
 
         const that = this;
-        window.onpopstate = function(e) {
+        window.onpopstate = function (e) {
           if (e.state) {
             that.setState({
               displayEvent: false,
@@ -399,6 +419,9 @@ export default class JoinEvent extends Component {
             eventId={eventId}
             isOnMobile={isOnMobile}
             handleGetSetEvent={this.handleGetSetEvent}
+            setGlobalMuted={(bool) => this.setState({ globalMuted: bool })}
+            globalMuted={this.state.globalMuted}
+            secondsRemaining={this.state.secondsRemaining}
             handleGoBack={() =>
               this.setState({ displayEvent: false, eventId: null })
             }
@@ -419,13 +442,14 @@ export default class JoinEvent extends Component {
         ) : null}
 
         <Stack
+          w={isOnMobile ? '100%' : '1000px'}
           maxW="1000px"
           height="100vh"
           overflow="scroll"
           position="relative"
           alignItems="center"
         >
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>
             <Stack px="1rem" pt="2rem" pb="9rem" w="100%">
               {jointEvent.info ? (
                 <div className="header">
@@ -510,7 +534,7 @@ export default class JoinEvent extends Component {
                           }
                           url={
                             eventData.event.info.status === "live" &&
-                            eventData.event.info.liveURL
+                              eventData.event.info.liveURL
                               ? eventData.event.info.liveURL
                               : eventData.event.info.videoURL
                           }
@@ -622,7 +646,7 @@ export default class JoinEvent extends Component {
           </ScrollView>
           <Flex position="absolute" bottom="2rem" justify="center" flex={1}>
             {jointEvent.info.timestamp &&
-            jointEvent.info.timestamp > new Date().getTime() ? (
+              jointEvent.info.timestamp > new Date().getTime() ? (
               <Stack
                 style={{
                   justifyContent: "center",

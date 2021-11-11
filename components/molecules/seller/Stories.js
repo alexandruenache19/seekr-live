@@ -1,12 +1,12 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react'
 import { Pressable, ScrollView } from 'react-native'
-import { Flex, Button, Stack, Text } from '@chakra-ui/react'
+import { Flex, Button, Stack, Text, Center } from '@chakra-ui/react'
 import { FaRegPaperPlane } from 'react-icons/fa'
 // import { MdArrowBack } from 'react-icons/md'
 import { ImExit } from 'react-icons/im'
 import AmazonIVSPreview from './AmazonIVSPreview'
 
-const Stories = ({ events, onGoBack, onGetSetEvent, currentEventId }) => {
+const Stories = ({ events, onGoBack, onGetSetEvent, currentEventId, secondsRemaining }) => {
   return (
     <ScrollView
       horizontal
@@ -33,7 +33,7 @@ const Stories = ({ events, onGoBack, onGetSetEvent, currentEventId }) => {
           </Stack>
         </Pressable>
       ) : null} */}
-      {events.map(eventData => {
+      {events.map((eventData, index) => {
         return (
           <Pressable
             key={eventData.event.info.id}
@@ -49,7 +49,6 @@ const Stories = ({ events, onGoBack, onGetSetEvent, currentEventId }) => {
               key={eventData.event.id}
               borderColor='#FF0000'
               borderWidth={currentEventId === eventData.event.info.id ? 2 : 0}
-              filter={currentEventId === eventData.event.info.id ? 'none' : 'blur(2px)'}
             >
               {/* <AmazonIVSPreview
                 id={eventData.event.id}
@@ -60,12 +59,36 @@ const Stories = ({ events, onGoBack, onGetSetEvent, currentEventId }) => {
                     : eventData.event.info.videoURL
                 }
               /> */}
+              {index > 0 && events[index - 1].event.info.id === currentEventId ? (
+                <Center
+                  flexDir='column'
+                  zIndex={3}
+                  style={{
+                    marginTop: 0,
+                    position: 'absolute',
+                    borderRadius: 15,
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(0,0,0,0.5)'
+                  }}
+                >
+                  <Text color='#FFF' fontSize='14'>
+                    Up next in
+                  </Text>
+                  <Text color='#FFF' fontWeight='bold' fontSize='16' style={{ marginTop: 0 }}>
+                    {`${secondsRemaining}s`}
+                  </Text>
+                </Center>
+              ) : null}
               <img
                 style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  borderRadius: '15px'
+                  borderRadius: '15px',
+                  filter: currentEventId === eventData.event.info.id ? 'none' : 'blur(2px)'
                 }}
                 src={eventData.sellerInfo.imageURL}
               />
@@ -82,7 +105,7 @@ const Stories = ({ events, onGoBack, onGetSetEvent, currentEventId }) => {
     //   }}
     // >
 
-    // </Flex>
+  // </Flex>
   )
 }
 

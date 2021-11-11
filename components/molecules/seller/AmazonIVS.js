@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native'
 import { Center, Stack } from '@chakra-ui/react'
 import { FaVolumeMute } from 'react-icons/fa'
 
-function AmazonIVS({ url, setGlobalMuted, globalMuted }) {
+function AmazonIVS({ url, setGlobalMuted, globalMuted, isOnMobile }) {
   const videoEl = useRef(null)
   const [player, setPlayer] = useState(null)
   const [muted, setMuted] = useState(!(globalMuted !== null && globalMuted === false))
@@ -36,7 +36,7 @@ function AmazonIVS({ url, setGlobalMuted, globalMuted }) {
   }, [])
 
   return (
-    <Center style={{ width: '100%', height: '100%' }}>
+    <Center style={{ width: '100%', height: '100%', marginTop: 0, zIndex: 0 }}>
       {player ? (
         <Pressable
           onPress={() => {
@@ -80,7 +80,14 @@ function AmazonIVS({ url, setGlobalMuted, globalMuted }) {
       ) : null}
       <video
         id='video-player'
-        style={{ height: '100%', objectFit: 'cover' }}
+        style={isOnMobile ? {
+          height: '100%',
+          width: '100%',
+          objectFit: 'cover',
+          borderRadius: 12
+        } : {
+          height: '100%'
+        }}
         ref={videoEl}
         // autoplay
         autoPlay

@@ -25,7 +25,7 @@ import AmazonIVS from '../../molecules/seller/AmazonIVS'
 import Stories from '../../molecules/seller/Stories'
 import Countdown from '../../molecules/seller/Countdown'
 class LiveScreen extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -42,7 +42,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -83,7 +83,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate (prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -104,7 +104,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -113,7 +113,7 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder () {
+  handleOrder() {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -159,7 +159,7 @@ class LiveScreen extends Component {
     })
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -167,11 +167,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -194,6 +194,7 @@ class LiveScreen extends Component {
             <Stories
               events={events}
               currentEventId={eventInfo.id}
+              secondsRemaining={this.props.secondsRemaining}
               onGoBack={this.props.handleGoBack}
               onGetSetEvent={this.props.handleGetSetEvent}
             />
@@ -215,13 +216,6 @@ class LiveScreen extends Component {
             justifyContent='center'
             alignItems='center'
           >
-            <AmazonIVS
-              isOnMobile={isOnMobile}
-              url={eventInfo.liveURL}
-              setGlobalMuted={this.props.setGlobalMuted}
-              globalMuted={this.props.globalMuted}
-            />
-
             <Button
               position='absolute'
               top='8px'
@@ -230,7 +224,7 @@ class LiveScreen extends Component {
               w='2em'
               minW='0'
               p='5px'
-              zIndex={5}
+              zIndex={10}
               borderRadius='50%'
               align='center'
               justify='center'
@@ -240,13 +234,83 @@ class LiveScreen extends Component {
               <FiShare style={{ fontSize: 18, color: '#FFF' }} />
             </Button>
 
+            <Flex
+              position='absolute'
+              left='10px'
+              top='10px'
+              zIndex={15}
+              align='center'
+              style={{ marginTop: 0, justifyContent: 'flex-start' }}
+            >
+              <Flex
+                justify='flex-start'
+                alignItems='center'
+                borderRadius='xl'
+                p='5px'
+                bg='rgba(0,0,0,0.3)'
+              >
+                <Avatar
+                  size='sm'
+                  name={sellerInfo.username}
+                  src={sellerInfo.imageURL}
+                />
+                <Stack
+                  style={{
+                    marginTop: 0,
+                    marginLeft: 5,
+                    alignItems: 'flex-start',
+                    justifyContent: 'flex-start'
+                  }}
+                >
+                  <Text
+                    noOfLines={1}
+                    textOverflow='ellipsis'
+                    maxW='100px'
+                    fontWeight='bold'
+                    color='#FFF'
+                    fontSize={12}
+                  >
+                    @{sellerInfo.username}
+                  </Text>
+                  <Center
+                    style={{ marginTop: 0, justifyContent: 'flex-start' }}
+                  >
+                    <Center style={{ marginLeft: -3 }}>
+                      <Lottie
+                        options={{
+                          loop: true,
+                          autoplay: true,
+                          animationData: animationData
+                        }}
+                        height={20}
+                        width={20}
+                      />
+                      <Text pl='2px' color='#FFF' fontSize={10}>
+                        Live
+                      </Text>
+                    </Center>
+                    <Center ml='5px' textAlign='center'>
+                      <FiEye size={14} color='#FFF' />
+                      <Text
+                        fontSize={10}
+                        color='#FFF'
+                        textAlign='center'
+                        ml='3px'
+                      >
+                        {viewers}
+                      </Text>
+                    </Center>
+                  </Center>
+                </Stack>
+              </Flex>
+            </Flex>
             <Stack
               position='absolute'
               left='0px'
               bottom='0px'
               p='10px'
               w='100%'
-              zIndex={5}
+              zIndex={16}
               flex={1}
               style={{
                 borderBottomLeftRadius: 13,
@@ -368,85 +432,12 @@ class LiveScreen extends Component {
                 isOnMobile={isOnMobile}
               />
             </Stack>
-            <Flex
-              position='absolute'
-              left='10px'
-              top='10px'
-              zIndex={10}
-              align='center'
-              style={{ marginTop: 0, justifyContent: 'flex-start' }}
-            >
-              {/* {this.props.handleGoBack ? (
-                <Pressable onPress={this.props.handleGoBack}>
-                  <Flex align='center'>
-                    <MdArrowBack style={{ fontSize: 22, marginRight: 8, color: '#FFF' }} />
-                  </Flex>
-                </Pressable>
-              ) : (
-                null
-              )} */}
-              <Flex
-                justify='flex-start'
-                alignItems='center'
-                borderRadius='xl'
-                p='5px'
-                bg='rgba(0,0,0,0.3)'
-              >
-                <Avatar
-                  size='sm'
-                  name={sellerInfo.username}
-                  src={sellerInfo.imageURL}
-                />
-                <Stack
-                  style={{
-                    marginTop: 0,
-                    marginLeft: 5,
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start'
-                  }}
-                >
-                  <Text
-                    noOfLines={1}
-                    textOverflow='ellipsis'
-                    maxW='100px'
-                    fontWeight='bold'
-                    color='#FFF'
-                    fontSize={12}
-                  >
-                    @{sellerInfo.username}
-                  </Text>
-                  <Center
-                    style={{ marginTop: 0, justifyContent: 'flex-start' }}
-                  >
-                    <Center style={{ marginLeft: -3 }}>
-                      <Lottie
-                        options={{
-                          loop: true,
-                          autoplay: true,
-                          animationData: animationData
-                        }}
-                        height={20}
-                        width={20}
-                      />
-                      <Text pl='2px' color='#FFF' fontSize={10}>
-                        Live
-                      </Text>
-                    </Center>
-                    <Center ml='5px' textAlign='center'>
-                      <FiEye size={14} color='#FFF' />
-                      <Text
-                        fontSize={10}
-                        color='#FFF'
-                        textAlign='center'
-                        ml='3px'
-                      >
-                        {viewers}
-                      </Text>
-                    </Center>
-                  </Center>
-                </Stack>
-              </Flex>
-            </Flex>
+            <AmazonIVS
+              isOnMobile={isOnMobile}
+              url={eventInfo.liveURL}
+              setGlobalMuted={this.props.setGlobalMuted}
+              globalMuted={this.props.globalMuted}
+            />
           </Stack>
         </Stack>
       )
@@ -465,6 +456,7 @@ class LiveScreen extends Component {
             <Stories
               events={events}
               currentEventId={eventInfo.id}
+              secondsRemaining={this.props.secondsRemaining}
               onGoBack={this.props.handleGoBack}
               onGetSetEvent={this.props.handleGetSetEvent}
             />

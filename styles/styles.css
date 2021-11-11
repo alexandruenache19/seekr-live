@@ -91,7 +91,7 @@ a.left {
 	transition: all 0.2s ease-in;
 }
 
-.full-height-on-hover:hover {
+.full-height-on-hover img:hover {
 	height: 100%;
 	filter: none;
 }

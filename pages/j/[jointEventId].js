@@ -319,7 +319,11 @@ export default class JoinEvent extends Component {
     this.setState({ loading: false });
     if (jointEvent && jointEvent.participants) {
       const events = [];
-      for (const uid in jointEvent.participants) {
+      const sortedParticipants = Object.values(jointEvent.participants).sort((a, b) => {
+        return a.index - b.index
+      })
+      for (const participant of sortedParticipants) {
+        const uid = participant.uid
         console.log(uid, 'uid')
         /** get current event */
         const currentEventSn = await firebase

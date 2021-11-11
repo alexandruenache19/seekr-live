@@ -129,7 +129,7 @@ class LiveScreen extends Component {
       phoneNumber
     } = this.state
 
-    this.props.onOpenModal('payment', {
+    this.props.onOpenModal('order', {
       sellerUsername: sellerInfo.username,
       productInfo: productInfo,
       eventInfo: eventInfo,
@@ -157,6 +157,35 @@ class LiveScreen extends Component {
         })
       }
     })
+
+    // this.props.onOpenModal('payment', {
+    //   sellerUsername: sellerInfo.username,
+    //   productInfo: productInfo,
+    //   eventInfo: eventInfo,
+    //   orderQuantity: orderQuantity,
+    //   totalPrice: productInfo.price * orderQuantity,
+    //   address: address,
+    //   city: city,
+    //   country: country,
+    //   postalCode: postalCode,
+    //   addressLine1: addressLine1,
+    //   addressLine2: addressLine2,
+    //   name: name,
+    //   phoneNumber: phoneNumber,
+    //   sellerStripeId: sellerInfo.stripeId,
+    //   setDetailsInHomeState: details => {
+    //     this.setState({
+    //       address: details.address,
+    //       city: details.city,
+    //       country: details.country,
+    //       postalCode: details.postalCode,
+    //       addressLine1: details.addressLine1 || null,
+    //       addressLine2: details.addressLine2 || null,
+    //       name: details.name,
+    //       phoneNumber: details.phoneNumber
+    //     })
+    //   }
+    // })
   }
 
   handleShare() {
@@ -216,21 +245,36 @@ class LiveScreen extends Component {
             justifyContent='center'
             alignItems='center'
           >
-            <Pressable
-              style={{
-                position: 'absolute',
-                top: 8,
-                right: 12,
-                padding: 7,
-                zIndex: 10
-              }}
-              onPress={this.handleShare}
+            <Flex
+              pos='absolute'
+              top='8px'
+              right='12px'
+              align='center'
+              zIndex={10}
             >
-              <Center flexDir='column'>
-                <FiShare style={{ fontSize: 18, color: '#FFF' }} />
-                <Text color='#FFF' fontSize='13'>Distribuie</Text>
-              </Center>
-            </Pressable>
+              <Pressable
+                style={{
+                  padding: 7
+                }}
+                onPress={() => window.location.reload()}
+              >
+                <Center flexDir='column'>
+                  <FiRefreshCw style={{ fontSize: 18, color: '#FFF' }} />
+                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Refresh</Text>
+                </Center>
+              </Pressable>
+              <Pressable
+                style={{
+                  padding: 7
+                }}
+                onPress={this.handleShare}
+              >
+                <Center flexDir='column'>
+                  <FiShare style={{ fontSize: 18, color: '#FFF' }} />
+                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Distribuie</Text>
+                </Center>
+              </Pressable>
+            </Flex>
             {/* <Button
               position='absolute'
               top='8px'
@@ -345,6 +389,16 @@ class LiveScreen extends Component {
                 align='center'
                 style={{ marginBottom: 10 }}
               >
+                {/* {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
+                  <Flex align='center' w='100%' justify='space-between' px='5px'>
+                    <Text color='#FFF' fontSize={15}>
+                      {'Timp ramas sa cumperi produsul'}
+                    </Text>
+                    <Text style={{ marginTop: 0 }} color='#FFF' fontWeight='bold' fontSize='16'>
+                      {`${this.props.secondsRemaining}s`}
+                    </Text>
+                  </Flex>
+                ) : null} */}
                 <Flex
                   borderRadius='xl'
                   bg='rgba(0,0,0,0.3)'
@@ -371,9 +425,9 @@ class LiveScreen extends Component {
                       justifyContent='center'
                       style={{ marginTop: 0, paddingRight: 4 }}
                     >
-                      <Text color='#FFF' fontSize='14' fontWeight='normal'>
+                      {/* <Text color='#FFF' fontSize='14' fontWeight='normal'>
                         {`${productInfo.currentStock} remaining`}
-                      </Text>
+                      </Text> */}
                       <Text
                         color='#FFF'
                         fontWeight='bold'
@@ -403,10 +457,21 @@ class LiveScreen extends Component {
                       className='seekr-gradient-on-hover'
                       onClick={this.handleOrder}
                     >
-                      {/* <Countdown /> */}
-                      <Text color='#FFFFFF' fontWeight='600'>
-                        Cumpara
-                      </Text>
+                      <Stack>
+                        <Text color='#FFFFFF' fontWeight='600'>
+                          {'Cumpara'}
+                        </Text>
+                        {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
+                          <Text
+                            style={{ marginTop: 1 }}
+                            fontWeight='normal'
+                            fontSize='11'
+                            color='#FFFFFF'
+                          >
+                            {`00:${this.props.secondsRemaining > 0 ? this.props.secondsRemaining : '0' + this.props.secondsRemaining}`}
+                          </Text>
+                        ) : null}
+                      </Stack>
                     </Button>
                   ) : (
                     <Button
@@ -418,27 +483,18 @@ class LiveScreen extends Component {
                         minHeight: '100%',
                         flex: 1,
                         height: 50,
+                        marginLeft: 20,
                         // width: 'auto',
                         minWidth: 120
                       }}
                       onClick={() => null}
                     >
-                      <Text color='#FFFFFF' fontWeight='600'>
+                      <Text noOfLines={1} textOverflow='ellipsis' color='#FFFFFF' fontWeight='600'>
                         Waiting for the next item
                       </Text>
                     </Button>
                   )}
                 </Flex>
-                {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
-                  <Flex align='center' w='100%' justify='space-between' px='5px'>
-                    <Text color='#FFF' fontSize={15}>
-                      {'Timp ramas sa cumperi produsul'}
-                    </Text>
-                    <Text style={{ marginTop: 0 }} color='#FFF' fontWeight='bold' fontSize='16'>
-                      {`${this.props.secondsRemaining}s`}
-                    </Text>
-                  </Flex>
-                ) : null}
               </Stack>
               <MessageInput
                 onOpenModal={this.props.onOpenModal}

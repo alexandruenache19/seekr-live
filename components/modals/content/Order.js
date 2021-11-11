@@ -22,14 +22,14 @@ import { addOrder } from '../../../fetchData/getData'
 import { addComment } from '../../../actions/event'
 
 class LocationSearchInput extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = { address: props.address || '' }
     this.handleChange = this.handleChange.bind(this)
     this.handleSelect = this.handleSelect.bind(this)
   }
 
-  handleChange (address) {
+  handleChange(address) {
     const { setAddress } = this.props
     this.setState({
       address
@@ -38,7 +38,7 @@ class LocationSearchInput extends React.Component {
     })
   }
 
-  handleSelect (address) {
+  handleSelect(address) {
     const { setAddress } = this.props
     geocodeByAddress(address)
       .then(results => {
@@ -53,7 +53,7 @@ class LocationSearchInput extends React.Component {
       .catch(error => console.error('Error', error))
   }
 
-  render () {
+  render() {
     return (
       <PlacesAutocomplete
         value={this.state.address}
@@ -127,7 +127,7 @@ const OrderModalContent = ({
   const [name, setName] = useState(props.name || null)
   const [phoneNumber, setPhoneNumber] = useState(props.phoneNumber || null)
 
-  const [country, setCountry] = useState(props.country || null)
+  const [country, setCountry] = useState(props.country || 'Romania')
   const [addressLine1, setAddressLine1] = useState(props.addressLine1 || null)
   const [addressLine2, setAddressLine2] = useState(props.addressLine2 || null)
   const [city, setCity] = useState(props.city || null)
@@ -202,13 +202,13 @@ const OrderModalContent = ({
         <FormControl id='name' isRequired>
           <Input
             value={name}
-            placeholder='Name'
+            placeholder='Nume Complet'
             onChange={(e) => setName(e.target.value)}
           />
         </FormControl>
         <FormControl style={styles.formRow} id='country'>
           <Input
-            placeholder='Country'
+            placeholder='Tara'
             value={country}
             onChange={(e) => setCountry(e.target.value)}
           />
@@ -216,7 +216,7 @@ const OrderModalContent = ({
         </FormControl>
         <FormControl style={styles.formRow} id='address-line-1'>
           <Input
-            placeholder='Address line 1'
+            placeholder='Adresa'
             value={addressLine1}
             onChange={(e) => setAddressLine1(e.target.value)}
           />
@@ -224,7 +224,7 @@ const OrderModalContent = ({
         </FormControl>
         <FormControl style={styles.formRow} id='address-line-2'>
           <Input
-            placeholder='Address line 2'
+            placeholder='Adresa (continuare)'
             value={addressLine2}
             onChange={(e) => setAddressLine2(e.target.value)}
           />
@@ -233,7 +233,7 @@ const OrderModalContent = ({
         <Flex>
           <FormControl style={styles.formRow} id='city'>
             <Input
-              placeholder='City'
+              placeholder='Oras'
               value={city}
               onChange={(e) => setCity(e.target.value)}
             />
@@ -241,7 +241,7 @@ const OrderModalContent = ({
           </FormControl>
           <FormControl style={styles.formRow} id='postal-code'>
             <Input
-              placeholder='Postal Code'
+              placeholder='Cod Postal'
               value={postalCode}
               onChange={(e) => setPostalCode(e.target.value)}
             />
@@ -250,7 +250,7 @@ const OrderModalContent = ({
         </Flex>
         <FormControl style={styles.formRow} id='phone' isRequired>
           <Input
-            placeholder='Phone Number'
+            placeholder='Numar telefon'
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />

@@ -312,7 +312,6 @@ export default class JoinEvent extends Component {
           this.setState({
             secondsRemaining: snapshot.val()
           })
-          console.log('seconds remaining', snapshot.val())
         }
       })
 
@@ -324,7 +323,6 @@ export default class JoinEvent extends Component {
       })
       for (const participant of sortedParticipants) {
         const uid = participant.uid
-        console.log(uid, 'uid')
         /** get current event */
         const currentEventSn = await firebase
           .database()

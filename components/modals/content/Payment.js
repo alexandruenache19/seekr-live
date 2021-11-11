@@ -161,7 +161,7 @@ const CheckoutForm = ({
   const [name, setName] = useState(props.name || null)
   const [phoneNumber, setPhoneNumber] = useState(props.phoneNumber || null)
 
-  const [country, setCountry] = useState(props.country || null)
+  const [country, setCountry] = useState(props.country || 'Romania')
   const [addressLine1, setAddressLine1] = useState(props.addressLine1 || null)
   const [addressLine2, setAddressLine2] = useState(props.addressLine2 || null)
   const [city, setCity] = useState(props.city || null)
@@ -353,8 +353,12 @@ const CheckoutForm = ({
           <Button
             style={{ backgroundColor: '#121212', flex: 1, padding: 10 }}
             onClick={async () => {
-              setCompleteShipping(true)
-              await props.createPaymentIntent()
+              if (name !== '' && name !== null && addressLine1 !== '' && addressLine1 !== null && city !== '' && city !== null) {
+                setCompleteShipping(true)
+                await props.createPaymentIntent()
+              } else {
+                alert('Please complete all fields')
+              }
             }}
           >
             <Text style={{ color: '#FFFFFF' }}>Next</Text>

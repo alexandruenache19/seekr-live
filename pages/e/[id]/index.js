@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import { withRouter } from "next/router";
 import { Center, Spinner } from "@chakra-ui/react";
 
@@ -18,7 +18,7 @@ import {
 import { addComment } from "../../../actions/event";
 import firebase from "../../../firebase/clientApp";
 
-class EventPage extends PureComponent {
+class EventPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -122,7 +122,7 @@ class EventPage extends PureComponent {
           username={username}
           {...this.props}
         />
-      )
+      );
     } else if (
       eventInfo.status === "live" &&
       !eventInfo.hasOwnProperty("liveURL")
@@ -137,7 +137,7 @@ class EventPage extends PureComponent {
           username={username}
           handleGoBack={this.props.handleGoBack}
         />
-      )
+      );
     } else {
       return (
         <EndedScreen
@@ -149,7 +149,7 @@ class EventPage extends PureComponent {
           username={username}
           handleGoBack={this.props.handleGoBack}
         />
-      )
+      );
     }
   }
 

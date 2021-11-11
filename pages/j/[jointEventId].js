@@ -37,102 +37,113 @@ import {
 import AmazonIVSPreview from "../../components/molecules/seller/AmazonIVSPreview";
 
 const ExploreProducts = ({ events, isOnMobile }) => {
-  const [allProducts, setAllProducts] = useState([])
+  const [allProducts, setAllProducts] = useState([]);
   useEffect(async () => {
     for (const event of events) {
-      const eventId = event.event.id
+      const eventId = event.event.id;
       /** get products */
       const productsSn = await firebase
         .database()
         .ref(`events/${eventId}/products`)
-        .once('value')
+        .once("value");
 
       if (productsSn.exists()) {
-        setAllProducts([...allProducts, ...Object.values(productsSn.val())])
+        setAllProducts([...allProducts, ...Object.values(productsSn.val())]);
       }
     }
-  }, [events])
+  }, [events]);
 
   return (
-    <Stack w='100%'>
-      <Text fontWeight='bold' fontSize='26px'>Explore products</Text>
-      <ScrollView style={{ marginTop: 15, overflow: 'scroll', width: '100%' }} horizontal showsHorizontalScrollIndicator={false}>
-        {(allProducts).map(product => {
-          console.log('prod', product)
+    <Stack w="100%">
+      <Text fontWeight="bold" fontSize="26px">
+        Explore products
+      </Text>
+      <ScrollView
+        style={{ marginTop: 15, overflow: "scroll", width: "100%" }}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      >
+        {allProducts.map(product => {
+          console.log("prod", product);
           return (
             <Box
               // w='180px'
-              maxW={isOnMobile ? '150px' : '180px'}
-              h={isOnMobile ? '200px' : '250px'}
-              bg='#999'
-              borderRadius='15px'
-              mr='15px'
-              position='relative'
+              maxW={isOnMobile ? "150px" : "180px"}
+              h={isOnMobile ? "200px" : "250px"}
+              bg="#999"
+              borderRadius="15px"
+              mr="15px"
+              position="relative"
               key={product.id}
-            // style={{ width: '180px' }}
+              // style={{ width: '180px' }}
             >
               {product.quantity <= 0 ? (
                 <div
                   style={{
-                    position: 'absolute',
+                    position: "absolute",
                     top: 0,
                     left: 0,
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'rgba(0,0,0,0.45)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0,0,0,0.45)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     borderRadius: 15
                   }}
                 >
-                  <Text color='#FFFFFF'>Out of stock</Text>
+                  <Text color="#FFFFFF">Out of stock</Text>
                 </div>
               ) : (
                 <div
-                  className='product-layer'
+                  className="product-layer"
                   onClick={() =>
-                    (window.location.href = `https://seekrlive.com/p/${product.id}`)}
+                    (window.location.href = `https://seekrlive.com/p/${product.id}`)
+                  }
                   style={{
-                    cursor: 'pointer',
-                    position: 'absolute',
+                    cursor: "pointer",
+                    position: "absolute",
                     top: 0,
                     left: 0,
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'rgba(0,0,0,0.1)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    justifyContent: 'space-between',
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0,0,0,0.1)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
                     borderRadius: 15
                   }}
                 >
-                  <Stack py='6px' px='10px' className='quantity-label'>
+                  <Stack py="6px" px="10px" className="quantity-label">
                     <Stack
-                      borderRadius='xl'
-                      style={{ padding: 10, backgroundColor: 'rgba(0,0,0,0.8)' }}
+                      borderRadius="xl"
+                      style={{
+                        padding: 10,
+                        backgroundColor: "rgba(0,0,0,0.8)"
+                      }}
                     >
-                      <Text color='#FFFFFF' fontSize={14}>
-                        {`${product.quantity || product.currentStock} remaining`}
+                      <Text color="#FFFFFF" fontSize={14}>
+                        {`${product.quantity ||
+                          product.currentStock} remaining`}
                       </Text>
                     </Stack>
                   </Stack>
 
                   <Flex
-                    justify='space-between'
-                    w='100%'
+                    justify="space-between"
+                    w="100%"
                     style={{
                       background:
-                        'linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 0%, rgba(0,0,0,0.623686974789916) 0%, rgba(0,0,0,0) 100%)',
+                        "linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 0%, rgba(0,0,0,0.623686974789916) 0%, rgba(0,0,0,0) 100%)",
                       padding: 8,
                       borderBottomLeftRadius: 15,
                       borderBottomRightRadius: 15
                     }}
                   >
                     <Stack>
-                      <Text color='#FFFFFF' fontSize={18} fontWeight='bold'>
-                        {`${product.price} ${product.currency || 'RON'}`}
+                      <Text color="#FFFFFF" fontSize={18} fontWeight="bold">
+                        {`${product.price} ${product.currency || "RON"}`}
                       </Text>
                     </Stack>
                   </Flex>
@@ -142,18 +153,18 @@ const ExploreProducts = ({ events, isOnMobile }) => {
                 src={product.imageUrl || product.imageURL}
                 style={{
                   borderRadius: 15,
-                  width: isOnMobile ? '160px' : '180px',
-                  objectFit: 'cover',
-                  height: '100%'
+                  width: isOnMobile ? "160px" : "180px",
+                  objectFit: "cover",
+                  height: "100%"
                 }}
               />
             </Box>
-          )
+          );
         })}
       </ScrollView>
     </Stack>
-  )
-}
+  );
+};
 
 const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
   const [name, setName] = useState("");
@@ -259,7 +270,34 @@ export default class JoinEvent extends Component {
   }
 
   async componentDidMount() {
-    const { jointEvent } = this.props;
+    const { jointEvent, jointEventId } = this.props;
+
+    await firebase
+      .database()
+      .ref(`joint-events/${jointEventId}/info/currentLiveUserId`)
+      .on("value", async snapshot => {
+        if (snapshot.exists()) {
+          const eventSnap = await firebase
+            .database()
+            .ref(`users/${snapshot.val()}/events/current`)
+            .once("value");
+          const currentEventId = eventSnap.val();
+
+          this.setState(
+            {
+              displayEvent: false,
+              eventId: null
+            },
+            () => {
+              this.setState({
+                eventId: currentEventId,
+                displayEvent: true
+              });
+            }
+          );
+        }
+      });
+    this.setState({ loading: false });
     if (jointEvent && jointEvent.participants) {
       const events = [];
       for (const uid in jointEvent.participants) {
@@ -281,11 +319,6 @@ export default class JoinEvent extends Component {
           });
         }
       }
-
-      // this.setState({
-      //   // events: events,
-      //   loading: false
-      // });
     } else {
       this.setState({
         loading: false
@@ -294,39 +327,42 @@ export default class JoinEvent extends Component {
   }
 
   handleGetSetEvent(eventId) {
-    this.setState({
-      displayEvent: false,
-      eventId: null
-    }, () => {
-      const nextURL = `/e/${eventId}`;
-      const nextTitle = "My new page title";
-      const nextState = { additionalInformation: "Updated the URL with JS" };
+    this.setState(
+      {
+        displayEvent: false,
+        eventId: null
+      },
+      () => {
+        const nextURL = `/e/${eventId}`;
+        const nextTitle = "My new page title";
+        const nextState = { additionalInformation: "Updated the URL with JS" };
 
-      if (window && window.history) {
-        // This will create a new entry in the browser's history, without reloading
-        window.history.pushState(nextState, nextTitle, nextURL);
+        if (window && window.history) {
+          // This will create a new entry in the browser's history, without reloading
+          window.history.pushState(nextState, nextTitle, nextURL);
 
-        // This will replace the current entry in the browser's history, without reloading
-        window.history.replaceState(nextState, nextTitle, nextURL);
-      }
-
-      const that = this;
-      window.onpopstate = function (e) {
-        if (e.state) {
-          that.setState({
-            displayEvent: false,
-            eventId: null
-          });
-          // document.getElementById("content").innerHTML = e.state.html;
-          // document.title = e.state.pageTitle;
+          // This will replace the current entry in the browser's history, without reloading
+          window.history.replaceState(nextState, nextTitle, nextURL);
         }
-      };
 
-      this.setState({
-        displayEvent: true,
-        eventId: eventId
-      });
-    })
+        const that = this;
+        window.onpopstate = function(e) {
+          if (e.state) {
+            that.setState({
+              displayEvent: false,
+              eventId: null
+            });
+            // document.getElementById("content").innerHTML = e.state.html;
+            // document.title = e.state.pageTitle;
+          }
+        };
+
+        this.setState({
+          displayEvent: true,
+          eventId: eventId
+        });
+      }
+    );
   }
 
   render() {
@@ -389,15 +425,8 @@ export default class JoinEvent extends Component {
           position="relative"
           alignItems="center"
         >
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-          >
-            <Stack
-              px="1rem"
-              pt="2rem"
-              pb='9rem'
-              w='100%'
-            >
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Stack px="1rem" pt="2rem" pb="9rem" w="100%">
               {jointEvent.info ? (
                 <div className="header">
                   <Text fontWeight="bold" fontSize="36px" lineHeight="1.3">
@@ -412,26 +441,37 @@ export default class JoinEvent extends Component {
                   </Text>
                 </div>
               ) : null}
-              <Stack w='100%' pt='2rem' pb='0rem'>
+              <Stack w="100%" pt="2rem" pb="0rem">
                 {/* <Text fontWeight='bold' fontSize='24px'>Participants</Text> */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {events.map(eventData => {
-                    const sellerInfo = eventData.sellerInfo
+                    const sellerInfo = eventData.sellerInfo;
                     return (
-                      <Pressable style={{ marginRight: '1rem' }} onPress={() => {
-                        if (sellerInfo.instagramUrl) {
-                          window.open(sellerInfo.instagramUrl, '_blank')
-                        }
-                      }}>
-                        <Stack align='center'>
+                      <Pressable
+                        style={{ marginRight: "1rem" }}
+                        onPress={() => {
+                          if (sellerInfo.instagramUrl) {
+                            window.open(sellerInfo.instagramUrl, "_blank");
+                          }
+                        }}
+                      >
+                        <Stack align="center">
                           <img
                             src={sellerInfo.imageURL}
-                            style={{ objectFit: 'cover', width: 50, height: 50, borderRadius: '50%', border: '1px solid rgba(0,0,0,0.2)' }}
+                            style={{
+                              objectFit: "cover",
+                              width: 50,
+                              height: 50,
+                              borderRadius: "50%",
+                              border: "1px solid rgba(0,0,0,0.2)"
+                            }}
                           />
-                          <Text color='rgba(0,0,0,0.6)'>{sellerInfo.username}</Text>
+                          <Text color="rgba(0,0,0,0.6)">
+                            {sellerInfo.username}
+                          </Text>
                         </Stack>
                       </Pressable>
-                    )
+                    );
                   })}
                 </ScrollView>
               </Stack>
@@ -452,20 +492,25 @@ export default class JoinEvent extends Component {
                       onPress={() => this.handleGetSetEvent(eventData.event.id)}
                     >
                       <Stack
-                        h={isOnMobile ? "250px" : '350px'}
+                        h={isOnMobile ? "250px" : "350px"}
                         w="100%"
                         bg="#999"
                         borderRadius="15px"
                         position="relative"
                         key={eventData.event.id}
-                        style={{ boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)" }}
+                        style={{
+                          boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)"
+                        }}
                       >
                         <AmazonIVSPreview
                           id={eventData.event.id}
-                          isLive={eventData.event.info.status === "live" && eventData.event.info.liveURL}
+                          isLive={
+                            eventData.event.info.status === "live" &&
+                            eventData.event.info.liveURL
+                          }
                           url={
                             eventData.event.info.status === "live" &&
-                              eventData.event.info.liveURL
+                            eventData.event.info.liveURL
                               ? eventData.event.info.liveURL
                               : eventData.event.info.videoURL
                           }
@@ -570,37 +615,38 @@ export default class JoinEvent extends Component {
                   );
                 })}
               </SimpleGrid>
-              <Flex my='1rem' w='100%'>
+              <Flex my="1rem" w="100%">
                 <ExploreProducts events={events} isOnMobile={isOnMobile} />
               </Flex>
             </Stack>
           </ScrollView>
           <Flex position="absolute" bottom="2rem" justify="center" flex={1}>
             {jointEvent.info.timestamp &&
-              jointEvent.info.timestamp > new Date().getTime() ? (
+            jointEvent.info.timestamp > new Date().getTime() ? (
               <Stack
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
                   position: "fixed",
                   bottom: "2rem",
-                  width: isOnMobile ? '100%' : 'auto',
+                  width: isOnMobile ? "100%" : "auto"
                   // backgroundColor: 'rgba(0,0,0,0.3)',
                   // filter: 'blur(5px)'
                 }}
-                px={isOnMobile ? '1rem' : 0}
+                px={isOnMobile ? "1rem" : 0}
               >
                 <Button
                   style={{
                     // backgroundColor: "#121212",
-                    background: 'rgb(63,60,145)',
-                    background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
+                    background: "rgb(63,60,145)",
+                    background:
+                      "linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)",
                     padding: 12,
                     flex: 1,
                     flexDirection: "column",
                     minWidth: isOnMobile ? 250 : 350,
                     borderRadius: 10,
-                    width: isOnMobile ? '100%' : 'auto'
+                    width: isOnMobile ? "100%" : "auto"
                   }}
                   maxW="500px"
                   boxShadow="0px 0px 38px -2px rgba(0,0,0,0.62)"
@@ -675,6 +721,7 @@ export const getServerSideProps = async context => {
   return {
     props: {
       jointEvent: jointEvent,
+      jointEventId: jointEventId,
       isOnMobile: isOnMobile
     }
   };

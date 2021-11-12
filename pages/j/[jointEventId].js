@@ -327,7 +327,7 @@ export default class JoinEvent extends Component {
         const currentEventSn = await firebase
           .database()
           .ref(`users/${uid}/events/current`)
-          .once("value");
+          .once('value')
         if (currentEventSn.exists()) {
           const eventId = currentEventSn.val();
           const eventData = await getEvent(eventId);
@@ -338,7 +338,7 @@ export default class JoinEvent extends Component {
               sellerInfo: sellerInfo
             }),
             loading: false
-          });
+          })
         }
       }
     } else {
@@ -349,42 +349,39 @@ export default class JoinEvent extends Component {
   }
 
   handleGetSetEvent(eventId) {
-    this.setState(
-      {
-        displayEvent: false,
-        eventId: null
-      },
-      () => {
-        const nextURL = `/e/${eventId}`;
-        const nextTitle = "My new page title";
-        const nextState = { additionalInformation: "Updated the URL with JS" };
+    this.setState({
+      displayEvent: false,
+      eventId: null
+    }, () => {
+      const nextURL = `/e/${eventId}`;
+      const nextTitle = "My new page title";
+      const nextState = { additionalInformation: "Updated the URL with JS" };
 
-        if (window && window.history) {
-          // This will create a new entry in the browser's history, without reloading
-          window.history.pushState(nextState, nextTitle, nextURL);
+      if (window && window.history) {
+        // This will create a new entry in the browser's history, without reloading
+        window.history.pushState(nextState, nextTitle, nextURL);
 
-          // This will replace the current entry in the browser's history, without reloading
-          window.history.replaceState(nextState, nextTitle, nextURL);
-        }
-
-        const that = this;
-        window.onpopstate = function (e) {
-          if (e.state) {
-            that.setState({
-              displayEvent: false,
-              eventId: null
-            });
-            // document.getElementById("content").innerHTML = e.state.html;
-            // document.title = e.state.pageTitle;
-          }
-        };
-
-        this.setState({
-          displayEvent: true,
-          eventId: eventId
-        });
+        // This will replace the current entry in the browser's history, without reloading
+        window.history.replaceState(nextState, nextTitle, nextURL);
       }
-    );
+
+      const that = this;
+      window.onpopstate = function (e) {
+        if (e.state) {
+          that.setState({
+            displayEvent: false,
+            eventId: null
+          });
+          // document.getElementById("content").innerHTML = e.state.html;
+          // document.title = e.state.pageTitle;
+        }
+      }
+
+      this.setState({
+        displayEvent: true,
+        eventId: eventId
+      });
+    });
   }
 
   render() {
@@ -444,29 +441,99 @@ export default class JoinEvent extends Component {
         ) : null}
 
         <Stack
-          w={isOnMobile ? '100%' : '1000px'}
-          maxW="1000px"
           height="100vh"
           overflow="scroll"
           position="relative"
           alignItems="center"
+          w='100%'
         >
-          <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>
-            <Stack px="1rem" pt="2rem" pb="9rem" w="100%">
-              {jointEvent.info ? (
-                <div className="header">
-                  <Text fontWeight="bold" fontSize="36px" lineHeight="1.3">
-                    {jointEvent.info.title}
-                  </Text>
-                  <Text
-                    fontWeight="normal"
-                    fontSize="18px"
-                    style={{ marginTop: 10 }}
+          <ScrollView
+            showsVerticalScrollIndicator={false} style={{ width: '100%' }}
+            contentContainerStyle={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Stack
+              className='header'
+              h='70vh'
+              w='100%'
+              background='url("https://images.unsplash.com/photo-1614990354198-b06764dcb13c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2231&q=80")'
+              backgroundSize='cover'
+            >
+              <div style={{
+                width: '100%',
+                height: '100%',
+                background: 'linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 100%)',
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                padding: isOnMobile ? '0 2rem' : '0 7rem'
+              }}
+              >
+                <Text
+                  fontWeight="bold"
+                  fontSize="46px"
+                  color='#FFFFFF'
+                  lineHeight="1.3"
+                  maxW='650px'
+                >
+                  {jointEvent.info.title}
+                </Text>
+                <Text
+                  color='#FFFFFF'
+                  fontWeight="normal"
+                  fontSize="20px"
+                  maxW='650px'
+                  style={{ marginTop: 10 }}
+                >
+                  {jointEvent.info.description}
+                </Text>
+                <Stack
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "flex-start",
+                    width: isOnMobile ? "100%" : "auto",
+                    marginTop: '1.4rem'
+                    // backgroundColor: 'rgba(0,0,0,0.3)',
+                    // filter: 'blur(5px)'
+                  }}
+                >
+                  <Button
+                    style={{
+                      // backgroundColor: "#121212",
+                      background: "rgb(63,60,145)",
+                      background:
+                        "linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)",
+                      padding: 12,
+                      flex: 1,
+                      flexDirection: "column",
+                      minWidth: isOnMobile ? 250 : 350,
+                      borderRadius: 10,
+                      width: isOnMobile ? "100%" : "auto"
+                    }}
+                    maxW="500px"
+                    boxShadow="0px 0px 38px -2px rgba(0,0,0,0.2)"
+                    className="seekr-gradient-on-hover"
+                    onClick={() => {
+                      this.setState({ showRegistrationModal: true });
+                    }}
                   >
-                    {jointEvent.info.description}
+                    <Text
+                      style={{
+                        color: "#FFFFFF",
+                        fontWeight: "bold",
+                        fontSize: 18
+                      }}
+                    >
+                      Rezerva un loc...
+                    </Text>
+                  </Button>
+                  <Text style={{ color: "#FFF", fontSize: 14, marginTop: 10 }}>
+                    * ...si primesti livrarea gratis la orice comanda
                   </Text>
-                </div>
-              ) : null}
+                </Stack>
+
+              </div>
+            </Stack>
+            <Stack px="1rem" pt="2rem" pb="9rem" w="100%" style={{ width: isOnMobile ? '100%' : '1000px', maxWidth: "1000px" }}>
               <Stack w="100%" pt="2rem" pb="0rem">
                 {/* <Text fontWeight='bold' fontSize='24px'>Participants</Text> */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -481,18 +548,38 @@ export default class JoinEvent extends Component {
                           }
                         }}
                       >
-                        <Stack align="center">
+                        <Stack
+                          align="center"
+                          w='90px'
+                          align='center'
+                          style={{
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
                           <img
                             src={sellerInfo.imageURL}
                             style={{
                               objectFit: "cover",
-                              width: 50,
-                              height: 50,
+                              width: 90,
+                              height: 90,
                               borderRadius: "50%",
                               border: "1px solid rgba(0,0,0,0.2)"
                             }}
                           />
-                          <Text color="rgba(0,0,0,0.6)">
+                          <Text
+                            noOfLines={2}
+                            textOverflow='ellipsis'
+                            color="rgba(0,0,0,0.8)"
+                            textAlign='center'
+                            w='90px'
+                            style={{
+                              textOverflow: 'ellipsis',
+                              // overflow: 'hidden',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
                             {sellerInfo.username}
                           </Text>
                         </Stack>
@@ -641,12 +728,52 @@ export default class JoinEvent extends Component {
                   );
                 })}
               </SimpleGrid>
-              <Flex my="1rem" w="100%">
+              {/* <Flex my="1rem" w="100%">
                 <ExploreProducts events={events} isOnMobile={isOnMobile} />
-              </Flex>
+              </Flex> */}
+              <Stack
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  marginTop: '1rem'
+                }}
+              >
+                <Button
+                  style={{
+                    // backgroundColor: "#121212",
+                    background: "rgb(63,60,145)",
+                    background:
+                      "linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)",
+                    padding: 12,
+                    flex: 1,
+                    flexDirection: "column",
+                    minWidth: isOnMobile ? 250 : 350,
+                    borderRadius: 15,
+                    width: "100%"
+                  }}
+                  className="seekr-gradient-on-hover"
+                  onClick={() => {
+                    this.setState({ showRegistrationModal: true });
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "#FFFFFF",
+                      fontWeight: "bold",
+                      fontSize: 18
+                    }}
+                  >
+                    Rezerva un loc
+                  </Text>
+                  <Text style={{ color: "#FFF", fontSize: 12, marginTop: 5 }}>
+                    *primesti livrarea gratis
+                  </Text>
+                </Button>
+              </Stack>
             </Stack>
           </ScrollView>
-          <Flex position="absolute" bottom="2rem" justify="center" flex={1}>
+          {/* <Flex position="absolute" bottom="2rem" justify="center" flex={1}>
             {jointEvent.info.timestamp &&
               jointEvent.info.timestamp > new Date().getTime() ? (
               <Stack
@@ -715,6 +842,7 @@ export default class JoinEvent extends Component {
               </Button>
             )}
           </Flex>
+         */}
         </Stack>
       </Stack>
     );

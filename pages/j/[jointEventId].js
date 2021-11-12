@@ -34,6 +34,7 @@ import {
   getEventInfo,
   getSellerInfo
 } from "../../fetchData/getData";
+import Countdown from '../../components/molecules/seller/Countdown'
 import AmazonIVSPreview from "../../components/molecules/seller/AmazonIVSPreview";
 
 const ExploreProducts = ({ events, isOnMobile }) => {
@@ -463,78 +464,84 @@ export default class JoinEvent extends Component {
                 height: '100%',
                 background: 'linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 100%)',
                 display: 'flex',
-                justifyContent: 'center',
+                alignItems: 'center',
                 flexDirection: 'column',
-                padding: isOnMobile ? '0 2rem' : '0 7rem'
+                padding: '0 2rem'
               }}
               >
-                <Text
-                  fontWeight="bold"
-                  fontSize="46px"
-                  color='#FFFFFF'
-                  lineHeight="1.3"
-                  maxW='650px'
-                >
-                  {jointEvent.info.title}
-                </Text>
-                <Text
-                  color='#FFFFFF'
-                  fontWeight="normal"
-                  fontSize="20px"
-                  maxW='650px'
-                  style={{ marginTop: 10 }}
-                >
-                  {jointEvent.info.description}
-                </Text>
-                <Stack
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "flex-start",
-                    width: isOnMobile ? "100%" : "auto",
-                    marginTop: '1.4rem'
-                    // backgroundColor: 'rgba(0,0,0,0.3)',
-                    // filter: 'blur(5px)'
-                  }}
-                >
-                  <Button
+                <Stack w={isOnMobile ? '100%' : '1100px'} h='100%' justify='center' maxW='1100px'>
+                  <Text
+                    fontWeight="bold"
+                    fontSize="46px"
+                    color='#FFFFFF'
+                    lineHeight="1.3"
+                    maxW='650px'
+                  >
+                    {jointEvent.info.title}
+                  </Text>
+                  <Text
+                    color='#FFFFFF'
+                    fontWeight="normal"
+                    fontSize="20px"
+                    maxW='650px'
+                    style={{ marginTop: 10 }}
+                  >
+                    {jointEvent.info.description}
+                  </Text>
+                  <Countdown
+                    timeTillDate="11 17 2021, 6:30 pm"
+                    timeFormat="MM DD YYYY, h:mm a"
+                  />
+                  <Stack
                     style={{
-                      // backgroundColor: "#121212",
-                      background: "rgb(63,60,145)",
-                      background:
-                        "linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)",
-                      padding: 12,
-                      flex: 1,
-                      flexDirection: "column",
-                      minWidth: isOnMobile ? 250 : 350,
-                      borderRadius: 10,
-                      width: isOnMobile ? "100%" : "auto"
-                    }}
-                    maxW="500px"
-                    boxShadow="0px 0px 38px -2px rgba(0,0,0,0.2)"
-                    className="seekr-gradient-on-hover"
-                    onClick={() => {
-                      this.setState({ showRegistrationModal: true });
+                      justifyContent: "center",
+                      alignItems: "flex-start",
+                      width: isOnMobile ? "100%" : "auto",
+                      marginTop: '1.5rem'
+                      // backgroundColor: 'rgba(0,0,0,0.3)',
+                      // filter: 'blur(5px)'
                     }}
                   >
-                    <Text
+                    <Button
                       style={{
-                        color: "#FFFFFF",
-                        fontWeight: "bold",
-                        fontSize: 18
+                        // backgroundColor: "#121212",
+                        background: "rgb(63,60,145)",
+                        background:
+                          "linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)",
+                        padding: 12,
+                        flex: 1,
+                        flexDirection: "column",
+                        minWidth: isOnMobile ? 250 : 350,
+                        borderRadius: 10,
+                        width: isOnMobile ? "100%" : "auto"
+                      }}
+                      maxW="500px"
+                      boxShadow="0px 0px 38px -2px rgba(0,0,0,0.2)"
+                      className="seekr-gradient-on-hover"
+                      onClick={() => {
+                        this.setState({ showRegistrationModal: true });
                       }}
                     >
-                      Rezerva un loc...
+                      <Text
+                        style={{
+                          color: "#FFFFFF",
+                          fontWeight: "bold",
+                          fontSize: 18
+                        }}
+                      >
+                        Rezerva un loc...
+                      </Text>
+                    </Button>
+                    <Text style={{ color: "#FFF", fontSize: 14, marginTop: 10 }}>
+                      * ...si primesti livrarea gratis la orice comanda
                     </Text>
-                  </Button>
-                  <Text style={{ color: "#FFF", fontSize: 14, marginTop: 10 }}>
-                    * ...si primesti livrarea gratis la orice comanda
-                  </Text>
-                </Stack>
+                  </Stack>
 
+                </Stack>
               </div>
             </Stack>
-            <Stack px="1rem" pt="2rem" pb="9rem" w="100%" style={{ width: isOnMobile ? '100%' : '1000px', maxWidth: "1000px" }}>
-              <Stack w="100%" pt="2rem" pb="0rem">
+            <Stack px="1rem" pt="2rem" pb="9rem" w="100%" style={{ width: isOnMobile ? '100%' : '1100px', maxWidth: "1100px" }}>
+              <Stack w="100%" pt="1rem" pb="0rem">
                 {/* <Text fontWeight='bold' fontSize='24px'>Participants</Text> */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {events.map(eventData => {
@@ -596,7 +603,7 @@ export default class JoinEvent extends Component {
                 }}
                 columns={[2, null, 3]}
                 // columns={{ xs: 2, sm: 2, md: 3, lg: 3 }}
-                maxWidth="1000px"
+                maxWidth="1100px"
                 spacing="15px"
               >
                 {events.map(eventData => {

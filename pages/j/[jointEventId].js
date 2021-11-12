@@ -212,7 +212,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
               Numar de telefon
             </Text>
             <Input
-              placeholder="Phone Number"
+              placeholder="Numar de telefon"
               value={phoneNumber}
               onChange={e => setPhoneNumber(e.target.value)}
             />
@@ -454,7 +454,8 @@ export default class JoinEvent extends Component {
           >
             <Stack
               className='header'
-              h='70vh'
+              minHeight='70vh'
+              maxHeight='85vh'
               w='100%'
               background='url("https://images.unsplash.com/photo-1614990354198-b06764dcb13c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2231&q=80")'
               backgroundSize='cover'
@@ -466,7 +467,7 @@ export default class JoinEvent extends Component {
                 display: 'flex',
                 alignItems: 'center',
                 flexDirection: 'column',
-                padding: '0 2rem'
+                padding: '3rem 1.5rem'
               }}
               >
                 <Stack w={isOnMobile ? '100%' : '1100px'} h='100%' justify='center' maxW='1100px'>
@@ -482,7 +483,7 @@ export default class JoinEvent extends Component {
                   <Text
                     color='#FFFFFF'
                     fontWeight="normal"
-                    fontSize="20px"
+                    fontSize="18px"
                     maxW='650px'
                     style={{ marginTop: 10 }}
                   >
@@ -541,7 +542,7 @@ export default class JoinEvent extends Component {
               </div>
             </Stack>
             <Stack px="1rem" pt="2rem" pb="9rem" w="100%" style={{ width: isOnMobile ? '100%' : '1100px', maxWidth: "1100px" }}>
-              <Stack w="100%" pt="1rem" pb="0rem">
+              <Stack w="100%" pt={isOnMobile ? 0 : "1rem"} pb="0rem">
                 {/* <Text fontWeight='bold' fontSize='24px'>Participants</Text> */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {events.map(eventData => {

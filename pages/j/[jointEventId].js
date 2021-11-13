@@ -192,7 +192,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
             Vei primi un SMS cu 5 minute inainte de eveniment
           </Text>
         </ModalHeader>
-        <ModalCloseButton />
+        {/* <ModalCloseButton /> */}
         <Stack
           style={{
             overflow: "scroll",
@@ -472,7 +472,7 @@ export default class JoinEvent extends Component {
             <Stack
               className='header'
               minHeight='70vh'
-              maxHeight='100vh'
+              // maxHeight='100vh'
               w='100%'
               background='url("https://s3.amazonaws.com/odin-images/images/rpDUoOvgxFT.jpeg")'
               backgroundSize='cover'
@@ -507,6 +507,7 @@ export default class JoinEvent extends Component {
                     {jointEvent.info.description}
                   </Text>
                   <Countdown
+                    isOnMobile={isOnMobile}
                     timeTillDate="11 17 2021, 6:30 pm"
                     timeFormat="MM DD YYYY, h:mm a"
                   />

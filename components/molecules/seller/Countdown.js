@@ -122,6 +122,7 @@ class Countdown extends React.Component {
 
   render() {
     const { days, hours, minutes, seconds } = this.state;
+    const { isOnMobile } = this.props
 
     // Mapping the date values to radius values
     const daysRadius = mapNumber(days, 30, 0, 0, 360);
@@ -134,36 +135,40 @@ class Countdown extends React.Component {
     }
 
     return (
-      <div className="countdown-wrapper" style={{ marginTop: '1rem' }}>
-        {days && (
-          <div className="countdown-item">
-            <SVGCircle radius={daysRadius} />
-            {days}
-            <span>zile</span>
-          </div>
-        )}
-        {hours && (
-          <div className="countdown-item">
-            <SVGCircle radius={hoursRadius} />
-            {hours}
-            <span>ore</span>
-          </div>
-        )}
-        {minutes && (
-          <div className="countdown-item">
-            <SVGCircle radius={minutesRadius} />
-            {minutes}
-            <span>minute</span>
-          </div>
-        )}
-        {seconds && (
-          <div className="countdown-item">
-            <SVGCircle radius={secondsRadius} />
-            {seconds}
-            <span>secunde</span>
-          </div>
-        )}
-      </div>
+      <Stack flexDir={isOnMobile ? 'column' : 'row'} align='flex-start' className="countdown-wrapper" style={{ marginTop: '1rem' }}>
+        <Flex>
+          {days && (
+            <div className="countdown-item">
+              <SVGCircle radius={daysRadius} />
+              {days}
+              <span>zile</span>
+            </div>
+          )}
+          {hours && (
+            <div className="countdown-item">
+              <SVGCircle radius={hoursRadius} />
+              {hours}
+              <span>ore</span>
+            </div>
+          )}
+        </Flex>
+        <Flex>
+          {minutes && (
+            <div className="countdown-item">
+              <SVGCircle radius={minutesRadius} />
+              {minutes}
+              <span>minute</span>
+            </div>
+          )}
+          {seconds && (
+            <div className="countdown-item">
+              <SVGCircle radius={secondsRadius} />
+              {seconds}
+              <span>secunde</span>
+            </div>
+          )}
+        </Flex>
+      </Stack>
     );
   }
 }

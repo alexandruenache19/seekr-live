@@ -6,7 +6,7 @@ import { FaRegPaperPlane } from 'react-icons/fa'
 import { ImExit } from 'react-icons/im'
 import AmazonIVSPreview from './AmazonIVSPreview'
 
-const Stories = ({ events, onGoBack, onGetSetEvent, currentEventId, secondsRemaining }) => {
+const Stories = ({ events, participants, onGoBack, onGetSetEvent, currentEventId, secondsRemaining }) => {
   return (
     <ScrollView
       horizontal
@@ -105,7 +105,7 @@ const Stories = ({ events, onGoBack, onGetSetEvent, currentEventId, secondsRemai
     //   }}
     // >
 
-  // </Flex>
+    // </Flex>
   )
 }
 

@@ -25,7 +25,7 @@ import AmazonIVS from '../../molecules/seller/AmazonIVS'
 import Stories from '../../molecules/seller/Stories'
 import Countdown from '../../molecules/seller/Countdown'
 class LiveScreen extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -42,7 +42,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -83,7 +83,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate (prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -104,7 +104,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -113,7 +113,7 @@ class LiveScreen extends Component {
         .off('value', this.productInfoListener)
   }
 
-  handleOrder() {
+  handleOrder () {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -188,7 +188,7 @@ class LiveScreen extends Component {
     // })
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -196,11 +196,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  render() {
+  render () {
     const {
       isOnMobile,
       sellerInfo,
@@ -222,6 +222,7 @@ class LiveScreen extends Component {
           {events && events.length > 1 ? (
             <Stories
               events={events}
+              participants={this.props.participants}
               currentEventId={eventInfo.id}
               secondsRemaining={this.props.secondsRemaining}
               onGoBack={this.props.handleGoBack}
@@ -526,6 +527,7 @@ class LiveScreen extends Component {
           {events && events.length > 1 ? (
             <Stories
               events={events}
+              participants={this.props.participants}
               currentEventId={eventInfo.id}
               secondsRemaining={this.props.secondsRemaining}
               onGoBack={this.props.handleGoBack}

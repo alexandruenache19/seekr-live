@@ -37,135 +37,6 @@ import {
 import Countdown from '../../components/molecules/seller/Countdown'
 import AmazonIVSPreview from "../../components/molecules/seller/AmazonIVSPreview";
 
-const ExploreProducts = ({ events, isOnMobile }) => {
-  const [allProducts, setAllProducts] = useState([]);
-  useEffect(async () => {
-    for (const event of events) {
-      const eventId = event.event.id;
-      /** get products */
-      const productsSn = await firebase
-        .database()
-        .ref(`events/${eventId}/products`)
-        .once("value");
-
-      if (productsSn.exists()) {
-        setAllProducts([...allProducts, ...Object.values(productsSn.val())]);
-      }
-    }
-  }, [events]);
-
-  return (
-    <Stack w="100%">
-      <Text fontWeight="bold" fontSize="26px">
-        Explore products
-      </Text>
-      <ScrollView
-        style={{ marginTop: 15, overflow: "scroll", width: "100%" }}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
-        {allProducts.map(product => {
-          return (
-            <Box
-              // w='180px'
-              maxW={isOnMobile ? "150px" : "180px"}
-              h={isOnMobile ? "200px" : "250px"}
-              bg="#999"
-              borderRadius="15px"
-              mr="15px"
-              position="relative"
-              key={product.id}
-            // style={{ width: '180px' }}
-            >
-              {product.quantity <= 0 ? (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "rgba(0,0,0,0.45)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 15
-                  }}
-                >
-                  <Text color="#FFFFFF">Out of stock</Text>
-                </div>
-              ) : (
-                <div
-                  className="product-layer"
-                  onClick={() =>
-                    (window.location.href = `https://seekrlive.com/p/${product.id}`)
-                  }
-                  style={{
-                    cursor: "pointer",
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "rgba(0,0,0,0.1)",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    justifyContent: "space-between",
-                    borderRadius: 15
-                  }}
-                >
-                  <Stack py="6px" px="10px" className="quantity-label">
-                    <Stack
-                      borderRadius="xl"
-                      style={{
-                        padding: 10,
-                        backgroundColor: "rgba(0,0,0,0.8)"
-                      }}
-                    >
-                      <Text color="#FFFFFF" fontSize={14}>
-                        {`${product.quantity ||
-                          product.currentStock} remaining`}
-                      </Text>
-                    </Stack>
-                  </Stack>
-
-                  <Flex
-                    justify="space-between"
-                    w="100%"
-                    style={{
-                      background:
-                        "linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 0%, rgba(0,0,0,0.623686974789916) 0%, rgba(0,0,0,0) 100%)",
-                      padding: 8,
-                      borderBottomLeftRadius: 15,
-                      borderBottomRightRadius: 15
-                    }}
-                  >
-                    <Stack>
-                      <Text color="#FFFFFF" fontSize={18} fontWeight="bold">
-                        {`${product.price} ${product.currency || "RON"}`}
-                      </Text>
-                    </Stack>
-                  </Flex>
-                </div>
-              )}
-              <img
-                src={product.imageUrl || product.imageURL}
-                style={{
-                  borderRadius: 15,
-                  width: isOnMobile ? "160px" : "180px",
-                  objectFit: "cover",
-                  height: "100%"
-                }}
-              />
-            </Box>
-          );
-        })}
-      </ScrollView>
-    </Stack>
-  );
-};
-
 const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -324,14 +195,16 @@ export default class JoinEvent extends Component {
         }
       })
 
-    this.setState({ loading: false });
     if (jointEvent && jointEvent.participants) {
       const events = [];
       const sortedParticipants = Object.values(jointEvent.participants).sort((a, b) => {
         return a.index - b.index
       })
 
-      if (jointEvent.info.timestamp <= new Date().getTime()) {
+      if (
+        // true
+        jointEvent.info.timestamp <= new Date().getTime()
+      ) {
         for (const participant of sortedParticipants) {
           const uid = participant.uid
           /** get current event */
@@ -433,6 +306,7 @@ export default class JoinEvent extends Component {
         <div style={{ width: "100%", height: "100%" }}>
           <EventPage
             events={events}
+            participants={participants}
             eventId={eventId}
             isOnMobile={isOnMobile}
             handleGetSetEvent={this.handleGetSetEvent}
@@ -635,7 +509,7 @@ export default class JoinEvent extends Component {
                 maxWidth="1100px"
                 spacing="15px"
               >
-                {jointEvent.info.timestamp <= new Date().getTime() ? (
+                {(jointEvent.info.timestamp <= new Date().getTime()) || this.state.eventId !== null ? (
                   events.map(eventData => {
                     return (
                       <Pressable
@@ -871,12 +745,12 @@ export default class JoinEvent extends Component {
                       fontSize: 18
                     }}
                   >
-                    Rezerva un loc
-                  </Text>
-                  <Text style={{ color: "#FFF", fontSize: 12, marginTop: 5 }}>
-                    *primesti livrarea gratis
+                    Rezerva loc
                   </Text>
                 </Button>
+                <Text style={{ color: "#000", fontSize: 14, textAlign: 'center', marginTop: 10 }}>
+                  rezervarea aduce livrarea gratis la orice comanda
+                </Text>
               </Stack>
             </Stack>
           </ScrollView>

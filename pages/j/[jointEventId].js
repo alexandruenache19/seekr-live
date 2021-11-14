@@ -835,11 +835,23 @@ export default class JoinEvent extends Component {
               justifyContent: "center",
               alignItems: "center",
               position: "fixed",
-              bottom: "2rem",
-              width: "100%"
+              bottom: "0rem",
+              width: "100%",
+              padding: '1rem 0.6rem 1rem 0.6rem',
+              backgroundColor: 'rgba(0,0,0,0.3)'
             }}
             px={isOnMobile ? "1rem" : 0}
           >
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(255, 255, 255, .15)',
+              backdropFilter: 'blur(5px)'
+            }}
+            />
             <Button
               style={{
                 // backgroundColor: "#121212",
@@ -867,15 +879,15 @@ export default class JoinEvent extends Component {
                   fontSize: 18
                 }}
               >
-                Rezerva un loc
+                Rezerva loc
               </Text>
               <Text style={{ color: "#FFF", fontSize: 12, marginTop: 5 }}>
-                *primesti livrarea gratis
+                si primesti livrarea gratis la orice comanda
               </Text>
             </Button>
           </Stack>
         </Stack>
-      </Stack>
+      </Stack >
     );
   }
 }

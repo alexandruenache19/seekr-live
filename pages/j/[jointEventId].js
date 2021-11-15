@@ -75,7 +75,7 @@ const ExploreProducts = ({ events, isOnMobile }) => {
               mr="15px"
               position="relative"
               key={product.id}
-              // style={{ width: '180px' }}
+            // style={{ width: '180px' }}
             >
               {product.quantity <= 0 ? (
                 <div
@@ -188,7 +188,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
         borderRadius={isOnMobile ? 10 : 30}
       >
         <ModalHeader px="0px">
-          <Text>Vei primi un SMS cu 5 minute inainte de eveniment</Text>
+          <Text>Rezerva loc pentru livrarea gratis. Vei primi un SMS cu 5 minute inainte de eveniment</Text>
         </ModalHeader>
         {/* <ModalCloseButton /> */}
         <Stack
@@ -271,14 +271,18 @@ export default class JoinEvent extends Component {
       eventId: null,
       showRegistrationModal: false,
       globalMuted: true,
-      secondsRemaining: null
+      secondsRemaining: null,
+      showRegistrationButton: false
     };
 
     this.handleGetSetEvent = this.handleGetSetEvent.bind(this);
+    this.handleScroll = this.handleScroll.bind(this)
   }
 
   async componentDidMount() {
     const { jointEvent, jointEventId } = this.props;
+
+    window.addEventListener('scroll', this.handleScroll);
 
     await firebase
       .database()
@@ -322,7 +326,6 @@ export default class JoinEvent extends Component {
         }
       });
 
-    this.setState({ loading: false });
     if (jointEvent && jointEvent.participants) {
       const events = [];
       const sortedParticipants = Object.values(jointEvent.participants).sort(
@@ -331,7 +334,10 @@ export default class JoinEvent extends Component {
         }
       );
 
-      if (jointEvent.info.timestamp <= new Date().getTime()) {
+      if (
+        // true
+        jointEvent.info.timestamp <= new Date().getTime()
+      ) {
         for (const participant of sortedParticipants) {
           const uid = participant.uid;
           /** get current event */
@@ -355,6 +361,7 @@ export default class JoinEvent extends Component {
       } else {
         this.setState({
           participants: sortedParticipants,
+          showRegistrationModal: true,
           loading: false
         });
       }
@@ -362,6 +369,19 @@ export default class JoinEvent extends Component {
       this.setState({
         loading: false
       });
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
+  }
+
+  handleScroll(event) {
+    let scrollTop = event.nativeEvent.contentOffset.y
+    if (scrollTop > 300) {
+      this.setState({
+        showRegistrationButton: true
+      })
     }
   }
 
@@ -385,7 +405,7 @@ export default class JoinEvent extends Component {
         }
 
         const that = this;
-        window.onpopstate = function(e) {
+        window.onpopstate = function (e) {
           if (e.state) {
             that.setState({
               displayEvent: false,
@@ -411,7 +431,8 @@ export default class JoinEvent extends Component {
       displayEvent,
       eventId,
       showRegistrationModal,
-      participants
+      participants,
+      showRegistrationButton
     } = this.state;
     const { isOnMobile, jointEvent } = this.props;
 
@@ -436,6 +457,7 @@ export default class JoinEvent extends Component {
         <div style={{ width: "100%", height: "100%" }}>
           <EventPage
             events={events}
+            participants={participants}
             eventId={eventId}
             isOnMobile={isOnMobile}
             handleGetSetEvent={this.handleGetSetEvent}
@@ -470,6 +492,8 @@ export default class JoinEvent extends Component {
         >
           <ScrollView
             showsVerticalScrollIndicator={false}
+            onScroll={this.handleScroll}
+            scrollEventThrottle={16}
             style={{ width: "100%" }}
             contentContainerStyle={{ display: "flex", alignItems: "center" }}
           >
@@ -522,6 +546,38 @@ export default class JoinEvent extends Component {
                     timeTillDate="11 17 2021, 6:30 pm"
                     timeFormat="MM DD YYYY, h:mm a"
                   />
+                  <Button
+                    style={{
+                      // backgroundColor: "#121212",
+                      background: "rgb(63,60,145)",
+                      background:
+                        "linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)",
+                      padding: 12,
+                      // minWidth: isOnMobile ? 250 : 350,
+                      // borderRadius: 10,
+                      width: "100%",
+                      marginTop: 10
+                    }}
+                    maxW="400px"
+                    boxShadow="0px 0px 38px -2px rgba(0,0,0,0.62)"
+                    className="seekr-gradient-on-hover"
+                    onClick={() => {
+                      this.setState({ showRegistrationModal: true });
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#FFFFFF",
+                        fontWeight: "bold",
+                        fontSize: 18
+                      }}
+                    >
+                      Rezerva loc
+                    </Text>
+                  </Button>
+                  <Text style={{ color: "#FFF", fontSize: 14, marginTop: 8 }}>
+                    si primesti livrarea gratis la orice comanda
+                  </Text>
                 </Stack>
               </div>
             </Stack>
@@ -624,125 +680,11 @@ export default class JoinEvent extends Component {
               >
                 {jointEvent.info.timestamp <= new Date().getTime()
                   ? events.map(eventData => {
-                      return (
-                        <Pressable
-                          onPress={() =>
-                            this.handleGetSetEvent(eventData.event.id)
-                          }
-                        >
-                          <Stack
-                            h={isOnMobile ? "250px" : "400px"}
-                            w="100%"
-                            bg="#999"
-                            borderRadius="15px"
-                            position="relative"
-                            key={eventData.event.id}
-                            style={{
-                              boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)"
-                            }}
-                          >
-                            <AmazonIVSPreview
-                              id={eventData.event.id}
-                              isLive={
-                                eventData.event.info.status === "live" &&
-                                eventData.event.info.liveURL
-                              }
-                              url={
-                                eventData.event.info.status === "live" &&
-                                eventData.event.info.liveURL
-                                  ? eventData.event.info.liveURL
-                                  : eventData.event.info.videoURL
-                              }
-                            />
-                            <Flex
-                              style={{
-                                flex: 1,
-                                marginTop: 0,
-                                background:
-                                  "linear-gradient(180deg, rgba(0,0,0,0.47522759103641454) 10%, rgba(255,255,255,0) 100%)"
-                              }}
-                              position="absolute"
-                              top="0"
-                              p={2}
-                              w="100%"
-                              borderTopLeftRadius="15px"
-                              borderTopRightRadius="15px"
-                            >
-                              <Text
-                                style={{
-                                  flex: 1,
-                                  paddingLeft: 4,
-                                  color: "#FFF",
-                                  fontWeight: "bold",
-                                  fontSize: 14,
-                                  position: "relative"
-                                }}
-                              >
-                                {eventData.event.info.title}
-                              </Text>
-                            </Flex>
-                            <Flex
-                              style={{
-                                flex: 1,
-                                background:
-                                  "linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 44%, rgba(255,255,255,0) 100%)"
-                              }}
-                              position="absolute"
-                              bottom="0"
-                              p="10px"
-                              w="100%"
-                              borderBottomLeftRadius="15px"
-                              borderBottomRightRadius="15px"
-                              justifyContent="space-between"
-                              alignItems="center"
-                            >
-                              <Flex
-                                align="center"
-                                style={{
-                                  flex: 1,
-                                  overflow: "hidden"
-                                }}
-                              >
-                                <Avatar
-                                  size="xs"
-                                  name={eventData.sellerInfo.username}
-                                  src={eventData.sellerInfo.imageURL}
-                                />
-                                <Text
-                                  noOfLines={1}
-                                  textOverflow="ellipsis"
-                                  style={{
-                                    flex: 1,
-                                    paddingLeft: 4,
-                                    color: "#FFF",
-                                    fontWeight: "bold",
-                                    fontSize: 12,
-                                    position: "relative"
-                                  }}
-                                >
-                                  @{eventData.sellerInfo.username}
-                                </Text>
-                              </Flex>
-                              {eventData.sellerInfo.instagramUrl && (
-                                <Pressable
-                                  onPress={() =>
-                                    window.open(
-                                      eventData.sellerInfo.instagramUrl,
-                                      "_blank"
-                                    )
-                                  }
-                                >
-                                  <FiInstagram color="#FFF" size={26} />
-                                </Pressable>
-                              )}
-                            </Flex>
-                          </Stack>
-                        </Pressable>
-                      );
-                    })
-                  : participants.map(participant => (
+                    return (
                       <Pressable
-                      // onPress={() => this.handleGetSetEvent(eventData.event.id)}
+                        onPress={() =>
+                          this.handleGetSetEvent(eventData.event.id)
+                        }
                       >
                         <Stack
                           h={isOnMobile ? "250px" : "400px"}
@@ -750,19 +692,51 @@ export default class JoinEvent extends Component {
                           bg="#999"
                           borderRadius="15px"
                           position="relative"
-                          key={participant.username}
+                          key={eventData.event.id}
                           style={{
                             boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)"
                           }}
                         >
                           <AmazonIVSPreview
-                            id={participant.username}
-                            // isLive={
-                            //   eventData.event.info.status === "live" &&
-                            //   eventData.event.info.liveURL
-                            // }
-                            url={participant.videoURL}
+                            id={eventData.event.id}
+                            isLive={
+                              eventData.event.info.status === "live" &&
+                              eventData.event.info.liveURL
+                            }
+                            url={
+                              eventData.event.info.status === "live" &&
+                                eventData.event.info.liveURL
+                                ? eventData.event.info.liveURL
+                                : eventData.event.info.videoURL
+                            }
                           />
+                          <Flex
+                            style={{
+                              flex: 1,
+                              marginTop: 0,
+                              background:
+                                "linear-gradient(180deg, rgba(0,0,0,0.47522759103641454) 10%, rgba(255,255,255,0) 100%)"
+                            }}
+                            position="absolute"
+                            top="0"
+                            p={2}
+                            w="100%"
+                            borderTopLeftRadius="15px"
+                            borderTopRightRadius="15px"
+                          >
+                            <Text
+                              style={{
+                                flex: 1,
+                                paddingLeft: 4,
+                                color: "#FFF",
+                                fontWeight: "bold",
+                                fontSize: 14,
+                                position: "relative"
+                              }}
+                            >
+                              {eventData.event.info.title}
+                            </Text>
+                          </Flex>
                           <Flex
                             style={{
                               flex: 1,
@@ -786,9 +760,9 @@ export default class JoinEvent extends Component {
                               }}
                             >
                               <Avatar
-                                size="sm"
-                                name={participant.username}
-                                src={participant.imageURL}
+                                size="xs"
+                                name={eventData.sellerInfo.username}
+                                src={eventData.sellerInfo.imageURL}
                               />
                               <Text
                                 noOfLines={1}
@@ -802,14 +776,14 @@ export default class JoinEvent extends Component {
                                   position: "relative"
                                 }}
                               >
-                                @{participant.username}
+                                @{eventData.sellerInfo.username}
                               </Text>
                             </Flex>
-                            {participant.instagramUrl && (
+                            {eventData.sellerInfo.instagramUrl && (
                               <Pressable
                                 onPress={() =>
                                   window.open(
-                                    participant.instagramUrl,
+                                    eventData.sellerInfo.instagramUrl,
                                     "_blank"
                                   )
                                 }
@@ -820,7 +794,89 @@ export default class JoinEvent extends Component {
                           </Flex>
                         </Stack>
                       </Pressable>
-                    ))}
+                    );
+                  })
+                  : participants.map(participant => (
+                    <Pressable
+                    // onPress={() => this.handleGetSetEvent(eventData.event.id)}
+                    >
+                      <Stack
+                        h={isOnMobile ? "250px" : "400px"}
+                        w="100%"
+                        bg="#999"
+                        borderRadius="15px"
+                        position="relative"
+                        key={participant.username}
+                        style={{
+                          boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)"
+                        }}
+                      >
+                        <AmazonIVSPreview
+                          id={participant.username}
+                          // isLive={
+                          //   eventData.event.info.status === "live" &&
+                          //   eventData.event.info.liveURL
+                          // }
+                          url={participant.videoURL}
+                        />
+                        <Flex
+                          style={{
+                            flex: 1,
+                            background:
+                              "linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 44%, rgba(255,255,255,0) 100%)"
+                          }}
+                          position="absolute"
+                          bottom="0"
+                          p="10px"
+                          w="100%"
+                          borderBottomLeftRadius="15px"
+                          borderBottomRightRadius="15px"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          <Flex
+                            align="center"
+                            style={{
+                              flex: 1,
+                              overflow: "hidden"
+                            }}
+                          >
+                            <Avatar
+                              size="sm"
+                              name={participant.username}
+                              src={participant.imageURL}
+                            />
+                            <Text
+                              noOfLines={1}
+                              textOverflow="ellipsis"
+                              style={{
+                                flex: 1,
+                                paddingLeft: 4,
+                                color: "#FFF",
+                                fontWeight: "bold",
+                                fontSize: 12,
+                                position: "relative"
+                              }}
+                            >
+                              @{participant.username}
+                            </Text>
+                          </Flex>
+                          {participant.instagramUrl && (
+                            <Pressable
+                              onPress={() =>
+                                window.open(
+                                  participant.instagramUrl,
+                                  "_blank"
+                                )
+                              }
+                            >
+                              <FiInstagram color="#FFF" size={26} />
+                            </Pressable>
+                          )}
+                        </Flex>
+                      </Stack>
+                    </Pressable>
+                  ))}
               </SimpleGrid>
               {/* <Flex my="1rem" w="100%">
                 <ExploreProducts events={events} isOnMobile={isOnMobile} />
@@ -832,11 +888,24 @@ export default class JoinEvent extends Component {
               justifyContent: "center",
               alignItems: "center",
               position: "fixed",
-              bottom: "2rem",
-              width: "100%"
+              bottom: "0rem",
+              width: "100%",
+              padding: '1rem 0.6rem 1rem 0.6rem',
+              // backgroundColor: 'rgba(0,0,0,0.3)',
+              display: showRegistrationButton ? 'flex' : 'none'
             }}
             px={isOnMobile ? "1rem" : 0}
           >
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(255, 255, 255, .15)',
+              backdropFilter: 'blur(5px)'
+            }}
+            />
             <Button
               style={{
                 // backgroundColor: "#121212",
@@ -864,15 +933,15 @@ export default class JoinEvent extends Component {
                   fontSize: 18
                 }}
               >
-                Rezerva un loc
+                Rezerva loc
               </Text>
               <Text style={{ color: "#FFF", fontSize: 12, marginTop: 5 }}>
-                *primesti livrarea gratis
+                si primesti livrarea gratis la orice comanda
               </Text>
             </Button>
           </Stack>
         </Stack>
-      </Stack>
+      </Stack >
     );
   }
 }

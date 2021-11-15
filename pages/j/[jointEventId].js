@@ -271,14 +271,18 @@ export default class JoinEvent extends Component {
       eventId: null,
       showRegistrationModal: false,
       globalMuted: true,
-      secondsRemaining: null
+      secondsRemaining: null,
+      showRegistrationButton: false
     };
 
     this.handleGetSetEvent = this.handleGetSetEvent.bind(this);
+    this.handleScroll = this.handleScroll.bind(this)
   }
 
   async componentDidMount() {
     const { jointEvent, jointEventId } = this.props;
+
+    window.addEventListener('scroll', this.handleScroll);
 
     await firebase
       .database()
@@ -367,6 +371,20 @@ export default class JoinEvent extends Component {
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
+  }
+
+  handleScroll(event) {
+    let scrollTop = event.nativeEvent.contentOffset.y
+    console.log('hello', scrollTop)
+    if (scrollTop > 300) {
+      this.setState({
+        showRegistrationButton: true
+      })
+    }
+  }
+
   handleGetSetEvent(eventId) {
     this.setState(
       {
@@ -413,7 +431,8 @@ export default class JoinEvent extends Component {
       displayEvent,
       eventId,
       showRegistrationModal,
-      participants
+      participants,
+      showRegistrationButton
     } = this.state;
     const { isOnMobile, jointEvent } = this.props;
 
@@ -473,6 +492,8 @@ export default class JoinEvent extends Component {
         >
           <ScrollView
             showsVerticalScrollIndicator={false}
+            onScroll={this.handleScroll}
+            scrollEventThrottle={16}
             style={{ width: "100%" }}
             contentContainerStyle={{ display: "flex", alignItems: "center" }}
           >
@@ -525,6 +546,38 @@ export default class JoinEvent extends Component {
                     timeTillDate="11 17 2021, 6:30 pm"
                     timeFormat="MM DD YYYY, h:mm a"
                   />
+                  <Button
+                    style={{
+                      // backgroundColor: "#121212",
+                      background: "rgb(63,60,145)",
+                      background:
+                        "linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)",
+                      padding: 12,
+                      // minWidth: isOnMobile ? 250 : 350,
+                      // borderRadius: 10,
+                      width: "100%",
+                      marginTop: 10
+                    }}
+                    maxW="400px"
+                    boxShadow="0px 0px 38px -2px rgba(0,0,0,0.62)"
+                    className="seekr-gradient-on-hover"
+                    onClick={() => {
+                      this.setState({ showRegistrationModal: true });
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#FFFFFF",
+                        fontWeight: "bold",
+                        fontSize: 18
+                      }}
+                    >
+                      Rezerva loc
+                    </Text>
+                  </Button>
+                  <Text style={{ color: "#FFF", fontSize: 14, marginTop: 8 }}>
+                    si primesti livrarea gratis la orice comanda
+                  </Text>
                 </Stack>
               </div>
             </Stack>
@@ -838,7 +891,8 @@ export default class JoinEvent extends Component {
               bottom: "0rem",
               width: "100%",
               padding: '1rem 0.6rem 1rem 0.6rem',
-              backgroundColor: 'rgba(0,0,0,0.3)'
+              // backgroundColor: 'rgba(0,0,0,0.3)',
+              display: showRegistrationButton ? 'flex' : 'none'
             }}
             px={isOnMobile ? "1rem" : 0}
           >

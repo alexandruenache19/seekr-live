@@ -188,7 +188,7 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
         borderRadius={isOnMobile ? 10 : 30}
       >
         <ModalHeader px="0px">
-          <Text>Vei primi un SMS cu 5 minute inainte de eveniment</Text>
+          <Text>Rezerva loc pentru livrarea gratis. Vei primi un SMS cu 5 minute inainte de eveniment</Text>
         </ModalHeader>
         {/* <ModalCloseButton /> */}
         <Stack
@@ -361,6 +361,7 @@ export default class JoinEvent extends Component {
       } else {
         this.setState({
           participants: sortedParticipants,
+          showRegistrationModal: true,
           loading: false
         });
       }

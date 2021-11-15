@@ -59,29 +59,30 @@ const Stories = ({ events, participants, onGoBack, onGetSetEvent, currentEventId
                     : eventData.event.info.videoURL
                 }
               /> */}
-              {index > 0 && events[index - 1].event.info.id === currentEventId ? (
-                <Center
-                  flexDir='column'
-                  zIndex={3}
-                  style={{
-                    marginTop: 0,
-                    position: 'absolute',
-                    borderRadius: 15,
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'rgba(0,0,0,0.5)'
-                  }}
-                >
-                  <Text color='#FFF' fontSize='14'>
+              {(index > 0 && events[index - 1].event.info.id === currentEventId) ||
+                (index === 0 && events[events.length - 1].event.info.id === currentEventId) ? (
+                  <Center
+                    flexDir='column'
+                    zIndex={3}
+                    style={{
+                      marginTop: 0,
+                      position: 'absolute',
+                      borderRadius: 15,
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: 'rgba(0,0,0,0.5)'
+                    }}
+                  >
+                    <Text color='#FFF' fontSize='14'>
                     Up next in
-                  </Text>
-                  <Text color='#FFF' fontWeight='bold' fontSize='16' style={{ marginTop: 0 }}>
-                    {`${secondsRemaining}s`}
-                  </Text>
-                </Center>
-              ) : null}
+                    </Text>
+                    <Text color='#FFF' fontWeight='bold' fontSize='16' style={{ marginTop: 0 }}>
+                      {`${secondsRemaining}s`}
+                    </Text>
+                  </Center>
+                ) : null}
               <img
                 style={{
                   width: '100%',
@@ -105,7 +106,7 @@ const Stories = ({ events, participants, onGoBack, onGetSetEvent, currentEventId
     //   }}
     // >
 
-    // </Flex>
+  // </Flex>
   )
 }
 

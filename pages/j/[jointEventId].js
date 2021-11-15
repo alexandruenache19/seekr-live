@@ -378,7 +378,6 @@ export default class JoinEvent extends Component {
 
   handleScroll(event) {
     let scrollTop = event.nativeEvent.contentOffset.y
-    console.log('hello', scrollTop)
     if (scrollTop > 300) {
       this.setState({
         showRegistrationButton: true

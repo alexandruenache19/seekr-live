@@ -166,10 +166,19 @@ const ExploreProducts = ({ events, isOnMobile }) => {
   );
 };
 
-const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
-  const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [addressLine1, setAddressLine1] = useState(null);
+const RegistrationModal = ({
+  title,
+  isOpen,
+  onClose,
+  baseDetails,
+  isOnMobile,
+  jointEventId,
+  isConfirmModal,
+  ...props
+}) => {
+  const [name, setName] = useState(baseDetails.name || '');
+  const [phoneNumber, setPhoneNumber] = useState(baseDetails.phoneNumber || '');
+  const [addressLine1, setAddressLine1] = useState(baseDetails.addressLine1 || '');
 
   const toast = useToast();
   return (
@@ -188,7 +197,11 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
         borderRadius={isOnMobile ? 10 : 30}
       >
         <ModalHeader px="0px">
-          <Text>Rezerva loc pentru livrarea gratis. Vei primi un SMS cu 5 minute inainte de eveniment</Text>
+          {isConfirmModal ? (
+            <Text>✅ Confirma detaliile pentru a comanda mai rapid</Text>
+          ) : (
+            <Text>Rezerva loc pentru livrarea gratis. Vei primi un SMS cu 5 minute inainte de eveniment</Text>
+          )}
         </ModalHeader>
         {/* <ModalCloseButton /> */}
         <Stack
@@ -213,9 +226,6 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
             />
           </FormControl>
           <FormControl id="address" isRequired style={{ marginBottom: 10 }}>
-            <Text fontSize={15} color="#30313D" style={{ marginBottom: 4 }}>
-              Vrei livrarea gratis? Lasa-ne adresa inainte de targ
-            </Text>
             <FormControl style={styles.formRow} id="address-line-1">
               <Input
                 placeholder="Adresa de livrare"
@@ -227,32 +237,43 @@ const RegistrationModal = ({ isOpen, onClose, isOnMobile, jointEventId }) => {
           <Button
             style={{ backgroundColor: "#121212", flex: 1, padding: 10 }}
             onClick={async () => {
-              if (name !== "" && phoneNumber !== "") {
-                await firebase
-                  .database()
-                  .ref(`joint-events/${jointEventId}/waitlist`)
-                  .push({
-                    name: name,
-                    phoneNumber: phoneNumber,
-                    addressLine1: addressLine1
-                  });
+              if (isConfirmModal) {
+                props.setDetails({
+                  name: name,
+                  phoneNumber: phoneNumber,
+                  addressLine1: addressLine1
+                })
                 toast({
-                  title: "Loc rezervat cu succes",
+                  title: "Confirmat",
                   status: "success",
-                  duration: 3000,
+                  duration: 1500,
                   isClosable: false
                 });
                 onClose();
               } else {
-                alert("Te rugam completeaza formularul");
+                if (name !== "" && phoneNumber !== "") {
+                  await firebase
+                    .database()
+                    .ref(`joint-events/${jointEventId}/waitlist`)
+                    .push({
+                      name: name,
+                      phoneNumber: phoneNumber,
+                      addressLine1: addressLine1
+                    });
+                  toast({
+                    title: "Loc rezervat cu succes",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: false
+                  });
+                  onClose();
+                } else {
+                  alert("Te rugam completeaza formularul");
+                }
               }
-              // await props.completeRegistration({
-              //   name: name,
-              //   phoneNumber: phoneNumber
-              // })
             }}
           >
-            <Text style={{ color: "#FFFFFF" }}>Rezerva-mi locul</Text>
+            <Text style={{ color: "#FFFFFF" }}>{isConfirmModal ? 'Confirm' : 'Rezerva-mi locul'}</Text>
           </Button>
         </Stack>
       </ModalContent>
@@ -272,7 +293,11 @@ export default class JoinEvent extends Component {
       showRegistrationModal: false,
       globalMuted: true,
       secondsRemaining: null,
-      showRegistrationButton: false
+      showRegistrationButton: false,
+      /** for fast ordering */
+      name: props.name || null,
+      phoneNumber: props.phoneNumber || null,
+      addressLine1: props.addressLine1 || null
     };
 
     this.handleGetSetEvent = this.handleGetSetEvent.bind(this);
@@ -354,6 +379,7 @@ export default class JoinEvent extends Component {
                 event: eventData,
                 sellerInfo: sellerInfo
               }),
+              showRegistrationModal: true,
               loading: false
             });
           }
@@ -434,7 +460,7 @@ export default class JoinEvent extends Component {
       participants,
       showRegistrationButton
     } = this.state;
-    const { isOnMobile, jointEvent } = this.props;
+    const { isOnMobile, jointEvent, isConfirmModal } = this.props;
 
     if (loading) {
       return (
@@ -455,6 +481,27 @@ export default class JoinEvent extends Component {
     if (displayEvent) {
       return (
         <div style={{ width: "100%", height: "100%" }}>
+          {showRegistrationModal && (
+            <RegistrationModal
+              isOpen={showRegistrationModal}
+              onClose={() => this.setState({ showRegistrationModal: false })}
+              isOnMobile={isOnMobile}
+              jointEventId={jointEvent.info.id}
+              isConfirmModal={isConfirmModal}
+              baseDetails={{
+                name: this.state.name,
+                phoneNumber: this.state.phoneNumber,
+                addressLine1: this.state.addressLine1
+              }}
+              setDetails={(details) => {
+                this.setState({
+                  name: details.name,
+                  phoneNumber: details.phoneNumber,
+                  addressLine1: details.addressLine1
+                })
+              }}
+            />
+          )}
           <EventPage
             events={events}
             participants={participants}
@@ -467,6 +514,11 @@ export default class JoinEvent extends Component {
             handleGoBack={() =>
               this.setState({ displayEvent: false, eventId: null })
             }
+            baseDetails={{
+              name: this.state.name,
+              phoneNumber: this.state.phoneNumber,
+              addressLine1: this.state.addressLine1
+            }}
           />
         </div>
       );
@@ -480,6 +532,19 @@ export default class JoinEvent extends Component {
             onClose={() => this.setState({ showRegistrationModal: false })}
             isOnMobile={isOnMobile}
             jointEventId={jointEvent.info.id}
+            isConfirmModal={isConfirmModal}
+            baseDetails={{
+              name: this.state.name,
+              phoneNumber: this.state.phoneNumber,
+              addressLine1: this.state.addressLine1
+            }}
+            setDetails={(details) => {
+              this.setState({
+                name: details.name,
+                phoneNumber: details.phoneNumber,
+                addressLine1: details.addressLine1
+              })
+            }}
           />
         )}
 
@@ -975,6 +1040,10 @@ export const getServerSideProps = async context => {
 
   return {
     props: {
+      isConfirmModal: true,
+      name: 'Radu',
+      phoneNumber: '+40771440831',
+      addressLine1: 'Str Astrelor 16',
       jointEvent: jointEvent,
       jointEventId: jointEventId,
       isOnMobile: isOnMobile

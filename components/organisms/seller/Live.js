@@ -113,6 +113,11 @@ class LiveScreen extends Component {
         .database()
         .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
         .off('value', this.productInfoListener)
+
+    firebase
+      .database()
+      .ref(`events/${eventInfo.id}/info/viewers`)
+      .set(firebase.database.ServerValue.increment(-1))
   }
 
   handleOrder () {
@@ -259,7 +264,13 @@ class LiveScreen extends Component {
                 style={{
                   padding: 7
                 }}
-                onPress={() => window.location.reload()}
+                onPress={async () => {
+                  await firebase
+                    .database()
+                    .ref(`events/${eventInfo.id}/info/viewers`)
+                    .set(firebase.database.ServerValue.increment(-1))
+                  window.location.reload()
+                }}
               >
                 <Center flexDir='column'>
                   <FiRefreshCw style={{ fontSize: 18, color: '#FFF' }} />
@@ -585,7 +596,13 @@ class LiveScreen extends Component {
                 style={{
                   padding: 7
                 }}
-                onPress={() => window.location.reload()}
+                onPress={async () => {
+                  await firebase
+                    .database()
+                    .ref(`events/${eventInfo.id}/info/viewers`)
+                    .set(firebase.database.ServerValue.increment(-1))
+                  window.location.reload()
+                }}
               >
                 <Center flexDir='column'>
                   <FiRefreshCw style={{ fontSize: 18, color: '#FFF' }} />

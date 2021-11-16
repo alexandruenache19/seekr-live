@@ -265,10 +265,10 @@ class LiveScreen extends Component {
                   padding: 7
                 }}
                 onPress={async () => {
-                  await firebase
-                    .database()
-                    .ref(`events/${eventInfo.id}/info/viewers`)
-                    .set(firebase.database.ServerValue.increment(-1))
+                  // await firebase
+                  //   .database()
+                  //   .ref(`events/${eventInfo.id}/info/viewers`)
+                  //   .set(firebase.database.ServerValue.increment(-1))
                   window.location.reload()
                 }}
               >
@@ -597,10 +597,10 @@ class LiveScreen extends Component {
                   padding: 7
                 }}
                 onPress={async () => {
-                  await firebase
-                    .database()
-                    .ref(`events/${eventInfo.id}/info/viewers`)
-                    .set(firebase.database.ServerValue.increment(-1))
+                  // await firebase
+                  //   .database()
+                  //   .ref(`events/${eventInfo.id}/info/viewers`)
+                  //   .set(firebase.database.ServerValue.increment(-1))
                   window.location.reload()
                 }}
               >

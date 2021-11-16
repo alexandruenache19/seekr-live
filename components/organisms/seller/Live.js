@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { withRouter } from 'next/router'
+import React, { Component } from "react";
+import { withRouter } from "next/router";
 import {
   Flex,
   Stack,
@@ -12,21 +12,21 @@ import {
   ModalContent,
   ModalCloseButton,
   ModalBody
-} from '@chakra-ui/react'
-import Lottie from 'react-lottie'
-import { Pressable } from 'react-native'
-import { FaPlus, FaMinus } from 'react-icons/fa'
-import { FiEye, FiRefreshCw, FiShare } from 'react-icons/fi'
-import { MdArrowBack } from 'react-icons/md'
-import * as animationData from './live.json'
-import { MessageInput, CommentsList } from '../../../components'
-import firebase from '../../../firebase/clientApp'
-import AmazonIVS from '../../molecules/seller/AmazonIVS'
-import Stories from '../../molecules/seller/Stories'
+} from "@chakra-ui/react";
+import Lottie from "react-lottie";
+import { Pressable } from "react-native";
+import { FaPlus, FaMinus } from "react-icons/fa";
+import { FiEye, FiRefreshCw, FiShare } from "react-icons/fi";
+import { MdArrowBack } from "react-icons/md";
+import * as animationData from "./live.json";
+import { MessageInput, CommentsList } from "../../../components";
+import firebase from "../../../firebase/clientApp";
+import AmazonIVS from "../../molecules/seller/AmazonIVS";
+import Stories from "../../molecules/seller/Stories";
 
 class LiveScreen extends Component {
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       productInfo: null,
       orderQuantity: 1,
@@ -38,88 +38,85 @@ class LiveScreen extends Component {
       addressLine1: null,
       addressLine2: null,
       isCheckoutModalOpen: false
-    }
-    this.handleOrder = this.handleOrder.bind(this)
-    this.handleShare = this.handleShare.bind(this)
-    this.handleFollow = this.handleFollow.bind(this)
+    };
+    this.handleOrder = this.handleOrder.bind(this);
+    this.handleShare = this.handleShare.bind(this);
+    this.handleFollow = this.handleFollow.bind(this);
   }
 
-  componentDidMount () {
-    const { eventInfo } = this.props
+  componentDidMount() {
+    const { eventInfo } = this.props;
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
-    const vh = window.innerHeight * 0.01
+    const vh = window.innerHeight * 0.01;
     // Then we set the value in the --vh custom property to the root of the document
-    document.documentElement.style.setProperty('--vh', `${vh}px`)
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
 
     firebase
       .database()
       .ref(`events/${eventInfo.id}/info/viewers`)
-      .set(firebase.database.ServerValue.increment(1))
+      .set(firebase.database.ServerValue.increment(1));
 
     this.productInfoListener = firebase
       .database()
       .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
-      .on('value', async snapshot => {
+      .on("value", async snapshot => {
         this.setState({
           productInfo: snapshot.val()
-        })
-      })
+        });
+      });
 
     this.viewsInfoListener = firebase
       .database()
       .ref(`events/${eventInfo.id}/info/viewers`)
-      .on('value', snapshot => {
+      .on("value", snapshot => {
         if (snapshot.exists()) {
           this.setState({
             viewers: snapshot.val()
-          })
+          });
         }
-      })
+      });
 
-    window.onbeforeunload = function () {
+    window.onbeforeunload = function() {
       firebase
         .database()
         .ref(`events/${eventInfo.id}/info/viewers`)
-        .set(firebase.database.ServerValue.increment(-1))
-    }
+        .set(firebase.database.ServerValue.increment(-1));
+    };
   }
 
-  async componentDidUpdate (prevProps, prevState) {
-    const { eventInfo } = this.props
+  async componentDidUpdate(prevProps, prevState) {
+    const { eventInfo } = this.props;
     if (
       (prevProps.eventInfo.currentProductId &&
         this.props.eventInfo.currentProductId &&
         prevProps.eventInfo.currentProductId !==
-        this.props.eventInfo.currentProductId) ||
+          this.props.eventInfo.currentProductId) ||
       (!prevProps.eventInfo.currentProductId &&
         this.props.eventInfo.currentProductId)
     ) {
       this.productInfoListener = firebase
         .database()
         .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
-        .on('value', snapshot => {
+        .on("value", snapshot => {
           this.setState({
             productInfo: snapshot.val()
-          })
-        })
+          });
+        });
     }
   }
 
-  componentWillUnmount () {
-    const { eventInfo } = this.props
+  componentWillUnmount() {
+    const { eventInfo } = this.props;
     this.productInfoListener &&
       firebase
         .database()
         .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
-        .off('value', this.productInfoListener)
+        .off("value", this.productInfoListener);
   }
 
-  handleOrder () {
-    const {
-      eventInfo,
-      sellerInfo
-    } = this.props
+  handleOrder() {
+    const { eventInfo, sellerInfo } = this.props;
 
     const {
       productInfo,
@@ -132,9 +129,9 @@ class LiveScreen extends Component {
       addressLine2,
       name,
       phoneNumber
-    } = this.state
+    } = this.state;
 
-    this.props.onOpenModal('order', {
+    this.props.onOpenModal("order", {
       sellerUsername: sellerInfo.username,
       productInfo: productInfo,
       eventInfo: eventInfo,
@@ -159,9 +156,9 @@ class LiveScreen extends Component {
           addressLine2: details.addressLine2 || null,
           name: details.name,
           phoneNumber: details.phoneNumber
-        })
+        });
       }
-    })
+    });
 
     // this.props.onOpenModal('payment', {
     //   sellerUsername: sellerInfo.username,
@@ -193,19 +190,19 @@ class LiveScreen extends Component {
     // })
   }
 
-  handleShare () {
-    const { sellerInfo } = this.props
-    this.props.onOpenModal('share', {
+  handleShare() {
+    const { sellerInfo } = this.props;
+    this.props.onOpenModal("share", {
       username: sellerInfo.username,
       shareUrl: window.location.href
-    })
+    });
   }
 
-  handleFollow () {
-    this.props.onOpenModal('follow', {})
+  handleFollow() {
+    this.props.onOpenModal("follow", {});
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -213,17 +210,17 @@ class LiveScreen extends Component {
       comments,
       username,
       events
-    } = this.props
+    } = this.props;
     const {
       productInfo,
       orderQuantity,
       viewers,
       isCheckoutModalOpen
-    } = this.state
+    } = this.state;
 
     if (isOnMobile) {
       return (
-        <Stack w='100vw' bg='#FFF' p='10px' className='perfect-height-wrapper'>
+        <Stack w="100vw" bg="#FFF" p="10px" className="perfect-height-wrapper">
           {events && events.length > 1 ? (
             <Stories
               events={events}
@@ -235,27 +232,27 @@ class LiveScreen extends Component {
             />
           ) : this.props.handleGoBack ? (
             <Pressable onPress={this.props.handleGoBack}>
-              <Flex align='center' pr={isOnMobile ? '10px' : '20px'}>
+              <Flex align="center" pr={isOnMobile ? "10px" : "20px"}>
                 <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                <Text fontWeight='bold'>Inapoi la evenimente</Text>
+                <Text fontWeight="bold">Inapoi la evenimente</Text>
               </Flex>
             </Pressable>
           ) : null}
 
           <Stack
-            h='100%'
-            bg='rgba(0,0,0,0.9)'
-            borderRadius='xl'
-            overflow='hidden'
-            position='relative'
-            justifyContent='center'
-            alignItems='center'
+            h="100%"
+            bg="rgba(0,0,0,0.9)"
+            borderRadius="xl"
+            overflow="hidden"
+            position="relative"
+            justifyContent="center"
+            alignItems="center"
           >
             <Flex
-              pos='absolute'
-              top='8px'
-              right='12px'
-              align='center'
+              pos="absolute"
+              top="8px"
+              right="12px"
+              align="center"
               zIndex={10}
             >
               <Pressable
@@ -264,9 +261,11 @@ class LiveScreen extends Component {
                 }}
                 onPress={() => window.location.reload()}
               >
-                <Center flexDir='column'>
-                  <FiRefreshCw style={{ fontSize: 18, color: '#FFF' }} />
-                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Refresh</Text>
+                <Center flexDir="column">
+                  <FiRefreshCw style={{ fontSize: 18, color: "#FFF" }} />
+                  <Text color="#FFF" fontSize="12" style={{ marginTop: 4 }}>
+                    Refresh
+                  </Text>
                 </Center>
               </Pressable>
               <Pressable
@@ -275,9 +274,11 @@ class LiveScreen extends Component {
                 }}
                 onPress={this.handleShare}
               >
-                <Center flexDir='column'>
-                  <FiShare style={{ fontSize: 18, color: '#FFF' }} />
-                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Distribuie</Text>
+                <Center flexDir="column">
+                  <FiShare style={{ fontSize: 18, color: "#FFF" }} />
+                  <Text color="#FFF" fontSize="12" style={{ marginTop: 4 }}>
+                    Distribuie
+                  </Text>
                 </Center>
               </Pressable>
             </Flex>
@@ -300,22 +301,22 @@ class LiveScreen extends Component {
             </Button> */}
 
             <Flex
-              position='absolute'
-              left='10px'
-              top='10px'
+              position="absolute"
+              left="10px"
+              top="10px"
               zIndex={15}
-              align='center'
-              style={{ marginTop: 0, justifyContent: 'flex-start' }}
+              align="center"
+              style={{ marginTop: 0, justifyContent: "flex-start" }}
             >
               <Flex
-                justify='flex-start'
-                alignItems='center'
-                borderRadius='xl'
-                p='5px'
-                bg='rgba(0,0,0,0.3)'
+                justify="flex-start"
+                alignItems="center"
+                borderRadius="xl"
+                p="5px"
+                bg="rgba(0,0,0,0.3)"
               >
                 <Avatar
-                  size='sm'
+                  size="sm"
                   name={sellerInfo.username}
                   src={sellerInfo.imageURL}
                 />
@@ -323,22 +324,22 @@ class LiveScreen extends Component {
                   style={{
                     marginTop: 0,
                     marginLeft: 5,
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start'
+                    alignItems: "flex-start",
+                    justifyContent: "flex-start"
                   }}
                 >
                   <Text
                     noOfLines={1}
-                    textOverflow='ellipsis'
-                    maxW='100px'
-                    fontWeight='bold'
-                    color='#FFF'
+                    textOverflow="ellipsis"
+                    maxW="100px"
+                    fontWeight="bold"
+                    color="#FFF"
                     fontSize={12}
                   >
                     @{sellerInfo.username}
                   </Text>
                   <Center
-                    style={{ marginTop: 0, justifyContent: 'flex-start' }}
+                    style={{ marginTop: 0, justifyContent: "flex-start" }}
                   >
                     <Center style={{ marginLeft: -3 }}>
                       <Lottie
@@ -350,17 +351,17 @@ class LiveScreen extends Component {
                         height={20}
                         width={20}
                       />
-                      <Text pl='2px' color='#FFF' fontSize={10}>
+                      <Text pl="2px" color="#FFF" fontSize={10}>
                         Live
                       </Text>
                     </Center>
-                    <Center ml='5px' textAlign='center'>
-                      <FiEye size={14} color='#FFF' />
+                    <Center ml="5px" textAlign="center">
+                      <FiEye size={14} color="#FFF" />
                       <Text
                         fontSize={10}
-                        color='#FFF'
-                        textAlign='center'
-                        ml='3px'
+                        color="#FFF"
+                        textAlign="center"
+                        ml="3px"
                       >
                         {viewers}
                       </Text>
@@ -370,29 +371,29 @@ class LiveScreen extends Component {
               </Flex>
             </Flex>
             <Stack
-              position='absolute'
-              left='0px'
-              bottom='0px'
-              p='10px'
-              w='100%'
+              position="absolute"
+              left="0px"
+              bottom="0px"
+              p="10px"
+              w="100%"
               zIndex={16}
               flex={1}
               style={{
                 borderBottomLeftRadius: 13,
                 borderBottomRightRadius: 13,
                 background:
-                  'linear-gradient(0deg, rgba(0,0,0,0.49) 0%, rgba(0,0,0,0.6685049019607843) 0%, rgba(0,0,0,0) 100%)'
+                  "linear-gradient(0deg, rgba(0,0,0,0.49) 0%, rgba(0,0,0,0.6685049019607843) 0%, rgba(0,0,0,0) 100%)"
               }}
             >
-              <Center w='100%' style={{ overflow: 'scroll', height: 90 }}>
-                <Center w='100%' pt='120px'>
+              <Center w="100%" style={{ overflow: "scroll", height: 90 }}>
+                <Center w="100%" pt="120px">
                   <CommentsList comments={comments} isOnMobile />
                 </Center>
               </Center>
               <Stack
-                w='100%'
-                justify='space-between'
-                align='center'
+                w="100%"
+                justify="space-between"
+                align="center"
                 style={{ marginBottom: 10 }}
               >
                 {/* {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
@@ -406,13 +407,13 @@ class LiveScreen extends Component {
                   </Flex>
                 ) : null} */}
                 <Flex
-                  borderRadius='xl'
-                  bg='rgba(0,0,0,0.3)'
-                  p='6px'
-                  align='center'
-                  w='100%'
+                  borderRadius="xl"
+                  bg="rgba(0,0,0,0.3)"
+                  p="6px"
+                  align="center"
+                  w="100%"
                   minW={0}
-                  alignSelf='start'
+                  alignSelf="start"
                 >
                   {productInfo && productInfo.imageURL ? (
                     <img
@@ -420,7 +421,7 @@ class LiveScreen extends Component {
                       style={{
                         height: 50,
                         width: 50,
-                        objectFit: 'cover',
+                        objectFit: "cover",
                         borderRadius: 10,
                         marginRight: 8
                       }}
@@ -428,17 +429,17 @@ class LiveScreen extends Component {
                   ) : null}
                   {productInfo ? (
                     <Stack
-                      justifyContent='center'
+                      justifyContent="center"
                       style={{ marginTop: 0, paddingRight: 4 }}
                     >
                       {/* <Text color='#FFF' fontSize='14' fontWeight='normal'>
                         {`${productInfo.currentStock} remaining`}
                       </Text> */}
                       <Text
-                        color='#FFF'
-                        fontWeight='bold'
-                        fontSize='14'
-                        style={{ marginTop: '0.1rem' }}
+                        color="#FFF"
+                        fontWeight="bold"
+                        fontSize="14"
+                        style={{ marginTop: "0.1rem" }}
                       >
                         {`${productInfo.price} ${productInfo.currency}`}
                       </Text>
@@ -446,47 +447,52 @@ class LiveScreen extends Component {
                   ) : null}
                   {productInfo && productInfo.currentStock > 0 ? (
                     <Button
-                      borderRadius='xl'
+                      borderRadius="xl"
                       // px='10px'
                       style={{
-                        justifyContent: 'center',
-                        background: 'rgb(63,60,145)',
+                        justifyContent: "center",
+                        background: "rgb(63,60,145)",
                         background:
-                          'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
-                        minHeight: '100%',
+                          "linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)",
+                        minHeight: "100%",
                         flex: 1,
                         height: 50,
                         // width: 'auto',
                         minWidth: 120,
                         marginLeft: 20
                       }}
-                      className='seekr-gradient-on-hover'
+                      className="seekr-gradient-on-hover"
                       onClick={this.handleOrder}
                     >
                       <Stack>
-                        <Text color='#FFFFFF' fontWeight='600'>
-                          {'Cumpara'}
+                        <Text color="#FFFFFF" fontWeight="600">
+                          {"Cumpara"}
                         </Text>
-                        {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
+                        {this.props.secondsRemaining &&
+                        this.props.secondsRemaining >= 0 ? (
                           <Text
                             style={{ marginTop: 1 }}
-                            fontWeight='normal'
-                            fontSize='11'
-                            color='#FFFFFF'
+                            fontWeight="normal"
+                            fontSize="11"
+                            color="#FFFFFF"
                           >
-                            {`00:${this.props.secondsRemaining > 0 ? this.props.secondsRemaining : '0' + this.props.secondsRemaining}`}
+                            {`00:${
+                              this.props.secondsRemaining > 0
+                                ? this.props.secondsRemaining
+                                : "0" + this.props.secondsRemaining
+                            }`}
                           </Text>
                         ) : null}
                       </Stack>
                     </Button>
                   ) : (
                     <Button
-                      borderRadius='xl'
+                      borderRadius="xl"
                       // px='10px'
                       style={{
-                        justifyContent: 'center',
-                        backgroundColor: '#999',
-                        minHeight: '100%',
+                        justifyContent: "center",
+                        backgroundColor: "#999",
+                        minHeight: "100%",
                         flex: 1,
                         height: 50,
                         marginLeft: 20,
@@ -495,7 +501,12 @@ class LiveScreen extends Component {
                       }}
                       onClick={() => null}
                     >
-                      <Text noOfLines={1} textOverflow='ellipsis' color='#FFFFFF' fontWeight='600'>
+                      <Text
+                        noOfLines={1}
+                        textOverflow="ellipsis"
+                        color="#FFFFFF"
+                        fontWeight="600"
+                      >
                         Waiting for the next item
                       </Text>
                     </Button>
@@ -517,18 +528,18 @@ class LiveScreen extends Component {
             />
           </Stack>
         </Stack>
-      )
+      );
     }
 
     return (
       <Flex
-        bg='#FFF'
-        className='perfect-height-wrapper'
+        bg="#FFF"
+        className="perfect-height-wrapper"
         // maxH='90vh'
-        w='100vw'
-        justify='space-between'
+        w="100vw"
+        justify="space-between"
       >
-        <Stack w='70vw' p='20px' h='100%' className='perfect-height-wrapper'>
+        <Stack w="70vw" p="20px" h="100%" className="perfect-height-wrapper">
           {events && events.length > 1 ? (
             <Stories
               events={events}
@@ -540,20 +551,23 @@ class LiveScreen extends Component {
             />
           ) : this.props.handleGoBack ? (
             <Pressable onPress={this.props.handleGoBack}>
-              <Flex align='center' pb='10px'>
+              <Flex align="center" pb="10px">
                 <MdArrowBack style={{ fontSize: 20, marginRight: 8 }} />
-                <Text fontWeight='bold'>Inapoi la evenimente</Text>
+                <Text fontWeight="bold">Inapoi la evenimente</Text>
               </Flex>
             </Pressable>
           ) : null}
           <Stack
-            h='100%'
-            w='100%'
-            bg='rgba(0,0,0,0.9)'
-            borderRadius='20px'
-            overflow='hidden'
-            position='relative'
-            style={{ marginTop: events && events.length > 1 ? 10 : 0, boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)' }}
+            h="100%"
+            w="100%"
+            bg="rgba(0,0,0,0.9)"
+            borderRadius="20px"
+            overflow="hidden"
+            position="relative"
+            style={{
+              marginTop: events && events.length > 1 ? 10 : 0,
+              boxShadow: "0px 0px 36px 2px rgba(0,0,0,0.12)"
+            }}
           >
             <AmazonIVS
               url={eventInfo.liveURL}
@@ -562,10 +576,10 @@ class LiveScreen extends Component {
             />
 
             <Flex
-              pos='absolute'
-              top='8px'
-              right='12px'
-              align='center'
+              pos="absolute"
+              top="8px"
+              right="12px"
+              align="center"
               zIndex={10}
             >
               <Pressable
@@ -574,9 +588,11 @@ class LiveScreen extends Component {
                 }}
                 onPress={() => window.location.reload()}
               >
-                <Center flexDir='column'>
-                  <FiRefreshCw style={{ fontSize: 18, color: '#FFF' }} />
-                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Refresh</Text>
+                <Center flexDir="column">
+                  <FiRefreshCw style={{ fontSize: 18, color: "#FFF" }} />
+                  <Text color="#FFF" fontSize="12" style={{ marginTop: 4 }}>
+                    Refresh
+                  </Text>
                 </Center>
               </Pressable>
               <Pressable
@@ -585,27 +601,29 @@ class LiveScreen extends Component {
                 }}
                 onPress={this.handleShare}
               >
-                <Center flexDir='column'>
-                  <FiShare style={{ fontSize: 18, color: '#FFF' }} />
-                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Distribuie</Text>
+                <Center flexDir="column">
+                  <FiShare style={{ fontSize: 18, color: "#FFF" }} />
+                  <Text color="#FFF" fontSize="12" style={{ marginTop: 4 }}>
+                    Distribuie
+                  </Text>
                 </Center>
               </Pressable>
             </Flex>
 
             <Flex
-              position='absolute'
-              left='15px'
-              top='15px'
+              position="absolute"
+              left="15px"
+              top="15px"
               zIndex={10}
-              align='center'
-              style={{ marginTop: 0, justifyContent: 'flex-start' }}
+              align="center"
+              style={{ marginTop: 0, justifyContent: "flex-start" }}
             >
               <Flex
-                borderRadius='xl'
-                p='5px'
-                bg='rgba(0,0,0,0.3)'
-                justify='flex-start'
-                alignItems='center'
+                borderRadius="xl"
+                p="5px"
+                bg="rgba(0,0,0,0.3)"
+                justify="flex-start"
+                alignItems="center"
               >
                 <Avatar
                   // size='sm'
@@ -617,22 +635,22 @@ class LiveScreen extends Component {
                   style={{
                     marginTop: 0,
                     marginLeft: 8,
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start'
+                    alignItems: "flex-start",
+                    justifyContent: "flex-start"
                   }}
                 >
                   <Text
                     noOfLines={1}
-                    textOverflow='ellipsis'
-                    maxW='100px'
-                    fontWeight='bold'
-                    color='#FFF'
+                    textOverflow="ellipsis"
+                    maxW="100px"
+                    fontWeight="bold"
+                    color="#FFF"
                     fontSize={14}
                   >
                     @{sellerInfo.username}
                   </Text>
                   <Center
-                    style={{ marginTop: 0, justifyContent: 'flex-start' }}
+                    style={{ marginTop: 0, justifyContent: "flex-start" }}
                   >
                     <Center style={{ marginLeft: -3 }}>
                       <Lottie
@@ -644,17 +662,17 @@ class LiveScreen extends Component {
                         height={20}
                         width={20}
                       />
-                      <Text pl='2px' color='#FFF' fontSize={12}>
+                      <Text pl="2px" color="#FFF" fontSize={12}>
                         Live
                       </Text>
                     </Center>
-                    <Center ml='5px' textAlign='center'>
-                      <FiEye size={14} color='#FFF' />
+                    <Center ml="5px" textAlign="center">
+                      <FiEye size={14} color="#FFF" />
                       <Text
                         fontSize={12}
-                        color='#FFF'
-                        textAlign='center'
-                        ml='3px'
+                        color="#FFF"
+                        textAlign="center"
+                        ml="3px"
                       >
                         {viewers}
                       </Text>
@@ -666,23 +684,23 @@ class LiveScreen extends Component {
 
             {productInfo ? (
               <Stack
-                position='absolute'
-                left='0px'
-                bottom='0px'
+                position="absolute"
+                left="0px"
+                bottom="0px"
                 zIndex={5}
-                p='15px'
-                w='100%'
+                p="15px"
+                w="100%"
                 flex={1}
               >
-                <Flex align='center' justify='space-between' w='100%'>
+                <Flex align="center" justify="space-between" w="100%">
                   <Flex
-                    borderRadius='xl'
-                    bg='rgba(0,0,0,0.3)'
-                    p='8px'
-                    align='center'
-                    w='auto'
+                    borderRadius="xl"
+                    bg="rgba(0,0,0,0.3)"
+                    p="8px"
+                    align="center"
+                    w="auto"
                     minW={0}
-                    alignSelf='start'
+                    alignSelf="start"
                   >
                     {productInfo.imageURL ? (
                       <img
@@ -690,35 +708,41 @@ class LiveScreen extends Component {
                         style={{
                           height: 50,
                           width: 50,
-                          objectFit: 'cover',
+                          objectFit: "cover",
                           borderRadius: 10,
                           marginRight: 8
                         }}
                       />
                     ) : null}
                     <Stack
-                      justifyContent='center'
+                      justifyContent="center"
                       style={{ marginTop: 0, paddingRight: 4 }}
                     >
-                      <Text color='#FFF' fontSize='14' fontWeight='normal'>
+                      <Text color="#FFF" fontSize="14" fontWeight="normal">
                         {`${productInfo.currentStock} remaining`}
                       </Text>
                       <Text
-                        color='#FFF'
-                        fontWeight='bold'
-                        fontSize='14'
-                        style={{ marginTop: '0.1rem' }}
+                        color="#FFF"
+                        fontWeight="bold"
+                        fontSize="14"
+                        style={{ marginTop: "0.1rem" }}
                       >
                         {`${productInfo.price} ${productInfo.currency}`}
                       </Text>
                     </Stack>
                   </Flex>
-                  {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
-                    <Stack align='center'>
-                      <Text color='#FFF' fontSize={14}>
-                        {'Timp ramas sa cumperi produsul'}
+                  {this.props.secondsRemaining &&
+                  this.props.secondsRemaining >= 0 ? (
+                    <Stack align="center">
+                      <Text color="#FFF" fontSize={14}>
+                        {"Timp ramas sa cumperi produsul"}
                       </Text>
-                      <Text style={{ marginTop: 0 }} color='#FFF' fontWeight='bold' fontSize='16'>
+                      <Text
+                        style={{ marginTop: 0 }}
+                        color="#FFF"
+                        fontWeight="bold"
+                        fontSize="16"
+                      >
                         {`${this.props.secondsRemaining}s`}
                       </Text>
                     </Stack>
@@ -726,28 +750,28 @@ class LiveScreen extends Component {
                 </Flex>
                 {productInfo.currentStock > 0 ? (
                   <Button
-                    borderRadius='xl'
+                    borderRadius="xl"
                     style={{
-                      justifyContent: 'center',
-                      backgroundColor: '#000'
+                      justifyContent: "center",
+                      backgroundColor: "#000"
                     }}
-                    className='seekr-gradient-on-hover'
+                    className="seekr-gradient-on-hover"
                     onClick={this.handleOrder}
                   >
-                    <Text pr='10px' color='#FFFFFF'>
+                    <Text pr="10px" color="#FFFFFF">
                       Cumpara
                     </Text>
                   </Button>
                 ) : (
                   <Button
-                    borderRadius='xl'
+                    borderRadius="xl"
                     onClick={() => null}
                     style={{
-                      justifyContent: 'center',
-                      backgroundColor: '#999'
+                      justifyContent: "center",
+                      backgroundColor: "#999"
                     }}
                   >
-                    <Text pr='10px' color='#FFFFFF'>
+                    <Text pr="10px" color="#FFFFFF">
                       Waiting for the next item
                     </Text>
                   </Button>
@@ -757,7 +781,7 @@ class LiveScreen extends Component {
           </Stack>
         </Stack>
 
-        <Stack p='20px' pl='10px' h='100vh' w='30vw'>
+        <Stack p="20px" pl="10px" h="100vh" w="30vw">
           {/* {this.props.handleGoBack ? (
             <Pressable onPress={this.props.handleGoBack} style={{ opacity: 0 }}>
               <Flex align='center' pb='10px'>
@@ -767,15 +791,15 @@ class LiveScreen extends Component {
             </Pressable>
           ) : null} */}
           <Stack
-            h='100%'
-            p='20px'
-            w='100%'
-            bg='#FFFFFF'
-            borderRadius='25px'
-            boxShadow='0px 0px 36px 2px rgba(0,0,0,0.12);'
-            style={{ justifyContent: 'space-between' }}
+            h="100%"
+            p="20px"
+            w="100%"
+            bg="#FFFFFF"
+            borderRadius="25px"
+            boxShadow="0px 0px 36px 2px rgba(0,0,0,0.12);"
+            style={{ justifyContent: "space-between" }}
           >
-            <Text color='#000' fontWeight='bold'>
+            <Text color="#000" fontWeight="bold">
               Vorbeste cu {sellerInfo.username}
             </Text>
 
@@ -784,8 +808,8 @@ class LiveScreen extends Component {
                 flex: 1,
                 marginBottom: 10,
                 marginTop: 10,
-                overflow: 'scroll',
-                alignItems: 'flex-start'
+                overflow: "scroll",
+                alignItems: "flex-start"
               }}
             >
               <CommentsList comments={comments} isOnMobile={isOnMobile} />
@@ -800,10 +824,10 @@ class LiveScreen extends Component {
           </Stack>
         </Stack>
       </Flex>
-    )
+    );
   }
 }
 
-const styles = {}
+const styles = {};
 
-export default withRouter(LiveScreen)
+export default withRouter(LiveScreen);

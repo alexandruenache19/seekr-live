@@ -27,6 +27,7 @@ import { MdArrowBack } from "react-icons/md";
 import { FiInstagram, FiPlus } from "react-icons/fi";
 import { getJointEvent } from "../../actions/fetch";
 import firebase from "../../firebase/clientApp";
+import router from "next/router";
 import EventPage from "../e/[id]";
 import {
   getSeller,
@@ -309,6 +310,22 @@ export default class JoinEvent extends Component {
 
     window.addEventListener('scroll', this.handleScroll);
 
+    if (router.query) {
+      let name = null
+      let phoneNumber = null
+      let addressLine1 = null
+      if (router.query.n) {
+        name = router.query.n
+      }
+      if (router.query.p) {
+        phoneNumber = router.query.p
+      }
+      if (router.query.a) {
+        addressLine1 = router.query.a
+      }
+      this.setState({ name, phoneNumber, addressLine1 })
+    }
+
     await firebase
       .database()
       .ref(`joint-events/${jointEventId}/info/currentLiveUserId`)
@@ -514,11 +531,9 @@ export default class JoinEvent extends Component {
             handleGoBack={() =>
               this.setState({ displayEvent: false, eventId: null })
             }
-            baseDetails={{
-              name: this.state.name,
-              phoneNumber: this.state.phoneNumber,
-              addressLine1: this.state.addressLine1
-            }}
+            name={this.state.name}
+            phoneNumber={this.state.phoneNumber}
+            addressLine1={this.state.addressLine1}
           />
         </div>
       );
@@ -1041,9 +1056,6 @@ export const getServerSideProps = async context => {
   return {
     props: {
       isConfirmModal: true,
-      name: 'Radu',
-      phoneNumber: '+40771440831',
-      addressLine1: 'Str Astrelor 16',
       jointEvent: jointEvent,
       jointEventId: jointEventId,
       isOnMobile: isOnMobile

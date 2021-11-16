@@ -23,7 +23,7 @@ import { MessageInput, CommentsList } from '../../../components'
 import firebase from '../../../firebase/clientApp'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
 import Stories from '../../molecules/seller/Stories'
-import Countdown from '../../molecules/seller/Countdown'
+
 class LiveScreen extends Component {
   constructor (props) {
     super(props)
@@ -35,6 +35,8 @@ class LiveScreen extends Component {
       addressDetails: null,
       name: null,
       phoneNumber: null,
+      addressLine1: null,
+      addressLine2: null,
       isCheckoutModalOpen: false
     }
     this.handleOrder = this.handleOrder.bind(this)
@@ -114,7 +116,10 @@ class LiveScreen extends Component {
   }
 
   handleOrder () {
-    const { eventInfo, sellerInfo } = this.props
+    const {
+      eventInfo,
+      sellerInfo
+    } = this.props
 
     const {
       productInfo,
@@ -139,10 +144,10 @@ class LiveScreen extends Component {
       city: city,
       country: country,
       postalCode: postalCode,
-      addressLine1: addressLine1,
+      addressLine1: addressLine1 || this.props.addressLine1,
       addressLine2: addressLine2,
-      name: name,
-      phoneNumber: phoneNumber,
+      name: name || this.props.name,
+      phoneNumber: phoneNumber || this.props.phoneNumber,
       sellerStripeId: sellerInfo.stripeId,
       setDetailsInHomeState: details => {
         this.setState({

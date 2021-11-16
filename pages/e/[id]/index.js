@@ -120,6 +120,9 @@ class EventPage extends Component {
           eventInfo={eventInfo}
           comments={comments}
           username={username}
+          name={this.props.name}
+          phoneNumber={this.props.phoneNumber}
+          addressLine1={this.props.addressLine1}
           {...this.props}
         />
       );

@@ -43,8 +43,8 @@ const info = {
     title: "Email me",
     subtitle: "Get an email 5 minutes before the event starts."
   },
-  order: { title: "Complete Your Order", subtitle: "" },
-  payment: { title: "Complete Your Order", subtitle: "" },
+  order: { title: "Completeaza datele de livrare", subtitle: "" },
+  payment: { title: "Plaseaza Comanda", subtitle: "" },
   follow: { title: "Download the app to follow", subtitle: "Down" }
 };
 

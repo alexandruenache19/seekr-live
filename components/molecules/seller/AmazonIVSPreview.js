@@ -13,7 +13,7 @@ function AmazonIVSPreview ({ url, id, isLive }) {
   useEffect(() => {
     const script = document.createElement('script')
 
-    script.src = 'https://player.live-video.net/1.0.0/amazon-ivs-player.min.js'
+    script.src = 'https://player.live-video.net/1.5.0/amazon-ivs-player.min.js'
     script.async = true
 
     document.body.appendChild(script)

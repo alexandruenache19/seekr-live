@@ -727,16 +727,29 @@ class LiveScreen extends Component {
                 {productInfo.currentStock > 0 ? (
                   <Button
                     borderRadius='xl'
+                    // px='10px'
                     style={{
                       justifyContent: 'center',
-                      backgroundColor: '#000'
+                      background: 'rgb(63,60,145)',
+                      background:
+                        'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
                     }}
                     className='seekr-gradient-on-hover'
                     onClick={this.handleOrder}
                   >
-                    <Text pr='10px' color='#FFFFFF'>
-                      Cumpara
+                    <Text color='#FFFFFF' fontWeight='600'>
+                      {'Cumpara'}
                     </Text>
+                    {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
+                      <Text
+                        style={{ marginTop: 1, marginLeft: 5 }}
+                        fontWeight='normal'
+                        // fontSize='14'
+                        color='#FFFFFF'
+                      >
+                        {`00:${this.props.secondsRemaining > 0 ? this.props.secondsRemaining : '0' + this.props.secondsRemaining}`}
+                      </Text>
+                    ) : null}
                   </Button>
                 ) : (
                   <Button

@@ -116,10 +116,7 @@ class LiveScreen extends Component {
   }
 
   handleOrder () {
-    const {
-      eventInfo,
-      sellerInfo
-    } = this.props
+    const { eventInfo, sellerInfo } = this.props
 
     const {
       productInfo,
@@ -266,7 +263,9 @@ class LiveScreen extends Component {
               >
                 <Center flexDir='column'>
                   <FiRefreshCw style={{ fontSize: 18, color: '#FFF' }} />
-                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Refresh</Text>
+                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>
+                    Refresh
+                  </Text>
                 </Center>
               </Pressable>
               <Pressable
@@ -277,7 +276,9 @@ class LiveScreen extends Component {
               >
                 <Center flexDir='column'>
                   <FiShare style={{ fontSize: 18, color: '#FFF' }} />
-                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Distribuie</Text>
+                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>
+                    Distribuie
+                  </Text>
                 </Center>
               </Pressable>
             </Flex>
@@ -467,16 +468,20 @@ class LiveScreen extends Component {
                         <Text color='#FFFFFF' fontWeight='600'>
                           {'Cumpara'}
                         </Text>
-                        {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
-                          <Text
-                            style={{ marginTop: 1 }}
-                            fontWeight='normal'
-                            fontSize='11'
-                            color='#FFFFFF'
-                          >
-                            {`00:${this.props.secondsRemaining > 0 ? this.props.secondsRemaining : '0' + this.props.secondsRemaining}`}
-                          </Text>
-                        ) : null}
+                        {this.props.secondsRemaining &&
+                          this.props.secondsRemaining >= 0 ? (
+                            <Text
+                              style={{ marginTop: 1 }}
+                              fontWeight='normal'
+                              fontSize='11'
+                              color='#FFFFFF'
+                            >
+                              {`00:${this.props.secondsRemaining > 0
+                              ? this.props.secondsRemaining
+                              : '0' + this.props.secondsRemaining
+                              }`}
+                            </Text>
+                          ) : null}
                       </Stack>
                     </Button>
                   ) : (
@@ -495,7 +500,12 @@ class LiveScreen extends Component {
                       }}
                       onClick={() => null}
                     >
-                      <Text noOfLines={1} textOverflow='ellipsis' color='#FFFFFF' fontWeight='600'>
+                      <Text
+                        noOfLines={1}
+                        textOverflow='ellipsis'
+                        color='#FFFFFF'
+                        fontWeight='600'
+                      >
                         Waiting for the next item
                       </Text>
                     </Button>
@@ -553,7 +563,10 @@ class LiveScreen extends Component {
             borderRadius='20px'
             overflow='hidden'
             position='relative'
-            style={{ marginTop: events && events.length > 1 ? 10 : 0, boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)' }}
+            style={{
+              marginTop: events && events.length > 1 ? 10 : 0,
+              boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)'
+            }}
           >
             <AmazonIVS
               url={eventInfo.liveURL}
@@ -576,7 +589,9 @@ class LiveScreen extends Component {
               >
                 <Center flexDir='column'>
                   <FiRefreshCw style={{ fontSize: 18, color: '#FFF' }} />
-                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Refresh</Text>
+                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>
+                    Refresh
+                  </Text>
                 </Center>
               </Pressable>
               <Pressable
@@ -587,7 +602,9 @@ class LiveScreen extends Component {
               >
                 <Center flexDir='column'>
                   <FiShare style={{ fontSize: 18, color: '#FFF' }} />
-                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>Distribuie</Text>
+                  <Text color='#FFF' fontSize='12' style={{ marginTop: 4 }}>
+                    Distribuie
+                  </Text>
                 </Center>
               </Pressable>
             </Flex>
@@ -713,16 +730,22 @@ class LiveScreen extends Component {
                       </Text>
                     </Stack>
                   </Flex>
-                  {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
-                    <Stack align='center'>
-                      <Text color='#FFF' fontSize={14}>
-                        {'Timp ramas sa cumperi produsul'}
-                      </Text>
-                      <Text style={{ marginTop: 0 }} color='#FFF' fontWeight='bold' fontSize='16'>
-                        {`${this.props.secondsRemaining}s`}
-                      </Text>
-                    </Stack>
-                  ) : null}
+                  {this.props.secondsRemaining &&
+                    this.props.secondsRemaining >= 0 ? (
+                      <Stack align='center'>
+                        <Text color='#FFF' fontSize={14}>
+                          {'Timp ramas sa cumperi produsul'}
+                        </Text>
+                        <Text
+                          style={{ marginTop: 0 }}
+                          color='#FFF'
+                          fontWeight='bold'
+                          fontSize='16'
+                        >
+                          {`${this.props.secondsRemaining}s`}
+                        </Text>
+                      </Stack>
+                    ) : null}
                 </Flex>
                 {productInfo.currentStock > 0 ? (
                   <Button

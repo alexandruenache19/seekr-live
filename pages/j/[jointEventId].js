@@ -559,7 +559,7 @@ export default class JoinEvent extends Component {
 
     return (
       <Stack w="100vw" h="100%" justifyContent="center" alignItems="center">
-        {/* {showRegistrationModal && (
+        {showRegistrationModal && (
           <RegistrationModal
             isOpen={showRegistrationModal}
             onClose={() => this.setState({ showRegistrationModal: false })}
@@ -579,7 +579,7 @@ export default class JoinEvent extends Component {
               });
             }}
           />
-        )} */}
+        )}
 
         <Stack
           height="100vh"

@@ -412,11 +412,13 @@ export default class JoinEvent extends Component {
                 event: eventData,
                 sellerInfo: sellerInfo
               }),
-              showRegistrationModal: true,
               loading: false
             });
           }
         }
+        this.setState({
+          showRegistrationModal: true
+        })
       } else {
         this.setState({
           participants: sortedParticipants,
@@ -520,7 +522,7 @@ export default class JoinEvent extends Component {
               onClose={() => this.setState({ showRegistrationModal: false })}
               isOnMobile={isOnMobile}
               jointEventId={jointEvent.info.id}
-              // isConfirmModal={isConfirmModal}
+              isConfirmModal={jointEvent.info.timestamp <= new Date().getTime()}
               baseDetails={{
                 name: this.state.name,
                 phoneNumber: this.state.phoneNumber,
@@ -563,7 +565,7 @@ export default class JoinEvent extends Component {
             onClose={() => this.setState({ showRegistrationModal: false })}
             isOnMobile={isOnMobile}
             jointEventId={jointEvent.info.id}
-            // isConfirmModal={isConfirmModal}
+            isConfirmModal={jointEvent.info.timestamp <= new Date().getTime()}
             baseDetails={{
               name: this.state.name,
               phoneNumber: this.state.phoneNumber,

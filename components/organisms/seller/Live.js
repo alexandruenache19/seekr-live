@@ -23,9 +23,10 @@ import { MessageInput, CommentsList } from '../../../components'
 import firebase from '../../../firebase/clientApp'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
 import Stories from '../../molecules/seller/Stories'
+import axios from 'axios'
 
 class LiveScreen extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -44,7 +45,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  componentDidMount () {
+  async componentDidMount() {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -85,7 +86,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate (prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -106,7 +107,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -114,13 +115,18 @@ class LiveScreen extends Component {
         .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
         .off('value', this.productInfoListener)
 
+    this.viewsInfoListener && firebase
+      .database()
+      .ref(`events/${eventInfo.id}/info/viewers`)
+      .off('value', this.viewsInfoListener)
+
     firebase
       .database()
       .ref(`events/${eventInfo.id}/info/viewers`)
       .set(firebase.database.ServerValue.increment(-1))
   }
 
-  handleOrder () {
+  handleOrder() {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -195,7 +201,7 @@ class LiveScreen extends Component {
     // })
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -203,11 +209,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -374,7 +380,7 @@ class LiveScreen extends Component {
                         textAlign='center'
                         ml='3px'
                       >
-                        {viewers}
+                        {viewers && viewers > 200 ? '200+' : viewers}
                       </Text>
                     </Center>
                   </Center>
@@ -481,18 +487,18 @@ class LiveScreen extends Component {
                         </Text>
                         {this.props.secondsRemaining &&
                           this.props.secondsRemaining >= 0 ? (
-                            <Text
-                              style={{ marginTop: 1 }}
-                              fontWeight='normal'
-                              fontSize='11'
-                              color='#FFFFFF'
-                            >
-                              {`00:${this.props.secondsRemaining > 0
+                          <Text
+                            style={{ marginTop: 1 }}
+                            fontWeight='normal'
+                            fontSize='11'
+                            color='#FFFFFF'
+                          >
+                            {`00:${this.props.secondsRemaining > 0
                               ? this.props.secondsRemaining
                               : '0' + this.props.secondsRemaining
                               }`}
-                            </Text>
-                          ) : null}
+                          </Text>
+                        ) : null}
                       </Stack>
                     </Button>
                   ) : (
@@ -749,20 +755,20 @@ class LiveScreen extends Component {
                   </Flex>
                   {this.props.secondsRemaining &&
                     this.props.secondsRemaining >= 0 ? (
-                      <Stack align='center'>
-                        <Text color='#FFF' fontSize={14}>
-                          {'Timp ramas sa cumperi produsul'}
-                        </Text>
-                        <Text
-                          style={{ marginTop: 0 }}
-                          color='#FFF'
-                          fontWeight='bold'
-                          fontSize='16'
-                        >
-                          {`${this.props.secondsRemaining}s`}
-                        </Text>
-                      </Stack>
-                    ) : null}
+                    <Stack align='center'>
+                      <Text color='#FFF' fontSize={14}>
+                        {'Timp ramas sa cumperi produsul'}
+                      </Text>
+                      <Text
+                        style={{ marginTop: 0 }}
+                        color='#FFF'
+                        fontWeight='bold'
+                        fontSize='16'
+                      >
+                        {`${this.props.secondsRemaining}s`}
+                      </Text>
+                    </Stack>
+                  ) : null}
                 </Flex>
                 {productInfo.currentStock > 0 ? (
                   <Button

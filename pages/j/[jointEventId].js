@@ -516,7 +516,7 @@ export default class JoinEvent extends Component {
     if (displayEvent) {
       return (
         <div style={{ width: "100%", height: "100%" }}>
-          {showRegistrationModal && (
+          {/* {showRegistrationModal && (
             <RegistrationModal
               isOpen={showRegistrationModal}
               onClose={() => this.setState({ showRegistrationModal: false })}
@@ -536,7 +536,7 @@ export default class JoinEvent extends Component {
                 });
               }}
             />
-          )}
+          )} */}
           <EventPage
             events={events}
             participants={participants}
@@ -559,7 +559,7 @@ export default class JoinEvent extends Component {
 
     return (
       <Stack w="100vw" h="100%" justifyContent="center" alignItems="center">
-        {showRegistrationModal && (
+        {/* {showRegistrationModal && (
           <RegistrationModal
             isOpen={showRegistrationModal}
             onClose={() => this.setState({ showRegistrationModal: false })}
@@ -579,7 +579,7 @@ export default class JoinEvent extends Component {
               });
             }}
           />
-        )}
+        )} */}
 
         <Stack
           height="100vh"

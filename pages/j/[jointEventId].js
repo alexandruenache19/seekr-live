@@ -417,12 +417,13 @@ export default class JoinEvent extends Component {
           }
         }
         this.setState({
-          showRegistrationModal: true
+          // showRegistrationModal: true,
+          loading: false,
         })
       } else {
         this.setState({
           participants: sortedParticipants,
-          showRegistrationModal: true,
+          // showRegistrationModal: true,
           loading: false
         });
       }
@@ -981,7 +982,7 @@ export default class JoinEvent extends Component {
               </Flex> */}
             </Stack>
           </ScrollView>
-          <Stack
+          {/* <Stack
             style={{
               justifyContent: "center",
               alignItems: "center",
@@ -1038,7 +1039,7 @@ export default class JoinEvent extends Component {
                 si primesti livrarea gratis la orice comanda
               </Text>
             </Button>
-          </Stack>
+          </Stack> */}
         </Stack>
       </Stack>
     );

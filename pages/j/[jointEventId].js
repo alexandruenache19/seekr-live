@@ -639,11 +639,11 @@ export default class JoinEvent extends Component {
                   >
                     {jointEvent.info.description}
                   </Text>
-                  <Countdown
+                  {/* <Countdown
                     isOnMobile={isOnMobile}
                     timeTillDate="11 17 2021, 6:30 pm"
                     timeFormat="MM DD YYYY, h:mm a"
-                  />
+                  /> */}
                   <Button
                     style={{
                       // backgroundColor: "#121212",

@@ -644,7 +644,7 @@ export default class JoinEvent extends Component {
                     isOnMobile={isOnMobile}
                     timeTillDate="11 17 2021, 6:30 pm"
                     timeFormat="MM DD YYYY, h:mm a"
-                  /> */}
+                  />
                   <Button
                     style={{
                       // backgroundColor: "#121212",
@@ -677,6 +677,7 @@ export default class JoinEvent extends Component {
                   <Text style={{ color: "#FFF", fontSize: 14, marginTop: 8 }}>
                     si primesti livrarea gratis la orice comanda
                   </Text>
+                  */}
                 </Stack>
               </div>
             </Stack>

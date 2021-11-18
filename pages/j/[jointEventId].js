@@ -598,7 +598,7 @@ export default class JoinEvent extends Component {
           >
             <Stack
               className="header"
-              minHeight="70vh"
+              minHeight="50vh"
               // maxHeight='100vh'
               w="100%"
               background='url("https://s3.amazonaws.com/odin-images/images/rpDUoOvgxFT.jpeg")'
@@ -702,7 +702,7 @@ export default class JoinEvent extends Component {
                   fontSize="20px"
                   style={{ marginBottom: "1rem" }}
                 >
-                  Arunca o privire la instagram-ul expozantilor
+                  Arunca o privire la magazinele expozantilor
                 </Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {participants.map(sellerInfo => {
@@ -711,7 +711,7 @@ export default class JoinEvent extends Component {
                         style={{ marginRight: "1rem" }}
                         onPress={() => {
                           if (sellerInfo.instagramUrl) {
-                            window.open(sellerInfo.instagramUrl, "_blank");
+                            window.open(`/${sellerInfo.username}`, "_blank");
                           }
                         }}
                       >

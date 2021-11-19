@@ -58,12 +58,12 @@ const ShopItems = ({ isOnMobile, products, initialProduct, sellerInfo, showOrder
     }
   }, [initialProduct])
 
-  function addProductToCard (product) {
+  function addProductToCard(product) {
     const newCart = currentProducts.concat(product)
     setCurrentProducts(newCart)
   }
 
-  async function handlePlaceOrder (details) {
+  async function handlePlaceOrder(details) {
     // console.log(details)
     // console.log(currentProducts)
     // console.log(totalOrder)
@@ -124,7 +124,7 @@ const ShopItems = ({ isOnMobile, products, initialProduct, sellerInfo, showOrder
     <Stack
       maxWidth='850'
       style={{
-        padding: '1rem 1rem 3rem 1rem',
+        padding: '1rem 1rem 5rem 1rem',
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative'
@@ -139,7 +139,8 @@ const ShopItems = ({ isOnMobile, products, initialProduct, sellerInfo, showOrder
             padding: 20,
             zIndex: 10,
             minWidth: isOnMobile ? 250 : 350,
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
           }}
           boxShadow='0px 0px 38px -2px rgba(0,0,0,0.62)'
           className='seekr-gradient-on-hover'

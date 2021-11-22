@@ -14,8 +14,7 @@ import {
   ModalBody
 } from '@chakra-ui/react'
 import Lottie from 'react-lottie'
-import { Pressable } from 'react-native'
-import { FaPlus, FaMinus } from 'react-icons/fa'
+import { Pressable, ScrollView } from 'react-native'
 import { FiEye, FiRefreshCw, FiShare } from 'react-icons/fi'
 import { MdArrowBack } from 'react-icons/md'
 import * as animationData from './live.json'
@@ -26,7 +25,7 @@ import Stories from '../../molecules/seller/Stories'
 import axios from 'axios'
 
 class LiveScreen extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -38,14 +37,15 @@ class LiveScreen extends Component {
       phoneNumber: null,
       addressLine1: null,
       addressLine2: null,
-      isCheckoutModalOpen: false
+      isCheckoutModalOpen: false,
+      eventProducts: null
     }
     this.handleOrder = this.handleOrder.bind(this)
     this.handleShare = this.handleShare.bind(this)
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  async componentDidMount() {
+  async componentDidMount () {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -57,6 +57,15 @@ class LiveScreen extends Component {
       .database()
       .ref(`events/${eventInfo.id}/info/viewers`)
       .set(firebase.database.ServerValue.increment(1))
+
+    this.eventProductsListener = firebase
+      .database()
+      .ref(`events/${eventInfo.id}/products`)
+      .on('value', async snapshot => {
+        this.setState({
+          eventProducts: snapshot.val()
+        })
+      })
 
     this.productInfoListener = firebase
       .database()
@@ -86,7 +95,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate (prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -107,13 +116,19 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
         .database()
         .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
         .off('value', this.productInfoListener)
+
+    this.eventProductsListener &&
+      firebase
+        .database()
+        .ref(`events/${eventInfo.id}/products`)
+        .off('value', this.eventProductsListener)
 
     this.viewsInfoListener && firebase
       .database()
@@ -126,7 +141,7 @@ class LiveScreen extends Component {
       .set(firebase.database.ServerValue.increment(-1))
   }
 
-  handleOrder() {
+  handleOrder () {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -201,7 +216,7 @@ class LiveScreen extends Component {
     // })
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -209,11 +224,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  render() {
+  render () {
     const {
       isOnMobile,
       sellerInfo,
@@ -226,7 +241,8 @@ class LiveScreen extends Component {
       productInfo,
       orderQuantity,
       viewers,
-      isCheckoutModalOpen
+      isCheckoutModalOpen,
+      eventProducts
     } = this.state
 
     if (isOnMobile) {
@@ -299,23 +315,6 @@ class LiveScreen extends Component {
                 </Center>
               </Pressable>
             </Flex>
-            {/* <Button
-              position='absolute'
-              top='8px'
-              right='12px'
-              h='2em'
-              w='2em'
-              minW='0'
-              p='5px'
-              zIndex={10}
-              borderRadius='50%'
-              align='center'
-              justify='center'
-              bg='transparent'
-              onClick={this.handleShare}
-            >
-
-            </Button> */}
 
             <Flex
               position='absolute'
@@ -402,11 +401,74 @@ class LiveScreen extends Component {
                   'linear-gradient(0deg, rgba(0,0,0,0.49) 0%, rgba(0,0,0,0.6685049019607843) 0%, rgba(0,0,0,0) 100%)'
               }}
             >
-              <Center w='100%' style={{ overflow: 'scroll', height: 90 }}>
-                <Center w='100%' pt='120px'>
-                  <CommentsList comments={comments} isOnMobile />
+              <Flex justify='space-between' align='flex-end'>
+                <Center w='100%' style={{ overflow: 'scroll', height: 90 }} flex={1}>
+                  <Center w='100%' pt='120px'>
+                    <CommentsList comments={comments} isOnMobile />
+                  </Center>
                 </Center>
-              </Center>
+                <Stack
+                  borderRadius='xl'
+                  // bg='rgba(0,0,0,0.3)'
+                  px='2px'
+                  py='8px'
+                >
+                  <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={{
+                      overflow: 'scroll',
+                      alignSelf: 'flex-end',
+                      position: 'relative',
+                      flexGrow: 0,
+                      // paddingTop: 10,
+                      // paddingBottom: 10,
+                      maxHeight: this.props.globalMuted ? '25vh' : '35vh'
+                    }}
+                  >
+                    {eventProducts ? (
+                      Object.values(eventProducts).map((prod, index) => (
+                        <Pressable
+                          key={prod.id}
+                          onPress={() => {
+                            if (prod.currentStock > 0) {
+                              this.setState({ productInfo: prod })
+                            } else {
+                              alert('Out of stock')
+                            }
+                          }}
+                        >
+                          <Stack align='center' style={{ marginTop: index > 0 ? '0.6rem' : 0 }}>
+                            <img
+                              src={prod.imageURL}
+                              style={{
+                                height: 64,
+                                width: 64,
+                                backgroundColor: '#F8F8F8',
+                                // borderRadius: '50%',
+                                opacity: prod.currentStock > 0 ? 1 : 0.7,
+                                borderRadius: '20%',
+                                objectFit: 'cover',
+                                boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)'
+                              }}
+                            />
+                            <Text
+                              color='#FFF'
+                              align='center'
+                              noOfLines={1}
+                              textOverflow='ellipsis'
+                              maxW='64px'
+                              style={{ fontSize: 11, marginTop: '0.3rem' }}
+                            >
+                              {prod.currentStock > 0 ? `${prod.price} ${prod.currency}` : 'Out of stock'}
+                            </Text>
+                          </Stack>
+                        </Pressable>
+                      ))
+                    ) : null}
+
+                  </ScrollView>
+                </Stack>
+              </Flex>
               <Stack
                 w='100%'
                 justify='space-between'
@@ -487,18 +549,18 @@ class LiveScreen extends Component {
                         </Text>
                         {this.props.secondsRemaining &&
                           this.props.secondsRemaining >= 0 ? (
-                          <Text
-                            style={{ marginTop: 1 }}
-                            fontWeight='normal'
-                            fontSize='11'
-                            color='#FFFFFF'
-                          >
-                            {`00:${this.props.secondsRemaining > 0
+                            <Text
+                              style={{ marginTop: 1 }}
+                              fontWeight='normal'
+                              fontSize='11'
+                              color='#FFFFFF'
+                            >
+                              {`00:${this.props.secondsRemaining > 0
                               ? this.props.secondsRemaining
                               : '0' + this.props.secondsRemaining
                               }`}
-                          </Text>
-                        ) : null}
+                            </Text>
+                          ) : null}
                       </Stack>
                     </Button>
                   ) : (
@@ -523,7 +585,7 @@ class LiveScreen extends Component {
                         color='#FFFFFF'
                         fontWeight='600'
                       >
-                        Waiting for the next item
+                        Wait or choose another product to order
                       </Text>
                     </Button>
                   )}
@@ -714,7 +776,10 @@ class LiveScreen extends Component {
                 w='100%'
                 flex={1}
               >
-                <Flex align='center' justify='space-between' w='100%'>
+                {/* <Flex w='100%' justify='flex-end'>
+
+                </Flex> */}
+                <Flex justify='space-between' align='flex-end' w='100%'>
                   <Flex
                     borderRadius='xl'
                     bg='rgba(0,0,0,0.3)'
@@ -722,7 +787,7 @@ class LiveScreen extends Component {
                     align='center'
                     w='auto'
                     minW={0}
-                    alignSelf='start'
+                    alignSelf='flex-end'
                   >
                     {productInfo.imageURL ? (
                       <img
@@ -753,32 +818,62 @@ class LiveScreen extends Component {
                       </Text>
                     </Stack>
                   </Flex>
-                  {this.props.secondsRemaining &&
-                    this.props.secondsRemaining >= 0 ? (
-                    <Stack align='center'>
-                      <Text color='#FFF' fontSize={14}>
-                        {'Timp ramas sa cumperi produsul'}
-                      </Text>
-                      <Text
-                        style={{ marginTop: 0 }}
-                        color='#FFF'
-                        fontWeight='bold'
-                        fontSize='16'
-                      >
-                        {`${this.props.secondsRemaining}s`}
-                      </Text>
-                    </Stack>
-                  ) : null}
+                  <Stack
+                    borderRadius='xl'
+                    bg='rgba(0,0,0,0.3)'
+                    p='8px'
+                  >
+                    <ScrollView
+                      showsVerticalScrollIndicator={false}
+                      style={{
+                        overflow: 'scroll',
+                        alignSelf: 'flex-end',
+                        position: 'relative',
+                        flexGrow: 0,
+                        // paddingTop: 10,
+                        // paddingBottom: 10,
+                        maxHeight: this.props.globalMuted ? '25vh' : '55vh'
+                      }}
+                    >
+                      {eventProducts ? (
+                        Object.values(eventProducts).map((prod, index) => (
+                          <Pressable
+                            key={prod.id}
+                            onPress={() => {
+                              this.setState({ productInfo: prod })
+                            }}
+                          >
+                            <Stack align='center' style={{ marginTop: index > 0 ? '0.6rem' : 0 }}>
+                              <img
+                                src={prod.imageURL}
+                                style={{
+                                  height: 64,
+                                  width: 64,
+                                  // borderRadius: '50%',
+                                  borderRadius: '20%',
+                                  objectFit: 'cover',
+                                  boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)'
+                                }}
+                              />
+                              <Text color='#FFF' align='center' style={{ fontSize: 14, marginTop: '0.3rem', fontWeight: 'bold' }}>
+                                {`${prod.price} ${prod.currency}`}
+                              </Text>
+                            </Stack>
+                          </Pressable>
+                        ))
+                      ) : null}
+
+                    </ScrollView>
+                  </Stack>
                 </Flex>
-                {productInfo.currentStock > 0 ? (
+                {productInfo && productInfo.currentStock > 0 ? (
                   <Button
                     borderRadius='xl'
                     // px='10px'
                     style={{
                       justifyContent: 'center',
                       background: 'rgb(63,60,145)',
-                      background:
-                        'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
+                      background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
                     }}
                     className='seekr-gradient-on-hover'
                     onClick={this.handleOrder}
@@ -807,7 +902,7 @@ class LiveScreen extends Component {
                     }}
                   >
                     <Text pr='10px' color='#FFFFFF'>
-                      Waiting for the next item
+                      Wait or choose another product to order
                     </Text>
                   </Button>
                 )}

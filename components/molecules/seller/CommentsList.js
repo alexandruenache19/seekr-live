@@ -5,6 +5,7 @@ import React, {
   forwardRef,
   useImperativeHandle
 } from 'react'
+import { ScrollView } from 'react-native'
 import {
   List,
   ListItem,
@@ -29,7 +30,12 @@ const CommentsList = ({ comments, isOnMobile }) => {
   })
 
   return (
-    <List style={{ overflowY: 'auto', width: '100%' }} spacing={3}>
+    <List
+      // showsVerticalScrollIndicator={false}
+      style={{ overflowY: 'auto', width: '100%' }}
+      spacing={3}
+      className='comment-list'
+    >
       {comments.map((comment, i) => (
         <ListItem key={i} style={{ marginTop: 5 }}>
           <Flex justify='flex-start' alignItems=''>

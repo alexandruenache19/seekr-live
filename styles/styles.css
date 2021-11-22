@@ -134,3 +134,11 @@ a.left {
     width: 100px;
     height: 100px;
 }
+
+*{
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}

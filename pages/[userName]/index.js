@@ -22,7 +22,8 @@ class UserPage extends PureComponent {
     super(props);
     this.state = {
       currentEventId: null,
-      loading: true
+      loading: true,
+      globalMuted: true
     };
   }
 
@@ -40,7 +41,14 @@ class UserPage extends PureComponent {
     const { currentEventId } = this.state;
     const { isOnMobile, userProfile } = this.props;
     if (currentEventId) {
-      return <EventPage eventId={currentEventId} isOnMobile={isOnMobile} />;
+      return (
+        <EventPage
+          eventId={currentEventId}
+          isOnMobile={isOnMobile}
+          setGlobalMuted={bool => this.setState({ globalMuted: bool })}
+          globalMuted={this.state.globalMuted}
+        />
+      )
     } else {
       return (
         <Stack style={{ marginTop: "3rem" }}>

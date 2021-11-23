@@ -316,12 +316,12 @@ class LiveScreen extends Component {
               </Pressable>
             </Flex>
 
-            <Flex
+            <Stack
               position='absolute'
               left='10px'
               top='10px'
               zIndex={15}
-              align='center'
+              align='flex-start'
               style={{ marginTop: 0, justifyContent: 'flex-start' }}
             >
               <Flex
@@ -385,7 +385,74 @@ class LiveScreen extends Component {
                   </Center>
                 </Stack>
               </Flex>
-            </Flex>
+              <Stack
+                borderRadius='xl'
+                style={{ marginTop: '0.8rem' }}
+              >
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  style={{
+                    overflow: 'scroll',
+                    alignSelf: 'flex-end',
+                    position: 'relative',
+                    flexGrow: 0,
+                    maxHeight: '55vh'
+                  }}
+                >
+                  {eventProducts ? (
+                    Object.values(eventProducts).map((prod, index) => (
+                      <Pressable
+                        key={prod.id}
+                        onPress={() => {
+                          if (prod.currentStock) {
+                            this.setState({ productInfo: prod }, () => {
+                              this.handleOrder()
+                            })
+                          } else {
+                            alert('Out of stock!')
+                          }
+                        }}
+                      >
+                        <Stack
+                          align='center'
+                          bg='rgba(0,0,0,0.3)'
+                          p='7px'
+                          borderRadius='xl'
+                          style={{ marginTop: index > 0 ? '0.5rem' : 0 }}
+                        >
+                          <img
+                            src={prod.imageURL}
+                            style={{
+                              height: 'auto',
+                              width: 56,
+                              minHeight: 56,
+                              // borderRadius: '50%',
+                              borderRadius: 5,
+                              objectFit: 'cover',
+                              boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)'
+                            }}
+                          />
+                          {/* <Center position='absolute' bottom='15px' right='0px' bg='#FFF'> */}
+                          <Text
+                            color='#FFF'
+                            align='center'
+                            noOfLines={1}
+                            maxW='56px'
+                            textOverflow='ellipsis'
+                            style={{
+                              fontSize: 11, marginTop: '0.2rem', marginBottom: 0
+                            }}
+                          >
+                            {prod.currentStock > 0 ? `${prod.price} ${prod.currency}` : 'Out of stock'}
+                          </Text>
+                          {/* </Center> */}
+                        </Stack>
+                      </Pressable>
+                    ))
+                  ) : null}
+                </ScrollView>
+              </Stack>
+            </Stack>
             <Stack
               position='absolute'
               left='0px'
@@ -407,67 +474,6 @@ class LiveScreen extends Component {
                     <CommentsList comments={comments} isOnMobile />
                   </Center>
                 </Center>
-                <Stack
-                  borderRadius='xl'
-                  // bg='rgba(0,0,0,0.3)'
-                  px='2px'
-                  py='8px'
-                >
-                  <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={{
-                      overflow: 'scroll',
-                      alignSelf: 'flex-end',
-                      position: 'relative',
-                      flexGrow: 0,
-                      // paddingTop: 10,
-                      // paddingBottom: 10,
-                      maxHeight: this.props.globalMuted ? '25vh' : '35vh'
-                    }}
-                  >
-                    {eventProducts ? (
-                      Object.values(eventProducts).map((prod, index) => (
-                        <Pressable
-                          key={prod.id}
-                          onPress={() => {
-                            if (prod.currentStock > 0) {
-                              this.setState({ productInfo: prod })
-                            } else {
-                              alert('Out of stock')
-                            }
-                          }}
-                        >
-                          <Stack align='center' style={{ marginTop: index > 0 ? '0.6rem' : 0 }}>
-                            <img
-                              src={prod.imageURL}
-                              style={{
-                                height: 64,
-                                width: 64,
-                                backgroundColor: '#F8F8F8',
-                                // borderRadius: '50%',
-                                opacity: prod.currentStock > 0 ? 1 : 0.7,
-                                borderRadius: '20%',
-                                objectFit: 'cover',
-                                boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)'
-                              }}
-                            />
-                            <Text
-                              color='#FFF'
-                              align='center'
-                              noOfLines={1}
-                              textOverflow='ellipsis'
-                              maxW='64px'
-                              style={{ fontSize: 11, marginTop: '0.3rem' }}
-                            >
-                              {prod.currentStock > 0 ? `${prod.price} ${prod.currency}` : 'Out of stock'}
-                            </Text>
-                          </Stack>
-                        </Pressable>
-                      ))
-                    ) : null}
-
-                  </ScrollView>
-                </Stack>
               </Flex>
               <Stack
                 w='100%'
@@ -498,8 +504,8 @@ class LiveScreen extends Component {
                     <img
                       src={productInfo.imageURL}
                       style={{
-                        height: 50,
-                        width: 50,
+                        height: 45,
+                        width: 45,
                         objectFit: 'cover',
                         borderRadius: 10,
                         marginRight: 8
@@ -535,7 +541,7 @@ class LiveScreen extends Component {
                           'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
                         minHeight: '100%',
                         flex: 1,
-                        height: 50,
+                        height: 45,
                         // width: 'auto',
                         minWidth: 120,
                         marginLeft: 20
@@ -694,17 +700,18 @@ class LiveScreen extends Component {
               </Pressable>
             </Flex>
 
-            <Flex
+            <Stack
               position='absolute'
               left='15px'
               top='15px'
               zIndex={10}
-              align='center'
+              align='flex-start'
               style={{ marginTop: 0, justifyContent: 'flex-start' }}
             >
               <Flex
                 borderRadius='xl'
                 p='5px'
+                pr='8px'
                 bg='rgba(0,0,0,0.3)'
                 justify='flex-start'
                 alignItems='center'
@@ -764,7 +771,62 @@ class LiveScreen extends Component {
                   </Center>
                 </Stack>
               </Flex>
-            </Flex>
+              <Stack
+                borderRadius='xl'
+                style={{ marginTop: '0.8rem' }}
+              >
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  style={{
+                    overflow: 'scroll',
+                    alignSelf: 'flex-end',
+                    position: 'relative',
+                    flexGrow: 0,
+                    maxHeight: '55vh'
+                  }}
+                >
+                  {eventProducts ? (
+                    Object.values(eventProducts).map((prod, index) => (
+                      <Pressable
+                        key={prod.id}
+                        onPress={() => {
+                          this.setState({ productInfo: prod }, () => {
+                            this.handleOrder()
+                          })
+                        }}
+                      >
+                        <Stack
+                          align='center'
+                          bg='rgba(0,0,0,0.3)'
+                          p='7px'
+                          borderRadius='xl'
+                          style={{ marginTop: index > 0 ? '0.5rem' : 0 }}
+                        >
+                          <img
+                            src={prod.imageURL}
+                            style={{
+                              height: 'auto',
+                              width: 64,
+                              minHeight: 64,
+                              // borderRadius: '50%',
+                              borderRadius: 5,
+                              objectFit: 'cover',
+                              boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)'
+                            }}
+                          />
+                          {/* <Center position='absolute' bottom='15px' right='0px' bg='#FFF'> */}
+                          <Text color='#FFF' align='center' style={{ fontSize: 11, marginTop: '0.2rem', marginBottom: 0 }}>
+                            {`${prod.price} ${prod.currency}`}
+                          </Text>
+                          {/* </Center> */}
+                        </Stack>
+                      </Pressable>
+                    ))
+                  ) : null}
+
+                </ScrollView>
+              </Stack>
+            </Stack>
 
             {productInfo ? (
               <Stack
@@ -818,53 +880,6 @@ class LiveScreen extends Component {
                       </Text>
                     </Stack>
                   </Flex>
-                  <Stack
-                    borderRadius='xl'
-                    bg='rgba(0,0,0,0.3)'
-                    p='8px'
-                  >
-                    <ScrollView
-                      showsVerticalScrollIndicator={false}
-                      style={{
-                        overflow: 'scroll',
-                        alignSelf: 'flex-end',
-                        position: 'relative',
-                        flexGrow: 0,
-                        // paddingTop: 10,
-                        // paddingBottom: 10,
-                        maxHeight: this.props.globalMuted ? '25vh' : '55vh'
-                      }}
-                    >
-                      {eventProducts ? (
-                        Object.values(eventProducts).map((prod, index) => (
-                          <Pressable
-                            key={prod.id}
-                            onPress={() => {
-                              this.setState({ productInfo: prod })
-                            }}
-                          >
-                            <Stack align='center' style={{ marginTop: index > 0 ? '0.6rem' : 0 }}>
-                              <img
-                                src={prod.imageURL}
-                                style={{
-                                  height: 64,
-                                  width: 64,
-                                  // borderRadius: '50%',
-                                  borderRadius: '20%',
-                                  objectFit: 'cover',
-                                  boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)'
-                                }}
-                              />
-                              <Text color='#FFF' align='center' style={{ fontSize: 14, marginTop: '0.3rem', fontWeight: 'bold' }}>
-                                {`${prod.price} ${prod.currency}`}
-                              </Text>
-                            </Stack>
-                          </Pressable>
-                        ))
-                      ) : null}
-
-                    </ScrollView>
-                  </Stack>
                 </Flex>
                 {productInfo && productInfo.currentStock > 0 ? (
                   <Button

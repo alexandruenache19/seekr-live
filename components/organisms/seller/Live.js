@@ -25,7 +25,7 @@ import Stories from '../../molecules/seller/Stories'
 import axios from 'axios'
 
 class LiveScreen extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -45,7 +45,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     const { eventInfo } = this.props
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -95,7 +95,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate (prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -116,7 +116,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -141,7 +141,7 @@ class LiveScreen extends Component {
       .set(firebase.database.ServerValue.increment(-1))
   }
 
-  handleOrder () {
+  handleOrder() {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -216,7 +216,7 @@ class LiveScreen extends Component {
     // })
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -224,11 +224,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -555,18 +555,18 @@ class LiveScreen extends Component {
                         </Text>
                         {this.props.secondsRemaining &&
                           this.props.secondsRemaining >= 0 ? (
-                            <Text
-                              style={{ marginTop: 1 }}
-                              fontWeight='normal'
-                              fontSize='11'
-                              color='#FFFFFF'
-                            >
-                              {`00:${this.props.secondsRemaining > 0
+                          <Text
+                            style={{ marginTop: 1 }}
+                            fontWeight='normal'
+                            fontSize='11'
+                            color='#FFFFFF'
+                          >
+                            {`00:${this.props.secondsRemaining > 0
                               ? this.props.secondsRemaining
                               : '0' + this.props.secondsRemaining
                               }`}
-                            </Text>
-                          ) : null}
+                          </Text>
+                        ) : null}
                       </Stack>
                     </Button>
                   ) : (
@@ -790,9 +790,13 @@ class LiveScreen extends Component {
                       <Pressable
                         key={prod.id}
                         onPress={() => {
-                          this.setState({ productInfo: prod }, () => {
-                            this.handleOrder()
-                          })
+                          if (prod.currentStock) {
+                            this.setState({ productInfo: prod }, () => {
+                              this.handleOrder()
+                            })
+                          } else {
+                            alert('Out of stock!')
+                          }
                         }}
                       >
                         <Stack
@@ -816,7 +820,7 @@ class LiveScreen extends Component {
                           />
                           {/* <Center position='absolute' bottom='15px' right='0px' bg='#FFF'> */}
                           <Text color='#FFF' align='center' style={{ fontSize: 11, marginTop: '0.2rem', marginBottom: 0 }}>
-                            {`${prod.price} ${prod.currency}`}
+                            {prod.currentStock > 0 ? `${prod.price} ${prod.currency}` : 'Out of stock'}
                           </Text>
                           {/* </Center> */}
                         </Stack>

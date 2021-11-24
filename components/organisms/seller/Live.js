@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import { withRouter } from 'next/router'
 import {
   Flex,
@@ -11,7 +11,11 @@ import {
   ModalOverlay,
   ModalContent,
   ModalCloseButton,
-  ModalBody
+  ModalBody,
+  ModalHeader,
+  FormControl,
+  Input,
+  useToast
 } from '@chakra-ui/react'
 import Lottie from 'react-lottie'
 import { Pressable, ScrollView } from 'react-native'
@@ -20,9 +24,105 @@ import { MdArrowBack } from 'react-icons/md'
 import * as animationData from './live.json'
 import { MessageInput, CommentsList } from '../../../components'
 import firebase from '../../../firebase/clientApp'
+import { addComment } from '../../../actions/event'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
 import Stories from '../../molecules/seller/Stories'
-import axios from 'axios'
+
+const AuctionRegistrationModal = ({
+  title,
+  isOpen,
+  onClose,
+  baseDetails,
+  isOnMobile,
+  ...props
+}) => {
+  const [name, setName] = useState(baseDetails.name || '')
+  const [phoneNumber, setPhoneNumber] = useState(baseDetails.phoneNumber || '')
+  const [addressLine1, setAddressLine1] = useState(
+    baseDetails.addressLine1 || ''
+  )
+
+  const toast = useToast()
+  return (
+    <Modal
+      motionPreset='scale'
+      isCentered
+      isOpen={isOpen}
+      onClose={onClose}
+      size='2xl'
+    >
+      <ModalOverlay />
+      <ModalContent
+        maxW='93vw'
+        p={isOnMobile ? 10 : 10}
+        py={isOnMobile ? 5 : 10}
+        borderRadius={isOnMobile ? 10 : 30}
+      >
+        <ModalHeader px='0px'>
+          <Text>✅ Confirma-ti detaliile pentru a licita</Text>
+        </ModalHeader>
+        {/* <ModalCloseButton /> */}
+        <Stack
+          style={{
+            overflow: 'scroll',
+            maxHeight: '60vh',
+            paddingBottom: '1rem'
+          }}
+        >
+          <FormControl id='name' isRequired style={{ marginBottom: 10 }}>
+            <Input
+              value={name}
+              placeholder='Nume si prenume'
+              onChange={e => setName(e.target.value)}
+            />
+          </FormControl>
+          <FormControl id='phone' isRequired style={{ marginBottom: 10 }}>
+            <Input
+              placeholder='Numar de telefon'
+              value={phoneNumber}
+              onChange={e => setPhoneNumber(e.target.value)}
+            />
+          </FormControl>
+          <FormControl id='address' isRequired style={{ marginBottom: 10 }}>
+            <FormControl style={styles.formRow} id='address-line-1'>
+              <Input
+                placeholder='Adresa de livrare'
+                value={addressLine1}
+                onChange={e => setAddressLine1(e.target.value)}
+              />
+            </FormControl>
+          </FormControl>
+          <Button
+            style={{ backgroundColor: '#121212', flex: 1, padding: 10 }}
+            onClick={async () => {
+              if (name && addressLine1 && phoneNumber) {
+                props.setDetails({
+                  name: name,
+                  phoneNumber: phoneNumber,
+                  addressLine1: addressLine1
+                })
+                toast({
+                  title: 'Confirmat',
+                  status: 'success',
+                  duration: 1500,
+                  isClosable: false
+                })
+                await props.onBid(name, addressLine1, phoneNumber)
+                onClose()
+              } else {
+                alert('Please complete all fields')
+              }
+            }}
+          >
+            <Text style={{ color: '#FFFFFF' }}>
+              {'Confirm'}
+            </Text>
+          </Button>
+        </Stack>
+      </ModalContent>
+    </Modal>
+  )
+}
 
 class LiveScreen extends Component {
   constructor(props) {
@@ -38,7 +138,8 @@ class LiveScreen extends Component {
       addressLine1: null,
       addressLine2: null,
       isCheckoutModalOpen: false,
-      eventProducts: null
+      eventProducts: null,
+      auctionOngoing: false
     }
     this.handleOrder = this.handleOrder.bind(this)
     this.handleShare = this.handleShare.bind(this)
@@ -72,7 +173,8 @@ class LiveScreen extends Component {
       .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
       .on('value', async snapshot => {
         this.setState({
-          productInfo: snapshot.val()
+          productInfo: snapshot.val(),
+          auctionOngoing: snapshot.val().hasOwnProperty('isForAuction') && snapshot.val().isForAuction
         })
       })
 
@@ -141,7 +243,44 @@ class LiveScreen extends Component {
       .set(firebase.database.ServerValue.increment(-1))
   }
 
-  handleOrder() {
+  async handleBid(
+    newPrice,
+    name,
+    addressLine1,
+    phoneNumber
+  ) {
+    const { eventInfo } = this.props
+    const { productInfo } = this.state
+    if (name && addressLine1 && phoneNumber) {
+      await firebase
+        .database()
+        .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
+        .update({
+          auctionPrice: newPrice
+        })
+      await firebase
+        .database()
+        .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}/bids`)
+        .push({
+          name: name,
+          phoneNumber: phoneNumber,
+          addressLine1: addressLine1,
+          price: newPrice
+        })
+
+      addComment(
+        {
+          text: `a licitat ${newPrice} ${productInfo.currency} 🚀`,
+          username: name
+        },
+        eventInfo.id
+      )
+    } else {
+      this.setState({ showRegistrationModal: true })
+    }
+  }
+
+  async handleOrder() {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -154,66 +293,76 @@ class LiveScreen extends Component {
       addressLine1,
       addressLine2,
       name,
-      phoneNumber
+      phoneNumber,
+      auctionOngoing
     } = this.state
 
-    this.props.onOpenModal('order', {
-      sellerUsername: sellerInfo.username,
-      productInfo: productInfo,
-      eventInfo: eventInfo,
-      orderQuantity: orderQuantity,
-      totalPrice: productInfo.price * orderQuantity,
-      address: address,
-      city: city,
-      country: country,
-      postalCode: postalCode,
-      addressLine1: addressLine1 || this.props.addressLine1,
-      addressLine2: addressLine2,
-      name: name || this.props.name,
-      phoneNumber: phoneNumber || this.props.phoneNumber,
-      sellerStripeId: sellerInfo.stripeId,
-      setDetailsInHomeState: details => {
-        this.setState({
-          address: details.address,
-          city: details.city,
-          country: details.country,
-          postalCode: details.postalCode,
-          addressLine1: details.addressLine1 || null,
-          addressLine2: details.addressLine2 || null,
-          name: details.name,
-          phoneNumber: details.phoneNumber
-        })
-      }
-    })
+    if (auctionOngoing) {
+      await this.handleBid(
+        parseFloat(productInfo.auctionPrice) + 10 || parseFloat(productInfo.price) + 10,
+        name,
+        addressLine1,
+        phoneNumber
+      )
+    } else {
+      this.props.onOpenModal('order', {
+        sellerUsername: sellerInfo.username,
+        productInfo: productInfo,
+        eventInfo: eventInfo,
+        orderQuantity: orderQuantity,
+        totalPrice: productInfo.price * orderQuantity,
+        address: address,
+        city: city,
+        country: country,
+        postalCode: postalCode,
+        addressLine1: addressLine1 || this.props.addressLine1,
+        addressLine2: addressLine2,
+        name: name || this.props.name,
+        phoneNumber: phoneNumber || this.props.phoneNumber,
+        sellerStripeId: sellerInfo.stripeId,
+        setDetailsInHomeState: details => {
+          this.setState({
+            address: details.address,
+            city: details.city,
+            country: details.country,
+            postalCode: details.postalCode,
+            addressLine1: details.addressLine1 || null,
+            addressLine2: details.addressLine2 || null,
+            name: details.name,
+            phoneNumber: details.phoneNumber
+          })
+        }
+      })
 
-    // this.props.onOpenModal('payment', {
-    //   sellerUsername: sellerInfo.username,
-    //   productInfo: productInfo,
-    //   eventInfo: eventInfo,
-    //   orderQuantity: orderQuantity,
-    //   totalPrice: productInfo.price * orderQuantity,
-    //   address: address,
-    //   city: city,
-    //   country: country,
-    //   postalCode: postalCode,
-    //   addressLine1: addressLine1,
-    //   addressLine2: addressLine2,
-    //   name: name,
-    //   phoneNumber: phoneNumber,
-    //   sellerStripeId: sellerInfo.stripeId,
-    //   setDetailsInHomeState: details => {
-    //     this.setState({
-    //       address: details.address,
-    //       city: details.city,
-    //       country: details.country,
-    //       postalCode: details.postalCode,
-    //       addressLine1: details.addressLine1 || null,
-    //       addressLine2: details.addressLine2 || null,
-    //       name: details.name,
-    //       phoneNumber: details.phoneNumber
-    //     })
-    //   }
-    // })
+      // this.props.onOpenModal('payment', {
+      //   sellerUsername: sellerInfo.username,
+      //   productInfo: productInfo,
+      //   eventInfo: eventInfo,
+      //   orderQuantity: orderQuantity,
+      //   totalPrice: productInfo.price * orderQuantity,
+      //   address: address,
+      //   city: city,
+      //   country: country,
+      //   postalCode: postalCode,
+      //   addressLine1: addressLine1,
+      //   addressLine2: addressLine2,
+      //   name: name,
+      //   phoneNumber: phoneNumber,
+      //   sellerStripeId: sellerInfo.stripeId,
+      //   setDetailsInHomeState: details => {
+      //     this.setState({
+      //       address: details.address,
+      //       city: details.city,
+      //       country: details.country,
+      //       postalCode: details.postalCode,
+      //       addressLine1: details.addressLine1 || null,
+      //       addressLine2: details.addressLine2 || null,
+      //       name: details.name,
+      //       phoneNumber: details.phoneNumber
+      //     })
+      //   }
+      // })
+    }
   }
 
   handleShare() {
@@ -239,15 +388,46 @@ class LiveScreen extends Component {
     } = this.props
     const {
       productInfo,
-      orderQuantity,
       viewers,
-      isCheckoutModalOpen,
-      eventProducts
+      eventProducts,
+      auctionOngoing,
+      showRegistrationModal
     } = this.state
 
     if (isOnMobile) {
       return (
         <Stack w='100vw' bg='#FFF' p='10px' className='perfect-height-wrapper'>
+
+          {showRegistrationModal && (
+            <AuctionRegistrationModal
+              isOpen={showRegistrationModal}
+              onClose={async () => {
+                this.setState({ showRegistrationModal: false })
+              }}
+              onBid={(name, addressLine1, phoneNumber) => {
+                this.handleBid(
+                  parseFloat(productInfo.auctionPrice) + 10 || parseFloat(productInfo.price) + 10,
+                  name,
+                  addressLine1,
+                  phoneNumber
+                )
+              }}
+              isOnMobile={isOnMobile}
+              baseDetails={{
+                name: this.state.name,
+                phoneNumber: this.state.phoneNumber,
+                addressLine1: this.state.addressLine1
+              }}
+              setDetails={details => {
+                this.setState({
+                  name: details.name,
+                  phoneNumber: details.phoneNumber,
+                  addressLine1: details.addressLine1
+                })
+              }}
+            />
+          )}
+
           {events && events.length > 1 ? (
             <Stories
               events={events}
@@ -387,7 +567,7 @@ class LiveScreen extends Component {
               </Flex>
               <Stack
                 borderRadius='xl'
-                style={{ marginTop: '0.8rem' }}
+                style={{ marginTop: '0.8rem', display: auctionOngoing ? 'none' : 'flex' }}
               >
                 <ScrollView
                   showsVerticalScrollIndicator={false}
@@ -513,22 +693,35 @@ class LiveScreen extends Component {
                     />
                   ) : null}
                   {productInfo ? (
-                    <Stack
-                      justifyContent='center'
-                      style={{ marginTop: 0, paddingRight: 4 }}
-                    >
-                      {/* <Text color='#FFF' fontSize='14' fontWeight='normal'>
-                        {`${productInfo.currentStock} remaining`}
-                      </Text> */}
+                    auctionOngoing ? (
                       <Text
                         color='#FFF'
                         fontWeight='bold'
-                        fontSize='14'
-                        style={{ marginTop: '0.1rem' }}
+                        fontSize='15'
                       >
-                        {`${productInfo.price} ${productInfo.currency}`}
+                        {`00:${productInfo.auctionTimeRemaining > 0
+                          ? productInfo.auctionTimeRemaining
+                          : '0' + productInfo.auctionTimeRemaining
+                          }`}
                       </Text>
-                    </Stack>
+                    ) : (
+                      <Stack
+                        justifyContent='center'
+                        style={{ marginTop: 0, paddingRight: 4 }}
+                      >
+                        {/* <Text color='#FFF' fontSize='14' fontWeight='normal'>
+                        {`${productInfo.currentStock} remaining`}
+                      </Text> */}
+                        <Text
+                          color='#FFF'
+                          fontWeight='bold'
+                          fontSize='14'
+                          style={{ marginTop: '0.1rem' }}
+                        >
+                          {`${productInfo.price} ${productInfo.currency}`}
+                        </Text>
+                      </Stack>
+                    )
                   ) : null}
                   {productInfo && productInfo.currentStock > 0 ? (
                     <Button
@@ -551,22 +744,26 @@ class LiveScreen extends Component {
                     >
                       <Stack>
                         <Text color='#FFFFFF' fontWeight='600'>
-                          {'Cumpara'}
+                          {auctionOngoing ? `Liciteaza ${productInfo.auctionPrice + 10 || productInfo.price + 10} ${productInfo.currency}` : 'Cumpara'}
                         </Text>
-                        {this.props.secondsRemaining &&
-                          this.props.secondsRemaining >= 0 ? (
-                          <Text
-                            style={{ marginTop: 1 }}
-                            fontWeight='normal'
-                            fontSize='11'
-                            color='#FFFFFF'
-                          >
-                            {`00:${this.props.secondsRemaining > 0
-                              ? this.props.secondsRemaining
-                              : '0' + this.props.secondsRemaining
-                              }`}
-                          </Text>
-                        ) : null}
+                        {productInfo.auctionTimeRemaining ? (
+                          null
+                        ) : (
+                          this.props.secondsRemaining &&
+                            this.props.secondsRemaining >= 0 ? (
+                            <Text
+                              style={{ marginTop: 1 }}
+                              fontWeight='normal'
+                              fontSize='11'
+                              color='#FFFFFF'
+                            >
+                              {`00:${this.props.secondsRemaining > 0
+                                ? this.props.secondsRemaining
+                                : '0' + this.props.secondsRemaining
+                                }`}
+                            </Text>
+                          ) : null
+                        )}
                       </Stack>
                     </Button>
                   ) : (
@@ -623,6 +820,35 @@ class LiveScreen extends Component {
         w='100vw'
         justify='space-between'
       >
+        {showRegistrationModal && (
+          <AuctionRegistrationModal
+            isOpen={showRegistrationModal}
+            onClose={async () => {
+              this.setState({ showRegistrationModal: false })
+            }}
+            onBid={(name, addressLine1, phoneNumber) => {
+              this.handleBid(
+                parseFloat(productInfo.auctionPrice) + 10 || parseFloat(productInfo.price) + 10,
+                name,
+                addressLine1,
+                phoneNumber
+              )
+            }}
+            isOnMobile={isOnMobile}
+            baseDetails={{
+              name: this.state.name,
+              phoneNumber: this.state.phoneNumber,
+              addressLine1: this.state.addressLine1
+            }}
+            setDetails={details => {
+              this.setState({
+                name: details.name,
+                phoneNumber: details.phoneNumber,
+                addressLine1: details.addressLine1
+              })
+            }}
+          />
+        )}
         <Stack w='70vw' p='20px' h='100%' className='perfect-height-wrapper'>
           {events && events.length > 1 ? (
             <Stories
@@ -773,7 +999,7 @@ class LiveScreen extends Component {
               </Flex>
               <Stack
                 borderRadius='xl'
-                style={{ marginTop: '0.8rem' }}
+                style={{ marginTop: '0.8rem', display: auctionOngoing ? 'none' : 'flex' }}
               >
                 <ScrollView
                   showsVerticalScrollIndicator={false}
@@ -867,22 +1093,44 @@ class LiveScreen extends Component {
                         }}
                       />
                     ) : null}
-                    <Stack
-                      justifyContent='center'
-                      style={{ marginTop: 0, paddingRight: 4 }}
-                    >
-                      <Text color='#FFF' fontSize='14' fontWeight='normal'>
-                        {`${productInfo.currentStock} remaining`}
-                      </Text>
-                      <Text
-                        color='#FFF'
-                        fontWeight='bold'
-                        fontSize='14'
-                        style={{ marginTop: '0.1rem' }}
+                    {auctionOngoing ? (
+                      <Stack
+                        justifyContent='center'
+                        style={{ marginTop: 0, paddingRight: 4 }}
                       >
-                        {`${productInfo.price} ${productInfo.currency}`}
-                      </Text>
-                    </Stack>
+                        <Text color='#FFF' fontSize='14' fontWeight='normal'>
+                          {'Licitatia se termina in'}
+                        </Text>
+                        <Text
+                          color='#FFF'
+                          fontWeight='bold'
+                          fontSize='15'
+                          style={{ marginTop: '0.1rem' }}
+                        >
+                          {`00:${productInfo.auctionTimeRemaining > 0
+                            ? productInfo.auctionTimeRemaining
+                            : '0' + productInfo.auctionTimeRemaining
+                            }`}
+                        </Text>
+                      </Stack>
+                    ) : (
+                      <Stack
+                        justifyContent='center'
+                        style={{ marginTop: 0, paddingRight: 4 }}
+                      >
+                        <Text color='#FFF' fontSize='14' fontWeight='normal'>
+                          {`${productInfo.currentStock} in stock`}
+                        </Text>
+                        <Text
+                          color='#FFF'
+                          fontWeight='bold'
+                          fontSize='14'
+                          style={{ marginTop: '0.1rem' }}
+                        >
+                          {`${productInfo.price} ${productInfo.currency}`}
+                        </Text>
+                      </Stack>
+                    )}
                   </Flex>
                 </Flex>
                 {productInfo && productInfo.currentStock > 0 ? (
@@ -898,7 +1146,7 @@ class LiveScreen extends Component {
                     onClick={this.handleOrder}
                   >
                     <Text color='#FFFFFF' fontWeight='600'>
-                      {'Cumpara'}
+                      {auctionOngoing ? `Liciteaza ${productInfo.auctionPrice + 10 || productInfo.price + 10} ${productInfo.currency}` : 'Cumpara'}
                     </Text>
                     {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
                       <Text

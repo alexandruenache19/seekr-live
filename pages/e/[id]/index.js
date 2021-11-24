@@ -44,7 +44,7 @@ class EventPage extends Component {
       .on("value", async snapshot => {
         const eventInfo = snapshot.val();
         const liveStatus = false;
-        if (eventInfo.sellerId && !this.state.sellerInfo) {
+        if (eventInfo && eventInfo.sellerId && !this.state.sellerInfo) {
           const sellerInfo = await getSellerInfo(eventInfo.sellerId);
           this.setState({ sellerInfo: sellerInfo });
         }

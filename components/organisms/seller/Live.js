@@ -109,7 +109,10 @@ const AuctionRegistrationModal = ({
                   duration: 1500,
                   isClosable: false
                 })
-                await props.onBid(name, addressLine1, phoneNumber)
+                console.log('props.isBidding', props.isBidding)
+                if (props.isBidding) {
+                  await props.onBid(name, addressLine1, phoneNumber)
+                }
                 onClose()
               } else {
                 alert('Please complete all fields')
@@ -127,7 +130,7 @@ const AuctionRegistrationModal = ({
 }
 
 class LiveScreen extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -135,26 +138,35 @@ class LiveScreen extends Component {
       viewers: 0,
       address: null,
       addressDetails: null,
-      name: null,
-      phoneNumber: null,
-      addressLine1: null,
+      name: this.props.phoneNumber || null,
+      phoneNumber: this.props.phoneNumber || null,
+      addressLine1: this.props.addressLine1 || null,
       addressLine2: null,
       isCheckoutModalOpen: false,
       eventProducts: null,
-      auctionOngoing: false
+      auctionOngoing: false,
+      isBidding: false
     }
     this.handleOrder = this.handleOrder.bind(this)
     this.handleShare = this.handleShare.bind(this)
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     const { eventInfo } = this.props
+    const { name, phoneNumber, addressLine1 } = this.state
 
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
     const vh = window.innerHeight * 0.01
     // Then we set the value in the --vh custom property to the root of the document
     document.documentElement.style.setProperty('--vh', `${vh}px`)
+
+    if (!name || !phoneNumber || !addressLine1) {
+      this.setState({
+        showRegistrationModal: true,
+        isBidding: false
+      })
+    }
 
     firebase
       .database()
@@ -199,7 +211,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate (prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -220,7 +232,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -245,7 +257,7 @@ class LiveScreen extends Component {
       .set(firebase.database.ServerValue.increment(-1))
   }
 
-  async handleBid (
+  async handleBid(
     newPrice,
     name,
     addressLine1,
@@ -278,11 +290,14 @@ class LiveScreen extends Component {
         eventInfo.id
       )
     } else {
-      this.setState({ showRegistrationModal: true })
+      this.setState({
+        showRegistrationModal: true,
+        isBidding: true
+      })
     }
   }
 
-  async handleOrder () {
+  async handleOrder() {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -367,7 +382,7 @@ class LiveScreen extends Component {
     }
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -375,11 +390,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -393,19 +408,23 @@ class LiveScreen extends Component {
       viewers,
       eventProducts,
       auctionOngoing,
-      showRegistrationModal
+      showRegistrationModal,
+      isBidding
     } = this.state
 
     if (isOnMobile) {
       return (
         <Stack w='100vw' bg='#FFF' p='10px' className='perfect-height-wrapper'>
-
           {showRegistrationModal && (
             <AuctionRegistrationModal
               isOpen={showRegistrationModal}
               onClose={async () => {
-                this.setState({ showRegistrationModal: false })
+                this.setState({
+                  showRegistrationModal: false,
+                  isBidding: true
+                })
               }}
+              isBidding={isBidding}
               onBid={(name, addressLine1, phoneNumber) => {
                 this.handleBid(
                   parseFloat(productInfo.auctionPrice) + 10 || parseFloat(productInfo.price) + 10,
@@ -873,8 +892,12 @@ class LiveScreen extends Component {
           <AuctionRegistrationModal
             isOpen={showRegistrationModal}
             onClose={async () => {
-              this.setState({ showRegistrationModal: false })
+              this.setState({
+                showRegistrationModal: false,
+                isBidding: true
+              })
             }}
+            isBidding={isBidding}
             onBid={(name, addressLine1, phoneNumber) => {
               this.handleBid(
                 parseFloat(productInfo.auctionPrice) + 10 || parseFloat(productInfo.price) + 10,

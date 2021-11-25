@@ -97,11 +97,11 @@ const CustomModal = ({ isOnMobile, callback }, ref) => {
     >
       <ModalOverlay style={{ backdropFilter: 'blur(2px)' }} />
       <ModalContent
-        p={isOnMobile ? 0 : 10}
-        py={isOnMobile ? 5 : 10}
+        p={isOnMobile ? 0 : '1.5rem'}
+        py={isOnMobile ? 5 : '1.5rem'}
         ref={initialRef}
         borderRadius={isOnMobile ? 10 : 30}
-        maxW='93vw'
+        maxW={isOnMobile ? '93vw' : '50vw'}
         {...styles}
       >
         {info[type].title && info[type].title.length > 0 ? (

@@ -28,6 +28,8 @@ import { addComment } from '../../../actions/event'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
 import Stories from '../../molecules/seller/Stories'
 
+const emojis = ['🙌', '🔥', '💃🏼', '🍀', '🚀', '🕺🏽', '👏', '🎉', '⭐️']
+
 const AuctionRegistrationModal = ({
   title,
   isOpen,
@@ -53,7 +55,7 @@ const AuctionRegistrationModal = ({
     >
       <ModalOverlay />
       <ModalContent
-        maxW='93vw'
+        maxW={isOnMobile ? '93vw' : '50vw'}
         p={isOnMobile ? 10 : 10}
         py={isOnMobile ? 5 : 10}
         borderRadius={isOnMobile ? 10 : 30}
@@ -684,9 +686,9 @@ class LiveScreen extends Component {
                           <Text
                             color='#FFF'
                             fontSize='15'
-                            mr='1.5'
+                            mr='1'
                           >
-                            {'Current winner'}
+                            {`${emojis[Math.floor(Math.random() * emojis.length)]} Current winner`}
                           </Text>
                           <Text color='#FFF' fontSize='15' fontWeight='bold' maxW='35vw' noOfLines={1} textOverflow='ellipsis'>
                             {`${Object.values(productInfo.bids)[Object.values(productInfo.bids).length - 1].name} `}
@@ -702,11 +704,11 @@ class LiveScreen extends Component {
                         </Text>
                       )}
                       <Text
-                        color='#FFF'
+                        color={productInfo.auctionTimeRemaining <= 15 ? 'red' : '#FFF'}
                         fontWeight='bold'
                         fontSize='15'
                       >
-                        {`00:${productInfo.auctionTimeRemaining > 0
+                        {`00:${productInfo.auctionTimeRemaining > 9
                           ? productInfo.auctionTimeRemaining
                           : '0' + productInfo.auctionTimeRemaining
                           }`}
@@ -810,7 +812,7 @@ class LiveScreen extends Component {
                           onClick={this.handleOrder}
                         >
                           <Text color='#FFFFFF' fontWeight='600'>
-                            {auctionOngoing ? `Liciteaza ${productInfo.auctionPrice + 10 || productInfo.price + 10} ${productInfo.currency}` : 'Cumpara'}
+                            {'Cumpara'}
                           </Text>
                           {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
                             <Text
@@ -833,7 +835,7 @@ class LiveScreen extends Component {
                           }}
                         >
                           <Text color='#FFFFFF' fontWeight='600'>
-                            Wait or choose another product to order
+                            This product is out of stock
                           </Text>
                         </Button>
                       )
@@ -1038,7 +1040,7 @@ class LiveScreen extends Component {
                         textAlign='center'
                         ml='3px'
                       >
-                        {viewers}
+                        {viewers && viewers > 200 ? '200+' : viewers}
                       </Text>
                     </Center>
                   </Center>
@@ -1118,151 +1120,189 @@ class LiveScreen extends Component {
                 {/* <Flex w='100%' justify='flex-end'>
 
                 </Flex> */}
-                <Flex justify='space-between' align='flex-end' w='100%'>
-                  <Flex
-                    borderRadius='xl'
-                    bg='rgba(0,0,0,0.3)'
-                    p='8px'
-                    align='center'
-                    w='auto'
-                    minW={0}
-                    alignSelf='flex-end'
+                <Flex
+                  borderRadius='xl'
+                  bg='rgba(0,0,0,0.3)'
+                  p='8px'
+                  align='center'
+                  w='auto'
+                  minW={0}
+                  display={productInfo.isForAuction ? 'none' : 'flex'}
+                  alignSelf='flex-start'
+                >
+                  {productInfo.imageURL ? (
+                    <img
+                      src={productInfo.imageURL}
+                      style={{
+                        height: 50,
+                        width: 50,
+                        objectFit: 'cover',
+                        borderRadius: 10,
+                        marginRight: 8
+                      }}
+                    />
+                  ) : null}
+                  {/* <Stack
+                    justifyContent='center'
+                    style={{ marginTop: 0, paddingRight: 4 }}
                   >
-                    {productInfo.imageURL ? (
-                      <img
-                        src={productInfo.imageURL}
-                        style={{
-                          height: 50,
-                          width: 50,
-                          objectFit: 'cover',
-                          borderRadius: 10,
-                          marginRight: 8
-                        }}
-                      />
-                    ) : null}
-                    {auctionOngoing ? (
-                      <Stack
-                        justifyContent='center'
-                        style={{ marginTop: 0, paddingRight: 4 }}
-                      >
-                        <Text color='#FFF' fontSize='14' fontWeight='normal'>
-                          {'Licitatia se termina in'}
-                        </Text>
-                        <Text
-                          color='#FFF'
-                          fontWeight='bold'
-                          fontSize='15'
-                          style={{ marginTop: '0.1rem' }}
-                        >
-                          {`00:${productInfo.auctionTimeRemaining > 0
-                            ? productInfo.auctionTimeRemaining
-                            : '0' + productInfo.auctionTimeRemaining
-                            }`}
-                        </Text>
-                      </Stack>
-                    ) : (
-                      <Stack
-                        justifyContent='center'
-                        style={{ marginTop: 0, paddingRight: 4 }}
-                      >
-                        <Text color='#FFF' fontSize='14' fontWeight='normal'>
-                          {`${productInfo.currentStock} in stock`}
-                        </Text>
-                        <Text
-                          color='#FFF'
-                          fontWeight='bold'
-                          fontSize='14'
-                          style={{ marginTop: '0.1rem' }}
-                        >
-                          {`${productInfo.price} ${productInfo.currency}`}
-                        </Text>
-                      </Stack>
-                    )}
-                  </Flex>
+                    <Text color='#FFF' fontSize='14' fontWeight='normal'>
+                      {`${productInfo.currentStock} in stock`}
+                    </Text>
+                    <Text
+                      color='#FFF'
+                      fontWeight='bold'
+                      fontSize='14'
+                      style={{ marginTop: '0.1rem' }}
+                    >
+                      {`${productInfo.price} ${productInfo.currency}`}
+                    </Text>
+                  </Stack> */}
                 </Flex>
-                {productInfo && productInfo.isForAuction ? (
-                  productInfo.auctionOngoing ? (
-                    <Button
-                      borderRadius='xl'
-                      // px='10px'
-                      style={{
-                        justifyContent: 'center',
-                        background: 'rgb(63,60,145)',
-                        background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
-                      }}
-                      className='seekr-gradient-on-hover'
-                      onClick={this.handleOrder}
-                    >
-                      <Text color='#FFFFFF' fontWeight='600'>
-                        {`Liciteaza ${productInfo.auctionPrice + 10 || productInfo.price + 10} ${productInfo.currency}`}
-                      </Text>
-                      {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
+
+                <Stack
+                  bg='rgba(0,0,0,0.3)'
+                  p='8px'
+                  borderRadius='xl'
+                  w='100%'
+                >
+                  {productInfo.isForAuction ? (
+                    <Flex w='100%' justify='space-between' align='center'>
+                      {productInfo.bids ? (
+                        <Flex>
+                          <Text
+                            color='#FFF'
+                            fontSize='15'
+                            mr='1'
+                          >
+                            {`${emojis[Math.floor(Math.random() * emojis.length)]} Current winner`}
+                          </Text>
+                          <Text color='#FFF' fontSize='15' fontWeight='bold' maxW='35vw' noOfLines={1} textOverflow='ellipsis'>
+                            {`${Object.values(productInfo.bids)[Object.values(productInfo.bids).length - 1].name} `}
+                          </Text>
+                        </Flex>
+                      ) : (
                         <Text
-                          style={{ marginTop: 1, marginLeft: 5 }}
-                          fontWeight='normal'
-                          // fontSize='14'
-                          color='#FFFFFF'
+                          color='#FFF'
+                          fontWeight='bold'
+                          fontSize='16'
                         >
-                          {`00:${this.props.secondsRemaining > 0 ? this.props.secondsRemaining : '0' + this.props.secondsRemaining}`}
+                          {'Time left to bid'}
                         </Text>
-                      ) : null}
-                    </Button>
+                      )}
+                      <Text
+                        color={productInfo.auctionTimeRemaining <= 15 ? 'red' : '#FFF'}
+                        fontWeight='bold'
+                        fontSize='15'
+                      >
+                        {`00:${productInfo.auctionTimeRemaining > 9
+                          ? productInfo.auctionTimeRemaining
+                          : '0' + productInfo.auctionTimeRemaining
+                          }`}
+                      </Text>
+                    </Flex>
                   ) : (
-                    <Button
-                      borderRadius='xl'
-                      onClick={() => null}
-                      style={{
-                        justifyContent: 'center',
-                        backgroundColor: '#999'
-                      }}
-                    >
-                      <Text color='#FFFFFF' fontWeight='600'>
-                        Auction has ended
+                    <Flex align='center' justify='space-between' w='100%'>
+                      <Text
+                        color='#FFF'
+                        fontSize='15'
+                      >
+                        {productInfo.description || `${productInfo.currentStock} in stock`}
                       </Text>
-                    </Button>
-                  )
-                ) : (
-                  productInfo && productInfo.currentStock > 0 ? (
-                    <Button
-                      borderRadius='xl'
-                      // px='10px'
-                      style={{
-                        justifyContent: 'center',
-                        background: 'rgb(63,60,145)',
-                        background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
-                      }}
-                      className='seekr-gradient-on-hover'
-                      onClick={this.handleOrder}
-                    >
-                      <Text color='#FFFFFF' fontWeight='600'>
-                        {auctionOngoing ? `Liciteaza ${productInfo.auctionPrice + 10 || productInfo.price + 10} ${productInfo.currency}` : 'Cumpara'}
+                      <Text
+                        color='#FFF'
+                        fontWeight='bold'
+                        fontSize='15'
+                      >
+                        {`${productInfo.price} ${productInfo.currency}`}
                       </Text>
-                      {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
-                        <Text
-                          style={{ marginTop: 1, marginLeft: 5 }}
-                          fontWeight='normal'
-                          // fontSize='14'
-                          color='#FFFFFF'
-                        >
-                          {`00:${this.props.secondsRemaining > 0 ? this.props.secondsRemaining : '0' + this.props.secondsRemaining}`}
+                    </Flex>
+                  )}
+
+                  {productInfo.isForAuction ? (
+                    productInfo.auctionOngoing ? (
+                      <Button
+                        borderRadius='xl'
+                        // px='10px'
+                        style={{
+                          justifyContent: 'center',
+                          background: 'rgb(63,60,145)',
+                          background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
+                        }}
+                        className='seekr-gradient-on-hover'
+                        onClick={this.handleOrder}
+                      >
+                        <Text color='#FFFFFF' fontWeight='600'>
+                          {`Liciteaza ${productInfo.auctionPrice + 10 || productInfo.price + 10} ${productInfo.currency}`}
                         </Text>
-                      ) : null}
-                    </Button>
+                        {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
+                          <Text
+                            style={{ marginTop: 1, marginLeft: 5 }}
+                            fontWeight='normal'
+                            // fontSize='14'
+                            color='#FFFFFF'
+                          >
+                            {`00:${this.props.secondsRemaining > 0 ? this.props.secondsRemaining : '0' + this.props.secondsRemaining}`}
+                          </Text>
+                        ) : null}
+                      </Button>
+                    ) : (
+                      <Button
+                        borderRadius='xl'
+                        onClick={() => null}
+                        style={{
+                          justifyContent: 'center',
+                          backgroundColor: '#999'
+                        }}
+                      >
+                        <Text color='#FFFFFF' fontWeight='600'>
+                          Auction has ended
+                        </Text>
+                      </Button>
+                    )
                   ) : (
-                    <Button
-                      borderRadius='xl'
-                      onClick={() => null}
-                      style={{
-                        justifyContent: 'center',
-                        backgroundColor: '#999'
-                      }}
-                    >
-                      <Text color='#FFFFFF' fontWeight='600'>
-                        Wait or choose another product to order
-                      </Text>
-                    </Button>
-                  )
-                )}
+                    productInfo && productInfo.currentStock > 0 ? (
+                      <Button
+                        borderRadius='xl'
+                        // px='10px'
+                        style={{
+                          justifyContent: 'center',
+                          background: 'rgb(63,60,145)',
+                          background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
+                        }}
+                        className='seekr-gradient-on-hover'
+                        onClick={this.handleOrder}
+                      >
+                        <Text color='#FFFFFF' fontWeight='600'>
+                          {'Cumpara'}
+                        </Text>
+                        {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
+                          <Text
+                            style={{ marginTop: 1, marginLeft: 5 }}
+                            fontWeight='normal'
+                            // fontSize='14'
+                            color='#FFFFFF'
+                          >
+                            {`00:${this.props.secondsRemaining > 0 ? this.props.secondsRemaining : '0' + this.props.secondsRemaining}`}
+                          </Text>
+                        ) : null}
+                      </Button>
+                    ) : (
+                      <Button
+                        borderRadius='xl'
+                        onClick={() => null}
+                        style={{
+                          justifyContent: 'center',
+                          backgroundColor: '#999'
+                        }}
+                      >
+                        <Text color='#FFFFFF' fontWeight='600'>
+                          This product is out of stock
+                        </Text>
+                      </Button>
+                    )
+                  )}
+                </Stack>
               </Stack>
             ) : null}
           </Stack>

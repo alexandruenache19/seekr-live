@@ -144,7 +144,6 @@ class LiveScreen extends Component {
       addressLine2: null,
       isCheckoutModalOpen: false,
       eventProducts: null,
-      auctionOngoing: false,
       isBidding: false
     }
     this.handleOrder = this.handleOrder.bind(this)
@@ -187,8 +186,12 @@ class LiveScreen extends Component {
       .ref(`events/${eventInfo.id}/products/${eventInfo.currentProductId}`)
       .on('value', async snapshot => {
         this.setState({
-          productInfo: snapshot.val(),
-          auctionOngoing: snapshot.val().hasOwnProperty('isForAuction') && snapshot.val().isForAuction
+          productInfo: null
+        }, () => {
+          this.setState({
+            productInfo: snapshot.val()
+            // auctionOngoing: snapshot.val().hasOwnProperty('isForAuction') && snapshot.val().isForAuction
+          })
         })
       })
 
@@ -310,11 +313,10 @@ class LiveScreen extends Component {
       addressLine1,
       addressLine2,
       name,
-      phoneNumber,
-      auctionOngoing
+      phoneNumber
     } = this.state
 
-    if (auctionOngoing) {
+    if (productInfo && productInfo.isForAuction) {
       await this.handleBid(
         parseFloat(productInfo.auctionPrice) + 10 || parseFloat(productInfo.price) + 10,
         name,
@@ -407,7 +409,6 @@ class LiveScreen extends Component {
       productInfo,
       viewers,
       eventProducts,
-      auctionOngoing,
       showRegistrationModal,
       isBidding
     } = this.state
@@ -588,7 +589,7 @@ class LiveScreen extends Component {
               </Flex>
               <Stack
                 borderRadius='xl'
-                style={{ marginTop: '0.8rem', display: auctionOngoing ? 'none' : 'flex' }}
+                style={{ marginTop: '0.8rem', display: productInfo && productInfo.isForAuction ? 'none' : 'flex' }}
               >
                 <ScrollView
                   showsVerticalScrollIndicator={false}
@@ -753,7 +754,7 @@ class LiveScreen extends Component {
                       />
                     ) : null}
                     {productInfo ? (
-                      auctionOngoing ? (
+                      productInfo.isForAuction ? (
                         null
                       ) : (
                         <Stack
@@ -803,19 +804,35 @@ class LiveScreen extends Component {
                           ) : null}
                         </Button>
                       ) : (
-                        <Button
-                          borderRadius='xl'
-                          onClick={() => null}
-                          style={{
-                            justifyContent: 'center',
-                            backgroundColor: '#999',
-                            width: '100%'
-                          }}
-                        >
-                          <Text color='#FFFFFF' fontWeight='600'>
-                            Auction has ended
-                          </Text>
-                        </Button>
+                        productInfo.auctionTimeRemaining <= 0 ? (
+                          <Button
+                            borderRadius='xl'
+                            onClick={() => null}
+                            style={{
+                              justifyContent: 'center',
+                              backgroundColor: '#999',
+                              width: '100%'
+                            }}
+                          >
+                            <Text color='#FFFFFF' fontWeight='600'>
+                              Auction has ended
+                            </Text>
+                          </Button>
+                        ) : (
+                          <Button
+                            borderRadius='xl'
+                            onClick={() => null}
+                            style={{
+                              justifyContent: 'center',
+                              backgroundColor: '#999',
+                              width: '100%'
+                            }}
+                          >
+                            <Text color='#FFFFFF' fontWeight='600'>
+                              Auction has not started yet
+                            </Text>
+                          </Button>
+                        )
                       )
                     ) : (
                       productInfo && productInfo.currentStock > 0 ? (
@@ -825,7 +842,8 @@ class LiveScreen extends Component {
                           style={{
                             justifyContent: 'center',
                             background: 'rgb(63,60,145)',
-                            background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
+                            background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
+                            flex: 1
                           }}
                           className='seekr-gradient-on-hover'
                           onClick={this.handleOrder}
@@ -1071,7 +1089,7 @@ class LiveScreen extends Component {
               </Flex>
               <Stack
                 borderRadius='xl'
-                style={{ marginTop: '0.8rem', display: auctionOngoing ? 'none' : 'flex' }}
+                style={{ marginTop: '0.8rem', display: productInfo && productInfo.isForAuction ? 'none' : 'flex' }}
               >
                 <ScrollView
                   showsVerticalScrollIndicator={false}
@@ -1150,7 +1168,7 @@ class LiveScreen extends Component {
                   align='center'
                   w='auto'
                   minW={0}
-                  display={productInfo.isForAuction ? 'none' : 'flex'}
+                  display={productInfo && productInfo.isForAuction ? 'none' : 'flex'}
                   alignSelf='flex-start'
                 >
                   {productInfo.imageURL ? (
@@ -1189,7 +1207,7 @@ class LiveScreen extends Component {
                   borderRadius='xl'
                   w='100%'
                 >
-                  {productInfo.isForAuction ? (
+                  {productInfo && productInfo.isForAuction ? (
                     <Flex w='100%' justify='space-between' align='center'>
                       {productInfo.bids ? (
                         <Flex>
@@ -1242,7 +1260,7 @@ class LiveScreen extends Component {
                     </Flex>
                   )}
 
-                  {productInfo.isForAuction ? (
+                  {productInfo && productInfo.isForAuction ? (
                     productInfo.auctionOngoing ? (
                       <Button
                         borderRadius='xl'

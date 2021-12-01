@@ -22,14 +22,14 @@ import { addOrder } from '../../../fetchData/getData'
 import { addComment } from '../../../actions/event'
 
 class LocationSearchInput extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = { address: props.address || '' }
     this.handleChange = this.handleChange.bind(this)
     this.handleSelect = this.handleSelect.bind(this)
   }
 
-  handleChange(address) {
+  handleChange (address) {
     const { setAddress } = this.props
     this.setState(
       {
@@ -41,7 +41,7 @@ class LocationSearchInput extends React.Component {
     )
   }
 
-  handleSelect(address) {
+  handleSelect (address) {
     const { setAddress } = this.props
     geocodeByAddress(address)
       .then(results => {
@@ -59,7 +59,7 @@ class LocationSearchInput extends React.Component {
       .catch(error => console.error('Error', error))
   }
 
-  render() {
+  render () {
     return (
       <PlacesAutocomplete
         value={this.state.address}

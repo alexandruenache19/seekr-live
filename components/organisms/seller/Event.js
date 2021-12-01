@@ -21,7 +21,7 @@ import {
 import moment from 'moment'
 
 class EventScreen extends PureComponent {
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = {
@@ -29,30 +29,37 @@ class EventScreen extends PureComponent {
     }
 
     this.handleFollow = this.handleFollow.bind(this)
-    this.handleReminderText = this.handleReminderText.bind(this)
+    this.handleShowReserveModal = this.handleShowReserveModal.bind(this)
     this.handleReminderEmail = this.handleReminderEmail.bind(this)
     this.handleShare = this.handleShare.bind(this)
   }
 
-  handleShare() {
+  componentDidMount () {
+    this.handleShowReserveModal()
+  }
+
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', { username: sellerInfo.username })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  handleReminderText() {
+  handleShowReserveModal () {
     const { eventInfo } = this.props
-    this.props.onOpenModal('text', { eventId: eventInfo.id })
+    // this.props.onOpenModal('text', { eventId: eventInfo.id })
+    this.props.onOpenModal('reserve', {
+      eventId: eventInfo.id
+    })
   }
 
-  handleReminderEmail() {
+  handleReminderEmail () {
     this.props.onOpenModal('email', {})
   }
 
-  render() {
+  render () {
     const { muted } = this.state
     const {
       isOnMobile,
@@ -248,156 +255,20 @@ class EventScreen extends PureComponent {
             <Button
               style={{
                 backgroundColor: '#000',
-                width: '100%'
+                width: '100%',
+                background: 'rgb(63,60,145)',
+                background:
+                  'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
               }}
               borderRadius={10}
-              onClick={this.handleReminderText}
+              onClick={this.handleShowReserveModal}
             >
-              <Text style={{ color: '#FFFFFF' }}>Anunta-ma cu 5 min inainte</Text>
+              <Text style={{ color: '#FFFFFF' }}>Rezerva loc</Text>
             </Button>
           </div>
         </Stack>
 
       </Stack>
-      // <Flex
-      //   bgColor='#FFF'
-      //   h='100vh'
-      //   w='100vw'
-      //   justify='center'
-      //   alignItems='center'
-      //   backgroundSize='cover'
-      //   backgroundPosition='center'
-      //   className='perfect-height-wrapper'
-      // >
-      //   <Stack
-      //     w={isOnMobile ? '100%' : '70vw'}
-      //     h={isOnMobile ? '100vh' : '94vh'}
-      //     bg='rgba(255,255,255,0.4)'
-      //     borderRadius={isOnMobile ? 0 : '20px'}
-      //     p='1.4rem'
-      //   >
-      //     <Flex
-      //       justify='space-between'
-      //       alignItems='center'
-      //       h='10vh'
-      //       w='100%'
-      //     >
-      //       <Flex
-      //         h='100%'
-      //         py='10px'
-      //         w='100%'
-      //         // bg='#F2F4F9'
-      //         borderRadius='15px'
-      //         overflow='hidden'
-      //         justify='space-between'
-      //       >
-      //         <Flex>
-      //           <Avatar name={sellerInfo.name} src={sellerInfo.imageURL} />
-      //           <Stack ml='10px'>
-      //             <Text fontWeight='bold' fontSize='md'>
-      //               {eventInfo.title}
-      //             </Text>
-      //             <Text style={{ marginTop: -3 }}>
-      //               @{sellerInfo.username}
-      //             </Text>
-      //           </Stack>
-      //         </Flex>
-
-      //         <Center>
-      //           <Button
-      //             h='3em'
-      //             shadow='md'
-      //             ml='1em'
-      //             borderRadius='1.5em'
-      //             bg='#FFF'
-      //             onClick={this.handleShare}
-      //           >
-      //             <FiShare size={20} />
-      //           </Button>
-      //         </Center>
-      //       </Flex>
-      //     </Flex>
-      //     <Center
-      //       style={{ marginTop: '1rem', maxHeight: 'calc(94vh - 16vh)' }}
-      //       h='100%'
-      //       w='100%'
-      //     >
-      //       <Stack
-      //         h='100%'
-      //         w='100%'
-      //         bg='rgba(0,0,0,0.9)'
-      //         borderRadius='15px'
-      //         overflow='hidden'
-      //         position='relative'
-      //       >
-
-      //         <ReactPlayer
-      //           className='react-player'
-      //           url={eventInfo.videoURL}
-      //           width='100%'
-      //           height='120%'
-      //           playing
-      //           muted={muted}
-      //           playsinline
-      //           style={{ marginTop: -20 }}
-      //           loop
-      //         />
-
-      //         {muted ? (
-      //           <Center
-      //             onClick={() => this.setState({ muted: false })}
-      //             style={{
-      //               width: '100%',
-      //               height: '100%',
-      //               position: 'absolute',
-      //               zIndex: 3,
-      //               top: 0,
-      //               left: 0,
-      //               marginTop: 0,
-      //               cursor: 'pointer',
-      //               backgroundColor: 'rgba(0,0,0,0.3)'
-      //             }}
-      //           >
-      //             <Center style={{ backgroundColor: 'rgba(0,0,0,0.75)', width: 60, height: 60, borderRadius: 30 }}>
-      //               <FaVolumeMute style={{ fontSize: 22, color: '#FFF' }} />
-      //             </Center>
-      //           </Center>
-      //         ) : null}
-
-      //         <Center
-      //           position='absolute'
-      //           bottom='5px'
-      //           width={isOnMobile ? '100%' : 'auto'}
-      //           left={isOnMobile ? 'auto' : '10px'}
-      //           zIndex={10}
-      //         >
-      //           <AddToCalendarComp event={event} />
-      //         </Center>
-
-      //         <Center
-      //           position='absolute'
-      //           bottom={isOnMobile ? 'auto' : '5px'}
-      //           right={isOnMobile ? 'auto' : '10px'}
-      //           left={isOnMobile ? '0px' : 'auto'}
-      //           zIndex={10}
-      //           width={isOnMobile ? '100%' : 'auto'}
-      //           top={isOnMobile ? 0 : 'auto'}
-      //         >
-      //           <Button
-      //             h='3em'
-      //             shadow='md'
-      //             borderRadius='15px'
-      //             bg='#FFF'
-      //             onClick={this.handleReminderText}
-      //           >
-      //             <BiMessageSquareDots size={26} />
-      //             <Text pl='6px' color='#000' fontWeight='bold' fontSize='lg'>Anunta-ma cu 5 min inainte</Text>
-      //           </Button>
-      //         </Center>
-      //       </Stack>
-      //     </Center>
-      //   </Stack>
-      // </Flex>
     )
   }
 }

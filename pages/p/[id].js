@@ -345,6 +345,7 @@ export default class PaymentScreen extends PureComponent {
           isOpen={isModalOpen}
           onClose={() => this.setState({ isModalOpen: false })}
           isOnMobile={isOnMobile}
+          productInfo={product}
           handlePlaceOrder={this.handlePlaceOrder}
         />
 

@@ -331,7 +331,7 @@ const OrderModalContent = ({
           }
         }}
       >
-        <Text style={{ color: '#FFFFFF' }}>Comanda</Text>
+        <Text style={{ color: '#FFFFFF' }}>{props.isAuction ? 'Liciteaza' : 'Comanda'}</Text>
       </Button>
     </Stack>
   )

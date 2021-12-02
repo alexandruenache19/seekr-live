@@ -388,6 +388,7 @@ export default class PaymentScreen extends PureComponent {
           isOnMobile={isOnMobile}
           productInfo={product}
           handlePlaceOrder={this.handlePlaceOrder}
+          isAuction={product && product.isAuction}
         />
 
         {product ? (
@@ -451,7 +452,8 @@ export default class PaymentScreen extends PureComponent {
                 style={{
                   position: "relative",
                   maxWidth: "100%",
-                  width: isOnMobile ? '100%' : 'auto',
+                  // width: isOnMobile ? '100%' : 'auto',
+                  width: '100%',
                   height: "auto",
                   marginTop: "1.2rem",
                   marginBottom: "1.2rem",

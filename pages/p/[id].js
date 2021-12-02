@@ -26,11 +26,39 @@ import router from "next/router";
 import axios from "axios";
 import { OrderModalContent } from "../../components/modals/content";
 import ShopItems from "../../components/molecules/profile/ShopItems";
+import useSound from 'use-sound';
 
 import moment from "moment";
 const format = val => "RON " + val;
 const parse = val => val.replace(/RON /, "");
 const emojis = ['🙌', '🔥', '💃🏼', '🍀', '🚀', '🕺🏽', '👏', '🎉', '⭐️']
+// const clickSound = require('../../sounds/click.mp3')
+
+const AuctionButton = ({ onPress, product }) => {
+  // const [play] = useSound(clickSound)
+  return (
+    <Button
+      borderRadius='xl'
+      w='100%'
+      style={{
+        marginTop: 8,
+        justifyContent: 'center',
+        background: 'rgb(63,60,145)',
+        background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
+        flexDirection: 'column'
+      }}
+      className='seekr-gradient-on-hover'
+      onClick={() => {
+        // play()
+        onPress()
+      }}
+    >
+      <Text color='#FFFFFF' fontWeight='600'>
+        {`Liciteaza ${product.price + 10} ${product.currency}`}
+      </Text>
+    </Button>
+  )
+}
 
 const CashOrderModal = ({ isOnMobile, ...props }) => {
   return (
@@ -75,8 +103,9 @@ const CountDownTimer = ({ endTime }) => {
           {'Timp Ramas'}
         </Text>
         <Text fontSize={'15'} fontWeight='bold'>
-          {/* {`${duration.days() > 0 ? duration.days() + " Days " : ''}`}
-        {`${duration.hours() > 0 ? duration.hours() + " Hours " : ''}`} */}
+          {/* {`${duration.days() > 0 ? duration.days() + " Days " : ''}`}*/}
+          {/* {`${duration.hours() > 0 ? duration.hours() + " Hours " : ''}`} */}
+          {`${duration.hours() > 9 ? duration.hours() : duration.hours() > 0 ? '0' + duration.hours() : '00'}:`}
           {`${duration.minutes() > 9 ? duration.minutes() : duration.minutes() > 0 ? '0' + duration.minutes() : '00'}:`}
           {`${duration.seconds() > 9 ? duration.seconds() : duration.seconds() > 0 ? '0' + duration.seconds() : '00'}`}
         </Text>
@@ -332,9 +361,9 @@ export default class PaymentScreen extends PureComponent {
       sellerInfo,
       sellerProducts,
       newPrice
-    } = this.state;
+    } = this.state
+    const { isOnMobile } = this.props
 
-    const { isOnMobile } = this.props;
     if (loading) {
       return (
         <Stack
@@ -422,6 +451,7 @@ export default class PaymentScreen extends PureComponent {
                 style={{
                   position: "relative",
                   maxWidth: "100%",
+                  width: isOnMobile ? '100%' : 'auto',
                   height: "auto",
                   marginTop: "1.2rem",
                   marginBottom: "1.2rem",
@@ -438,6 +468,7 @@ export default class PaymentScreen extends PureComponent {
                       borderRadius: 15,
                       objectFit: "cover"
                     }}
+                    muted
                     src={product.videoURL}
                     autoplay
                     autoPlay
@@ -554,29 +585,15 @@ export default class PaymentScreen extends PureComponent {
                       )}
                       <Stack w='100%' borderRadius='xl'>
                         <CountDownTimer endTime={product.auctionEndDate} />
-                        <Button
-                          borderRadius='xl'
-                          // px='10px'
-                          w='100%'
-                          style={{
-                            marginTop: 8,
-                            justifyContent: 'center',
-                            background: 'rgb(63,60,145)',
-                            background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
-                            flexDirection: 'column'
-                          }}
-                          className='seekr-gradient-on-hover'
-                          onClick={() => {
+                        <AuctionButton
+                          product={product}
+                          onPress={() => {
                             this.setState({
                               newPrice: this.state.newPrice || product.price + 10,
                               isModalOpen: true
                             })
                           }}
-                        >
-                          <Text color='#FFFFFF' fontWeight='600'>
-                            {`Liciteaza ${product.price + 10} ${product.currency}`}
-                          </Text>
-                        </Button>
+                        />
                       </Stack>
                     </Stack>
                   )}

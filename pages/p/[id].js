@@ -30,6 +30,7 @@ import ShopItems from "../../components/molecules/profile/ShopItems";
 import moment from "moment";
 const format = val => "RON " + val;
 const parse = val => val.replace(/RON /, "");
+const emojis = ['🙌', '🔥', '💃🏼', '🍀', '🚀', '🕺🏽', '👏', '🎉', '⭐️']
 
 const CashOrderModal = ({ isOnMobile, ...props }) => {
   return (
@@ -69,14 +70,17 @@ const CountDownTimer = ({ endTime }) => {
     }
     duration = moment.duration(duration.asSeconds() - 1, "seconds");
     return (
-      duration.days() +
-      " Days " +
-      duration.hours() +
-      " Hours " +
-      duration.minutes() +
-      " Minutes " +
-      duration.seconds() +
-      " Seconds"
+      <Flex align='center' w='100%' justify='space-between'>
+        <Text fontSize={'15'}>
+          {'Timp Ramas'}
+        </Text>
+        <Text fontSize={'15'} fontWeight='bold'>
+          {/* {`${duration.days() > 0 ? duration.days() + " Days " : ''}`}
+        {`${duration.hours() > 0 ? duration.hours() + " Hours " : ''}`} */}
+          {`${duration.minutes() > 9 ? duration.minutes() : duration.minutes() > 0 ? '0' + duration.minutes() : '00'}:`}
+          {`${duration.seconds() > 9 ? duration.seconds() : duration.seconds() > 0 ? '0' + duration.seconds() : '00'}`}
+        </Text>
+      </Flex>
     );
   };
 
@@ -89,9 +93,7 @@ const CountDownTimer = ({ endTime }) => {
   });
 
   return (
-    <Text fontWeight="bold" fontSize={20} textAlign="center">
-      {timeLeft}
-    </Text>
+    timeLeft
   );
 };
 
@@ -115,10 +117,19 @@ export default class PaymentScreen extends PureComponent {
 
   async componentDidMount() {
     const { id } = this.props;
+
+    firebase
+      .database()
+      .ref(`products/${id}`)
+      .on("value", productSn => {
+        const product = productSn.val();
+        this.setState({ product: productSn.val() })
+      })
+
     const productSn = await firebase
       .database()
       .ref(`products/${id}`)
-      .once("value");
+      .once("value")
 
     const product = productSn.val();
 
@@ -258,8 +269,7 @@ export default class PaymentScreen extends PureComponent {
         });
 
       this.setState({
-        isModalOpen: false,
-        paidProduct: true
+        isModalOpen: false
       });
     } else {
       await firebase
@@ -339,8 +349,10 @@ export default class PaymentScreen extends PureComponent {
       );
     }
 
+    const auctionHasEnded = product.isAuction && product.auctionEndDate - new Date().getTime() < 0
+
     return (
-      <Stack align="center" justify="center">
+      <Stack align="center" justify="center" py='2rem'>
         <CashOrderModal
           isOpen={isModalOpen}
           onClose={() => this.setState({ isModalOpen: false })}
@@ -352,9 +364,7 @@ export default class PaymentScreen extends PureComponent {
         {product ? (
           paidProduct ? (
             <Stack align="center" maxW="500px" width="100%" px="1rem">
-              <AiOutlineCheckCircle
-                style={{ fontSize: 40, color: "#28A445" }}
-              />
+              <AiOutlineCheckCircle style={{ fontSize: 40, color: "#28A445" }} />
               <Text textAlign="center">
                 {product.isAuction ? "Bid confirmed" : "Order confirmed"}
               </Text>
@@ -384,7 +394,7 @@ export default class PaymentScreen extends PureComponent {
               </Text>
             </Stack>
           ) : (
-            <Stack align="center" maxW="500px" w="100%" px="1.5rem" mt="4rem">
+            <Stack align="center" maxW="500px" w="100%" px="1.5rem" mt="2rem">
               <Stack alignItems="center">
                 {sellerInfo.imageURL && (
                   <img
@@ -406,76 +416,73 @@ export default class PaymentScreen extends PureComponent {
                   >{`@${sellerInfo.username}`}</Text>
                 )}
               </Stack>
-              <Text textAlign="center">{product.name}</Text>
+              <Text textAlign="center">{product.name || product.description}</Text>
 
               <div
                 style={{
                   position: "relative",
-                  maxWidth: "95%",
+                  maxWidth: "100%",
                   height: "auto",
                   marginTop: "1.2rem",
                   marginBottom: "1.2rem",
-                  maxHeight: 250
+                  maxHeight: '60vh'
                 }}
               >
-                <img
-                  src={product.imageUrl}
-                  style={{
-                    // boxShadow: '0px 0px 36px -9px rgba(0,0,0,0.49)',
-                    backgroundColor: "#999",
-                    width: "100%",
-                    height: "auto",
-                    maxHeight: 250,
-                    borderRadius: 15,
-                    objectFit: "cover"
-                  }}
-                />
-                <Stack
-                  style={{
-                    background:
-                      "linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 0%, rgba(0,0,0,0.623686974789916) 0%, rgba(0,0,0,0) 100%)",
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    zIndex: 3,
-                    width: "100%",
-                    padding: 10,
-                    borderBottomLeftRadius: 15,
-                    borderBottomRightRadius: 15
-                  }}
-                >
-                  <Text color="#FFFFFF" fontSize={16} fontWeight="bold">
-                    {`${product.quantity} in stock`}
-                  </Text>
-                </Stack>
+                {product.videoURL ? (
+                  <video
+                    style={{
+                      backgroundColor: "#999",
+                      width: "100%",
+                      height: "auto",
+                      maxHeight: '60vh',
+                      borderRadius: 15,
+                      objectFit: "cover"
+                    }}
+                    src={product.videoURL}
+                    autoplay
+                    autoPlay
+                    loop
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={product.imageUrl || product.imageURL}
+                    style={{
+                      // boxShadow: '0px 0px 36px -9px rgba(0,0,0,0.49)',
+                      backgroundColor: "#999",
+                      width: "100%",
+                      height: "auto",
+                      maxHeight: 250,
+                      borderRadius: 15,
+                      objectFit: "cover"
+                    }}
+                  />
+                )}
+                {product.isAuction ? (
+                  null
+                ) : (
+                  <Stack
+                    style={{
+                      background:
+                        "linear-gradient(0deg, rgba(0,0,0,0.47522759103641454) 0%, rgba(0,0,0,0.623686974789916) 0%, rgba(0,0,0,0) 100%)",
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      zIndex: 3,
+                      width: "100%",
+                      padding: 10,
+                      borderBottomLeftRadius: 15,
+                      borderBottomRightRadius: 15
+                    }}
+                  >
+                    <Text color="#FFFFFF" fontSize={16} fontWeight="bold">
+                      {`${product.quantity} in stock`}
+                    </Text>
+                  </Stack>
+                )}
               </div>
               {product.isAuction ? (
-                <Stack style={{ width: "100%" }}>
-                  {product.bids ? (
-                    <div style={{ width: "100%", marginBottom: "1rem" }}>
-                      <Text textAlign="center">{`Latest bids`}</Text>
-                      {Object.values(product.bids)
-                        .slice(-3)
-                        .map(bid => {
-                          return (
-                            <Flex
-                              key={bid.name}
-                              style={{ width: "100%", marginTop: 5 }}
-                              justify="space-between"
-                            >
-                              <Text>{bid.name}</Text>
-                              <Text fontWeight="bold">{`${bid.price} RON`}</Text>
-                            </Flex>
-                          );
-                        })}
-                    </div>
-                  ) : null}
-                  <Text
-                    textAlign="center"
-                    color="#999"
-                  >{`Auction ending in`}</Text>
-                  <CountDownTimer endTime={product.auctionEndDate} />
-                </Stack>
+                null
               ) : (
                 <Stack style={{ position: "relative" }}>
                   <Text textAlign="center" fontSize={"18px"} fontWeight="bold">
@@ -490,13 +497,6 @@ export default class PaymentScreen extends PureComponent {
                         "RON"} transport`}
                     </Text>
                   )}
-
-                  {/* {!outOfStock ? (
-                    <Text
-                      fontSize={"18px"}
-                      textAlign="center"
-                    >{`${product.quantity} in stock`}</Text>
-                  ) : null} */}
                 </Stack>
               )}
               {outOfStock ? (
@@ -512,37 +512,74 @@ export default class PaymentScreen extends PureComponent {
                   <Text style={{ color: "#FFFFFF" }}>{"Out of stock"}</Text>
                 </Button>
               ) : product.isAuction ? (
-                <div style={{ width: "100%", marginTop: "1.5rem" }}>
-                  <NumberInput
-                    placeholder="Your Bid"
-                    min={product.price + 10}
-                    value={newPrice || product.price + 10}
-                    onChange={number => {
-                      this.setState({ newPrice: number });
-                    }}
-                    _focus={{
-                      border: "1px solid #999",
-                      boxShadow: "none"
-                    }}
-                  >
-                    <NumberInputField />
-                  </NumberInput>
-                  <Button
-                    style={{
-                      backgroundColor: "#28A445",
-                      width: "100%",
-                      marginTop: "0.5rem"
-                    }}
-                    onClick={() =>
-                      this.setState({
-                        newPrice: this.state.newPrice || product.price + 10,
-                        isModalOpen: true
-                      })
-                    }
-                  >
-                    <Text style={{ color: "#FFFFFF" }}>{`Bid ${newPrice ||
-                      product.price + 10} RON`}</Text>
-                  </Button>
+                <div style={{ width: "100%" }}>
+                  {auctionHasEnded ? (
+                    <Stack
+                      color='white'
+                      align='center'
+                      borderRadius='xl'
+                      p={3}
+                      style={{
+                        background: 'rgb(63,60,145)',
+                        background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
+                      }}
+                    >
+                      <Text fontWeight='bold' fontSize={20}>
+                        {`${Object.values(product.bids)[Object.values(product.bids).length - 1].name}`}
+                      </Text>
+                      <Text fontSize={20} style={{ margin: 0 }}>
+                        {'won!'}
+                      </Text>
+                    </Stack>
+                  ) : (
+                    <Stack align='center'>
+                      {product.bids ? (
+                        <Flex align='flex-end' justify='space-between' w='100%'>
+                          <Stack>
+                            <Text
+                              fontSize='11'
+                            >
+                              {`Winner ${emojis[Math.floor(Math.random() * emojis.length)]}`}
+                            </Text>
+                            <Text fontSize='15' noOfLines={1} style={{ marginTop: 2 }} textOverflow='ellipsis'>
+                              {`${Object.values(product.bids)[Object.values(product.bids).length - 1].name} `}
+                            </Text>
+                          </Stack>
+                          <Text fontSize='15' marginTop='2'>
+                            {`${product.price} ${product.currency}`}
+                          </Text>
+                        </Flex>
+                      ) : (
+                        null
+                      )}
+                      <Stack w='100%' borderRadius='xl'>
+                        <CountDownTimer endTime={product.auctionEndDate} />
+                        <Button
+                          borderRadius='xl'
+                          // px='10px'
+                          w='100%'
+                          style={{
+                            marginTop: 8,
+                            justifyContent: 'center',
+                            background: 'rgb(63,60,145)',
+                            background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)',
+                            flexDirection: 'column'
+                          }}
+                          className='seekr-gradient-on-hover'
+                          onClick={() => {
+                            this.setState({
+                              newPrice: this.state.newPrice || product.price + 10,
+                              isModalOpen: true
+                            })
+                          }}
+                        >
+                          <Text color='#FFFFFF' fontWeight='600'>
+                            {`Liciteaza ${product.price + 10} ${product.currency}`}
+                          </Text>
+                        </Button>
+                      </Stack>
+                    </Stack>
+                  )}
                 </div>
               ) : (
                 <div
@@ -637,12 +674,16 @@ export default class PaymentScreen extends PureComponent {
             </Stack>
           )
         ) : null}
-        <ShopItems
-          isOnMobile={isOnMobile}
-          products={Object.values(sellerProducts)}
-          initialProduct={product}
-          sellerInfo={sellerInfo}
-        />
+        {product.isAuction ? (
+          null
+        ) : (
+          <ShopItems
+            isOnMobile={isOnMobile}
+            products={Object.values(sellerProducts)}
+            initialProduct={product}
+            sellerInfo={sellerInfo}
+          />
+        )}
       </Stack>
     );
   }

@@ -261,7 +261,9 @@ export default class PaymentScreen extends PureComponent {
             sellerProducts: sellerProductsSn.val()
           },
           () => {
-            if (productSn.val().quantity >= 1) {
+            if (
+              (productSn.val().quantity && productSn.val().quantity >= 1) ||
+              (productSn.val().currentStock && productSn.val().currentStock >= 1)) {
               this.setState({
                 loading: false
               });
@@ -283,7 +285,7 @@ export default class PaymentScreen extends PureComponent {
     const address = details.address;
     const { id } = product;
 
-    if (product.isAuction) {
+    if (product.isAuction || product.isForAuction) {
       await firebase
         .database()
         .ref(`products/${product.id}`)
@@ -380,7 +382,8 @@ export default class PaymentScreen extends PureComponent {
       );
     }
 
-    const auctionHasEnded = product.isAuction && product.auctionEndDate - new Date().getTime() < 0
+    const isAuction = product.isAuction || product.isForAuction
+    const auctionHasEnded = isAuction && product.auctionEndDate - new Date().getTime() < 0
 
     return (
       <Stack align="center" justify="center" py='2rem'>
@@ -390,7 +393,7 @@ export default class PaymentScreen extends PureComponent {
           isOnMobile={isOnMobile}
           productInfo={product}
           handlePlaceOrder={this.handlePlaceOrder}
-          isAuction={product && product.isAuction}
+          isAuction={product && isAuction}
         />
 
         {product ? (
@@ -398,7 +401,7 @@ export default class PaymentScreen extends PureComponent {
             <Stack align="center" maxW="500px" width="100%" px="1rem">
               <AiOutlineCheckCircle style={{ fontSize: 40, color: "#28A445" }} />
               <Text textAlign="center">
-                {product.isAuction ? "Bid confirmed" : "Order confirmed"}
+                {isAuction ? "Bid confirmed" : "Order confirmed"}
               </Text>
               <img
                 src={product.imageUrl}
@@ -415,12 +418,12 @@ export default class PaymentScreen extends PureComponent {
                 }}
               />
               <Text textAlign="center">
-                {product.isAuction
+                {isAuction
                   ? "Thank you for your bid!"
                   : "Thank you for your order!"}
               </Text>
               <Text textAlign="center">
-                {product.isAuction
+                {isAuction
                   ? `We'll contact you when the auction is over to let you know if you won!`
                   : `We'll contact you to confirm shipping details in the next 24h.`}
               </Text>
@@ -493,7 +496,7 @@ export default class PaymentScreen extends PureComponent {
                     }}
                   />
                 )}
-                {product.isAuction ? (
+                {isAuction ? (
                   null
                 ) : (
                   <Stack
@@ -511,12 +514,12 @@ export default class PaymentScreen extends PureComponent {
                     }}
                   >
                     <Text color="#FFFFFF" fontSize={16} fontWeight="bold">
-                      {`${product.quantity} in stock`}
+                      {`${product.quantity || product.currentStock} in stock`}
                     </Text>
                   </Stack>
                 )}
               </div>
-              {product.isAuction ? (
+              {isAuction ? (
                 null
               ) : (
                 <Stack style={{ position: "relative" }}>
@@ -546,7 +549,7 @@ export default class PaymentScreen extends PureComponent {
                 >
                   <Text style={{ color: "#FFFFFF" }}>{"Out of stock"}</Text>
                 </Button>
-              ) : product.isAuction ? (
+              ) : isAuction ? (
                 <div style={{ width: "100%" }}>
                   {auctionHasEnded ? (
                     <Stack
@@ -695,7 +698,7 @@ export default class PaymentScreen extends PureComponent {
             </Stack>
           )
         ) : null}
-        {product.isAuction ? (
+        {isAuction ? (
           null
         ) : (
           <ShopItems

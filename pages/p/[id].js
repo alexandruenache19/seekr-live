@@ -35,7 +35,9 @@ const emojis = ['🙌', '🔥', '💃🏼', '🍀', '🚀', '🕺🏽', '👏', 
 // const clickSound = require('../../sounds/click.mp3')
 
 const AuctionButton = ({ onPress, product }) => {
-  // const [play] = useSound(clickSound)
+  const [play] = useSound('https://assets.mixkit.co/sfx/preview/mixkit-video-game-retro-click-237.mp3', {
+    volume: 1,
+  })
   return (
     <Button
       borderRadius='xl'
@@ -48,8 +50,8 @@ const AuctionButton = ({ onPress, product }) => {
         flexDirection: 'column'
       }}
       className='seekr-gradient-on-hover'
-      onClick={() => {
-        // play()
+      onClick={async () => {
+        play()
         onPress()
       }}
     >

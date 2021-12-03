@@ -38,6 +38,15 @@ class EventPage extends Component {
   componentDidMount() {
     const { eventId } = this.props;
 
+    this.refreshListener = firebase
+      .database()
+      .ref(`/events/${eventId}/info/refresh`)
+      .on('value', async snapshot => {
+        if (snapshot.exists() && snapshot.val() === true) {
+          window.location.reload()
+        }
+      })
+
     this.eventInfoListener = firebase
       .database()
       .ref(`/events/${eventId}/info`)
@@ -71,6 +80,24 @@ class EventPage extends Component {
           isOnMobile: window.innerWidth <= 780
         });
       });
+  }
+
+  componentWillUnmount() {
+    const { eventId } = this.props
+    this.refreshListener && firebase
+      .database()
+      .ref(`/events/${eventId}/info/refresh`)
+      .off('value', this.refreshListener)
+
+    this.eventInfoListener && firebase
+      .database()
+      .ref(`/events/${eventId}/info`)
+      .off('value', this.eventInfoListener)
+
+    this.commentsListener && firebase
+      .database()
+      .ref(`/events/${eventId}/comments`)
+      .off('value', this.commentsListener)
   }
 
   handleOpenModal(type, props) {

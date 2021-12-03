@@ -163,7 +163,7 @@ const AuctionRegistrationModal = ({
 }
 
 class LiveScreen extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -184,7 +184,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  async componentDidMount() {
+  async componentDidMount () {
     const { eventInfo } = this.props
     const { name, phoneNumber, addressLine1 } = this.state
 
@@ -247,7 +247,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate (prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -268,7 +268,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -293,7 +293,7 @@ class LiveScreen extends Component {
       .set(firebase.database.ServerValue.increment(-1))
   }
 
-  async handleBid(
+  async handleBid (
     newPrice,
     name,
     addressLine1,
@@ -333,7 +333,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async handleOrder() {
+  async handleOrder () {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -417,7 +417,7 @@ class LiveScreen extends Component {
     }
   }
 
-  handleShare() {
+  handleShare () {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -425,11 +425,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow() {
+  handleFollow () {
     this.props.onOpenModal('follow', {})
   }
 
-  render() {
+  render () {
     const {
       isOnMobile,
       sellerInfo,

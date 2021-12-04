@@ -1,4 +1,4 @@
-import firebase from '../firebase/clientApp';
+import firebase from '../firebase/clientApp'
 
 // const auth = firebase.auth();
 const databaseRef = firebase.database().ref()

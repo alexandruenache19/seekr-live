@@ -28,8 +28,46 @@ import firebase from '../../../firebase/clientApp'
 import { addComment } from '../../../actions/event'
 import AmazonIVS from '../../molecules/seller/AmazonIVS'
 import Stories from '../../molecules/seller/Stories'
+import useSound from 'use-sound'
 
 const emojis = ['🙌', '🔥', '💃🏼', '🍀', '🚀', '🕺🏽', '👏', '🎉', '⭐️']
+
+const AuctionButton = ({ secondsRemaining, productInfo, onOrder }) => {
+  const [play] = useSound('https://assets.mixkit.co/sfx/preview/mixkit-video-game-retro-click-237.mp3', {
+    volume: 1
+  })
+  return (
+    <Button
+      borderRadius='xl'
+      // px='10px'
+      w='100%'
+      style={{
+        justifyContent: 'center',
+        background: 'rgb(63,60,145)',
+        background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
+      }}
+      className='seekr-gradient-on-hover'
+      onClick={() => {
+        play()
+        onOrder()
+      }}
+    >
+      <Text color='#FFFFFF' fontWeight='600'>
+        {`Liciteaza ${productInfo.auctionPrice + 10 || productInfo.price + 10} ${productInfo.currency}`}
+      </Text>
+      {secondsRemaining && secondsRemaining >= 0 ? (
+        <Text
+          style={{ marginTop: 1, marginLeft: 5 }}
+          fontWeight='normal'
+          // fontSize='14'
+          color='#FFFFFF'
+        >
+          {`00:${secondsRemaining > 0 ? secondsRemaining : '0' + secondsRemaining}`}
+        </Text>
+      ) : null}
+    </Button>
+  )
+}
 
 const ShowWinnerToast = ({ bids }) => {
   const toast = useToast()
@@ -163,7 +201,7 @@ const AuctionRegistrationModal = ({
 }
 
 class LiveScreen extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       productInfo: null,
@@ -184,7 +222,7 @@ class LiveScreen extends Component {
     this.handleFollow = this.handleFollow.bind(this)
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     const { eventInfo } = this.props
     const { name, phoneNumber, addressLine1 } = this.state
 
@@ -247,7 +285,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async componentDidUpdate (prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { eventInfo } = this.props
     if (
       (prevProps.eventInfo.currentProductId &&
@@ -268,7 +306,7 @@ class LiveScreen extends Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { eventInfo } = this.props
     this.productInfoListener &&
       firebase
@@ -293,7 +331,7 @@ class LiveScreen extends Component {
       .set(firebase.database.ServerValue.increment(-1))
   }
 
-  async handleBid (
+  async handleBid(
     newPrice,
     name,
     addressLine1,
@@ -333,7 +371,7 @@ class LiveScreen extends Component {
     }
   }
 
-  async handleOrder () {
+  async handleOrder() {
     const { eventInfo, sellerInfo } = this.props
 
     const {
@@ -417,7 +455,7 @@ class LiveScreen extends Component {
     }
   }
 
-  handleShare () {
+  handleShare() {
     const { sellerInfo } = this.props
     this.props.onOpenModal('share', {
       username: sellerInfo.username,
@@ -425,11 +463,11 @@ class LiveScreen extends Component {
     })
   }
 
-  handleFollow () {
+  handleFollow() {
     this.props.onOpenModal('follow', {})
   }
 
-  render () {
+  render() {
     const {
       isOnMobile,
       sellerInfo,
@@ -628,7 +666,7 @@ class LiveScreen extends Component {
                   </Center>
                 </Stack>
               </Flex>
-              <Stack
+              {/* <Stack
                 borderRadius='xl'
                 style={{ marginTop: '0.8rem', display: productInfo && productInfo.isForAuction ? 'none' : 'flex' }}
               >
@@ -675,7 +713,6 @@ class LiveScreen extends Component {
                               boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)'
                             }}
                           />
-                          {/* <Center position='absolute' bottom='15px' right='0px' bg='#FFF'> */}
                           <Text
                             color='#FFF'
                             align='center'
@@ -688,13 +725,12 @@ class LiveScreen extends Component {
                           >
                             {prod.currentStock > 0 ? `${prod.price} ${prod.currency}` : 'Out of stock'}
                           </Text>
-                          {/* </Center> */}
                         </Stack>
                       </Pressable>
                     ))
                   ) : null}
                 </ScrollView>
-              </Stack>
+              </Stack> */}
             </Stack>
             <Stack
               position='absolute'
@@ -776,6 +812,14 @@ class LiveScreen extends Component {
                       </Text>
                     </Flex>
                   ) : null}
+                  {productInfo && productInfo.description ? (
+                    <Text
+                      color='#FFF'
+                      fontSize='15'
+                    >
+                      {productInfo.description}
+                    </Text>
+                  ) : null}
                   <Flex
                     align='center'
                     w='100%'
@@ -818,32 +862,11 @@ class LiveScreen extends Component {
                     ) : null}
                     {productInfo && productInfo.isForAuction ? (
                       productInfo.auctionOngoing ? (
-                        <Button
-                          borderRadius='xl'
-                          // px='10px'
-                          w='100%'
-                          style={{
-                            justifyContent: 'center',
-                            background: 'rgb(63,60,145)',
-                            background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
-                          }}
-                          className='seekr-gradient-on-hover'
-                          onClick={this.handleOrder}
-                        >
-                          <Text color='#FFFFFF' fontWeight='600'>
-                            {`Liciteaza ${productInfo.auctionPrice + 10 || productInfo.price + 10} ${productInfo.currency}`}
-                          </Text>
-                          {this.props.secondsRemaining && this.props.secondsRemaining >= 0 ? (
-                            <Text
-                              style={{ marginTop: 1, marginLeft: 5 }}
-                              fontWeight='normal'
-                              // fontSize='14'
-                              color='#FFFFFF'
-                            >
-                              {`00:${this.props.secondsRemaining > 0 ? this.props.secondsRemaining : '0' + this.props.secondsRemaining}`}
-                            </Text>
-                          ) : null}
-                        </Button>
+                        <AuctionButton
+                          onOrder={this.handleOrder}
+                          secondsRemaining={this.props.secondsRemaining}
+                          productInfo={productInfo}
+                        />
                       ) : (
                         productInfo.auctionTimeRemaining <= 0 ? (
                           <Button
@@ -1134,7 +1157,7 @@ class LiveScreen extends Component {
                   </Center>
                 </Stack>
               </Flex>
-              <Stack
+              {/* <Stack
                 borderRadius='xl'
                 style={{ marginTop: '0.8rem', display: productInfo && productInfo.isForAuction ? 'none' : 'flex' }}
               >
@@ -1175,24 +1198,20 @@ class LiveScreen extends Component {
                               height: 'auto',
                               width: 64,
                               minHeight: 64,
-                              // borderRadius: '50%',
                               borderRadius: 5,
                               objectFit: 'cover',
                               boxShadow: '0px 0px 36px 2px rgba(0,0,0,0.12)'
                             }}
                           />
-                          {/* <Center position='absolute' bottom='15px' right='0px' bg='#FFF'> */}
                           <Text color='#FFF' align='center' style={{ fontSize: 11, marginTop: '0.2rem', marginBottom: 0 }}>
                             {prod.currentStock > 0 ? `${prod.price} ${prod.currency}` : 'Out of stock'}
                           </Text>
-                          {/* </Center> */}
                         </Stack>
                       </Pressable>
                     ))
                   ) : null}
-
                 </ScrollView>
-              </Stack>
+              </Stack> */}
             </Stack>
 
             {productInfo ? (

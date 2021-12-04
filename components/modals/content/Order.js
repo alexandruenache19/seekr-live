@@ -185,7 +185,7 @@ const OrderModalContent = ({
         quantity: orderQuantity,
         productId: productInfo.id,
         currency: productInfo.currency,
-        imageURL: productInfo.imageURL
+        imageURL: productInfo.imageURL || productInfo.imageUrl
       })
 
       setDetailsInHomeState({
@@ -229,7 +229,7 @@ const OrderModalContent = ({
       >
         <Stack style={{ marginBottom: '0.6rem' }}>
           <img
-            src={productInfo.imageURL}
+            src={productInfo.imageURL || productInfo.imageUrl}
             style={{
               // boxShadow: '0px 0px 36px -9px rgba(0,0,0,0.49)',
               backgroundColor: '#999',
@@ -315,23 +315,35 @@ const OrderModalContent = ({
         }}
         onClick={() => {
           if (handlePlaceOrder) {
-            handlePlaceOrder({
-              name: name,
-              phoneNumber: phoneNumber,
-              address: {
-                city: city,
-                country: country,
-                line1: addressLine1,
-                line2: addressLine2,
-                postalCode: postalCode
+            if (name && phoneNumber && addressLine1 && name !== '' && phoneNumber !== '' && addressLine1 !== '') {
+              if (props.isAuction) {
+                handlePlaceOrder({
+                  name: name,
+                  phoneNumber: phoneNumber,
+                  addressLine1: addressLine1
+                })
+              } else {
+                handlePlaceOrder({
+                  name: name,
+                  phoneNumber: phoneNumber,
+                  address: {
+                    city: city,
+                    country: country,
+                    line1: addressLine1,
+                    line2: addressLine2,
+                    postalCode: postalCode
+                  }
+                })
               }
-            })
+            } else {
+              alert('Completeaza toate datele pentru a putea licita')
+            }
           } else {
             handleDone()
           }
         }}
       >
-        <Text style={{ color: '#FFFFFF' }}>Comanda</Text>
+        <Text style={{ color: '#FFFFFF' }}>{props.isAuction ? 'Liciteaza' : 'Comanda'}</Text>
       </Button>
     </Stack>
   )

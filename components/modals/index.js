@@ -19,7 +19,8 @@ import {
   CommentModelContent,
   TextModalContent,
   EmailModalContent,
-  PaymentModalContent
+  PaymentModalContent,
+  ReserveModalContent
 } from './content'
 
 const info = {
@@ -43,6 +44,10 @@ const info = {
     title: 'Email me',
     subtitle: 'Get an email 5 minutes before the event starts.'
   },
+  reserve: {
+    title: 'Rezerva loc pentru livrarea gratis. Vei primi un SMS cu 5 minute inainte de eveniment',
+    subtitle: ''
+  },
   order: { title: '', subtitle: '' },
   payment: { title: 'Plaseaza Comanda', subtitle: '' },
   follow: { title: 'Download the app to follow', subtitle: 'Down' }
@@ -58,6 +63,8 @@ const renderContent = (type, props) => {
       return <CommentModelContent {...props} />
     case 'text':
       return <TextModalContent {...props} />
+    case 'reserve':
+      return <ReserveModalContent {...props} />
     case 'email':
       return <EmailModalContent {...props} />
     case 'follow':

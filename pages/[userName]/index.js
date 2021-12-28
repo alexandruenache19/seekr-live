@@ -1,7 +1,7 @@
 import React, { PureComponent, useEffect, useState } from "react";
 import { withRouter } from "next/router";
 import { Pressable } from "react-native";
-
+import { FiInstagram } from "react-icons/fi";
 import { getUser, getUserId } from "../../actions/auth";
 
 import EventPage from "../e/[id]";
@@ -23,7 +23,8 @@ class UserPage extends PureComponent {
     this.state = {
       currentEventId: null,
       loading: true,
-      globalMuted: true
+      globalMuted: true,
+      products: []
     };
   }
 
@@ -35,10 +36,13 @@ class UserPage extends PureComponent {
         loading: false
       });
     }
+    if (userProfile.shop && userProfile.shop.products) {
+      this.setState({ products: Object.values(userProfile.shop.products) });
+    }
   }
 
   render() {
-    const { currentEventId } = this.state;
+    const { currentEventId, products } = this.state;
     const { isOnMobile, userProfile } = this.props;
     if (currentEventId) {
       return (
@@ -48,27 +52,46 @@ class UserPage extends PureComponent {
           setGlobalMuted={bool => this.setState({ globalMuted: bool })}
           globalMuted={this.state.globalMuted}
         />
-      )
+      );
     } else {
       return (
-        <Stack style={{ marginTop: "3rem" }}>
+        <Stack
+          style={{
+            paddingTop: "1rem",
+            justifyContent: "space-between",
+            alignItems: "center",
+            height: "100vh"
+          }}
+        >
           <Stack justifyContent="center" alignItems="center">
             <Avatar src={userProfile.info.imageURL} size="xl" />
-            <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-              {`@${userProfile.info.username}`}
-            </Text>
+            <Flex justify="center" alignItems="center">
+              <Pressable
+                onPress={() =>
+                  window.open(userProfile.info.instagramUrl, "_blank")
+                }
+              >
+                <FiInstagram color="#000" size={26} />
+              </Pressable>
+              <Text style={{ fontWeight: "bold", fontSize: 20, marginLeft: 5 }}>
+                {`@${userProfile.info.username}`}
+              </Text>
+            </Flex>
           </Stack>
-          <ShopItems
-            isOnMobile={isOnMobile}
-            products={
-              userProfile.shop && userProfile.shop.products
-                ? Object.values(userProfile.shop.products)
-                : []
-            }
-            sellerInfo={userProfile.info}
-            showOrderButton
-          />
-          ;
+
+          {products.length !== 0 ? (
+            <ShopItems
+              isOnMobile={isOnMobile}
+              products={products}
+              sellerInfo={userProfile.info}
+              showOrderButton
+            />
+          ) : (
+            <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+              Other events are coming.
+            </Text>
+          )}
+          <Stack />
         </Stack>
       );
     }

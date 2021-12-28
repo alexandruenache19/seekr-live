@@ -324,9 +324,9 @@ export const Footer = ({ isOnMobile }) => {
         </Text>
       </View>
       <View style={{ display: 'flex', alignItems: 'center', marginTop: '0.7rem' }}>
-        <Text style={{ fontSize: 16, color: Colors.TEXT_COLOR_MAIN }}>
-          {'founders@listle.io • +40771440831'}
-        </Text>
+        {/* <Text style={{ fontSize: 16, color: Colors.TEXT_COLOR_MAIN }}>
+          {'+40771440831'}
+        </Text> */}
 
         {/* <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
           <a href='https://apps.apple.com/us/app/odin-share-ideas-with-friends/id1548503015'>

@@ -552,23 +552,40 @@ export default class PaymentScreen extends PureComponent {
               ) : isAuction ? (
                 <div style={{ width: "100%" }}>
                   {auctionHasEnded ? (
-                    <Stack
-                      color='white'
-                      align='center'
-                      borderRadius='xl'
-                      p={3}
-                      style={{
-                        background: 'rgb(63,60,145)',
-                        background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
-                      }}
-                    >
-                      <Text fontWeight='bold' fontSize={20}>
-                        {`${Object.values(product.bids)[Object.values(product.bids).length - 1].name}`}
-                      </Text>
-                      <Text fontSize={20} style={{ margin: 0 }}>
-                        {'won!'}
-                      </Text>
-                    </Stack>
+                    product.bids ? (
+                      <Stack
+                        color='white'
+                        align='center'
+                        borderRadius='xl'
+                        p={3}
+                        style={{
+                          background: 'rgb(63,60,145)',
+                          background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
+                        }}
+                      >
+                        <Text fontWeight='bold' fontSize={20}>
+                          {`${Object.values(product.bids)[Object.values(product.bids).length - 1].name}`}
+                        </Text>
+                        <Text fontSize={20} style={{ margin: 0 }}>
+                          {'won!'}
+                        </Text>
+                      </Stack>
+                    ) : (
+                      <Stack
+                        color='white'
+                        align='center'
+                        borderRadius='xl'
+                        p={3}
+                        style={{
+                          background: 'rgb(63,60,145)',
+                          background: 'linear-gradient(48deg, rgba(63,60,145,1) 0%, rgba(242,67,106,1) 100%)'
+                        }}
+                      >
+                        <Text fontSize={16} style={{ margin: 0, fontWeight: 'bold' }}>
+                          {'This auction has ended'}
+                        </Text>
+                      </Stack>
+                    )
                   ) : (
                     <Stack align='center'>
                       {product.bids ? (
